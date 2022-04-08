@@ -55,13 +55,13 @@ def createConfigParserExample():
 
     and using the read method of ConfigParser as follows::
 
-        >>> from ConfigParser import ConfigParser
+        >>> from configparser import ConfigParser
         >>> config = ConfigParser()
         >>> config.read(filename)
         >>> return config
 
     """
-    from ConfigParser import ConfigParser
+    from configparser import ConfigParser
     config = ConfigParser()
     config.add_section('Section1')
     config.set('Section1', 'int', '15')
@@ -200,7 +200,7 @@ class ConfigParams(config_base):
 
         :param (ConfigParser,str) config: a ConfigParser instance or a filename
         """
-        from ConfigParser import ConfigParser
+        from configparser import ConfigParser
         config_base.__init__(self)
 
         if type(config_or_filename) == str:
@@ -216,6 +216,3 @@ class ConfigParams(config_base):
                 self.__dict__[section] = _set_section(**self._config2dict(section))
         except:
             raise SyntaxError("Could not convert sections from the ConfigParser instance !!")
-
-
-

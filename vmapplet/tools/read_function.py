@@ -8,7 +8,7 @@
     :Code: mature
     :Documentation: mature
     :Author: Thomas Cokelaer <Thomas.Cokelaer@sophia.inria.fr>
-    :Revision: $Id$ 
+    :Revision: $Id$
 
 .. testsetup::
 
@@ -51,7 +51,7 @@ def _readFunction(filename='functions.set', func_name=None, x=0):
     """Function to read a functions.fset file according to L-studio syntax given
     a function name . It returns the f(x) value (interpolated).
 
-    .. warning:: for developers only. This function is used by :class:`ReadFunction` class, 
+    .. warning:: for developers only. This function is used by :class:`ReadFunction` class,
         which should be used by users.
 
     **From lpgf user guide**
@@ -97,7 +97,7 @@ def _readFunction(filename='functions.set', func_name=None, x=0):
     try:
         fdata = open(filename, 'r')
     except:
-        IOError('Could not read filename %s', filename)
+        raise IOError('Could not read filename %s', filename)
 
     #skipe first line
     fdata.readline()

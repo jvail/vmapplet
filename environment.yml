@@ -16,5 +16,8 @@ dependencies:
   - openalea.lpy
   - openalea.mtg
   - pyqglviewer
+  - node
+  - xlrd
   - flake8
-  - pip
+  - pip:
+    - pgljupyter>=1.2.*

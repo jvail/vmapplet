@@ -16,6 +16,8 @@ import datetime
 from math import exp
 import calendar
 
+from vmapplet import get_shared_data
+
 class Tp_date(object):
     def __init__(self, onset_year = 1994,
                 optimal_temperature = 1.1,
@@ -39,7 +41,7 @@ class Tp_date(object):
         self.sigmoidal_slope = sigmoidal_slope
         self.heat_quantity_required = heat_quantity_required
 
-        self.temp_file = xlrd.open_workbook("../../share/data/temperature_data.xls")
+        self.temp_file = xlrd.open_workbook(get_shared_data("temperature_data.xls"))
         self.temp_sheet = self.temp_file.sheet_by_name("moy")
 
         self.chilling_accummulation = 0

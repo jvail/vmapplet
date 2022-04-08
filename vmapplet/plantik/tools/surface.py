@@ -20,7 +20,7 @@
 
 """
 from openalea.plantgl.all import Vector3, Vector4, Scaled, BezierPatch
-# from vplants.plantik import get_shared_data
+from vmapplet import get_shared_data
 
 __all__ = ['createSurface', 'leafSurface']
 
@@ -90,10 +90,10 @@ def createSurface(filename=None, ustride=10, vstride=10):
     # read name
     name = f.readline().split()[0]
     # read ctrl points
-    for i in xrange(4):
+    for i in range(4):
         f.readline()
     ctrlpoints = []
-    for i in xrange(4):
+    for i in range(4):
         v = f.readline().split()
         row = []
         for j in range(4):

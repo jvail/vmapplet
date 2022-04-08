@@ -38,7 +38,7 @@ from vmapplet.tools.simulation import SimulationStocatree
 from vmapplet.sequences import Markov, generate_sequence, terminal_fate
 from vmapplet.organs.metamer import metamer_data
 from vmapplet.organs.growth_unit import growth_unit_data
-from vmapplet.structure_analysis import HiddenSemiMarkov
+from vmapplet.structure_analysis import HiddenSemiMarkov, StatError
 from vmapplet.srandom import boolean_event
 from vmapplet.physics import rotate_frame_at_branch, rupture
 from vmapplet.tools.surface import *
@@ -46,7 +46,7 @@ from vmapplet.tools.surface import *
 from vmapplet.tools.data_process import Group, Statistics
 from vmapplet.temperature_effects import Tp_date
 from vmapplet.tools.csv import ExprecCSV
-from vmapplet.tools.rw_tools import Ensure_dir, Recorder
+from vmapplet.tools.rw_tools import ensureLocalDir, Recorder
 from vmapplet.tools.file_tools import Cp_Lstring
 from vmapplet.pipe import get_new_radius
 
@@ -93,7 +93,7 @@ else:
       output_directory = "Singlemode_ExpCounters&Results/"
       #output_directory = options.general.single_dir
 
-Ensure_dir(output_directory)
+ensureLocalDir(output_directory)
 print(output_directory)
 
 #r = Recorder("ParallelResults/" + "current_exp.h")
@@ -102,12 +102,15 @@ print(output_directory)
 #lock.release()
 
 # Then, define a data structure to store outputs such as MTG, counts, sequences and so on
-data = Data(options=options, revision=__revision__)
+# data = Data(options=options, revision=__revision__)
 
 # Initialise the simulation
 simulation = SimulationStocatree(dt=options.general.time_step,
   starting_date=int(options.general.starting_year),
   ending_date=options.general.end_year)
+
+# fixed with https://github.com/openalea-incubator/MAppleT/blob/master/share/data/MappleT_Synthetic.lpy
+data = Data(options=options, init_date=simulation.date, directory=output_directory)
 
 # Read PGLshape surfaces
 stride = int(options.stocatree.stride_number)
@@ -117,13 +120,13 @@ petal_surface = petalSurface(stride, stride)
 
 # init markov and tree instances
 markov          = Markov(**options.markov.__dict__)
-markov.hsm_96_medium = HiddenSemiMarkov(get_shared_data('fmodel_fuji_5_15_y3_96.txt'))
-markov.hsm_97_medium = HiddenSemiMarkov(get_shared_data('fmodel_fuji_5_15_y4_97.txt'))
-markov.hsm_98_medium = HiddenSemiMarkov(get_shared_data('fmodel_fuji_5_15_y5_98.txt'))
-markov.hsm_95_long = HiddenSemiMarkov(get_shared_data('fmodel_fuji_y12.txt'))
-markov.hsm_96_long = HiddenSemiMarkov(get_shared_data('fmodel_fuji_16_65_y3_96.txt'))
-markov.hsm_97_long = HiddenSemiMarkov(get_shared_data('fmodel_fuji_16_65_y4_97.txt'))
-markov.hsm_98_long = HiddenSemiMarkov(get_shared_data('fmodel_fuji_16_65_y5_98.txt'))
+markov.hsm_96_medium = HiddenSemiMarkov.ascii_read(StatError(), get_shared_data('fmodel_fuji_5_15_y3_96.txt'))
+markov.hsm_97_medium = HiddenSemiMarkov.ascii_read(StatError(), get_shared_data('fmodel_fuji_5_15_y4_97.txt'))
+markov.hsm_98_medium = HiddenSemiMarkov.ascii_read(StatError(), get_shared_data('fmodel_fuji_5_15_y5_98.txt'))
+markov.hsm_95_long = HiddenSemiMarkov.ascii_read(StatError(), get_shared_data('fmodel_fuji_y12.txt'))
+markov.hsm_96_long = HiddenSemiMarkov.ascii_read(StatError(), get_shared_data('fmodel_fuji_16_65_y3_96.txt'))
+markov.hsm_97_long = HiddenSemiMarkov.ascii_read(StatError(), get_shared_data('fmodel_fuji_16_65_y4_97.txt'))
+markov.hsm_98_long = HiddenSemiMarkov.ascii_read(StatError(), get_shared_data('fmodel_fuji_16_65_y5_98.txt'))
 
 # The following objects (tree, wood, internode, apex_parameters, leaf, fruit
 # are used to store the user parameters and are used by the metamer_data
@@ -268,16 +271,16 @@ def Start():
     #random.seed(1000)
     #random.seed(simulation.seed)
     # init the data to store the required outputs (sequence, lstring, mtg, ...)
-    data.init()
+    data.open_all(current_experiment)
 
     global trunk_len
 
     #Added by Han on 06-07-2012, to calculate the length of corresponding sequence
-    seq_op = open("sequences.seq")
-    sequences = cPickle.load(seq_op)
-    for i in sequences[int(options.stocatree.select_trunk)]:
-        if i!=9:
-            trunk_len+=1
+    # seq_op = open(get_shared_data("sequences.seq"))
+    # sequences = pickle.load(seq_op.buffer)
+    # for i in sequences[int(options.stocatree.select_trunk)]:
+    #     if i!=9:
+    #         trunk_len+=1
 
 
 
@@ -446,7 +449,7 @@ def EndEach(lstring,scene):
                 #Modified by Han on 12-12-2011 with "pararun" option considered
                 if options.general.pararun == True:
                     sub_dir = output_directory + "{0}_{1}_{2}/".format(simulation.date.year, simulation.date.month, simulation.date.day)
-                    Ensure_dir(sub_dir)
+                    ensureLocalDir(sub_dir)
                     data.mtg.build_filename(sub_dir + "{0}".format(int(current_experiment)))
                 else:
                     if options.general.batchmode == True:
@@ -467,7 +470,7 @@ def EndEach(lstring,scene):
                     #Added by Han on 01-03-2012
                     #Pickle the lstring data structure with information
                     sub_dir = output_directory + "{0}_{1}_{2}/".format(simulation.date.year, simulation.date.month, simulation.date.day)
-                    Ensure_dir(sub_dir)
+                    ensureLocalDir(sub_dir)
                     cpl = Cp_Lstring(lstring)
                     cpl.copy()
                     pseudo_lstring = cpl.pseudo_lstring
@@ -497,7 +500,7 @@ def EndEach(lstring,scene):
               #Modified by Han on 12-12-2011 with "pararun" option considered
               if options.general.pararun == True:
                   sub_dir = output_directory + "{0}_{1}_{2}/".format(simulation.date.year, simulation.date.month, simulation.date.day)
-                  Ensure_dir(sub_dir)
+                  ensureLocalDir(sub_dir)
                   fn = "{0}.bgeom".format(int(current_experiment))
                   s.save(sub_dir + fn)
               else:

@@ -23,7 +23,6 @@ from openalea.mtg.aml import (
     Successor,
     Class,
     Components,
-    Pos,
     Descendants,
     Order,
     Extremities,
