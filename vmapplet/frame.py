@@ -17,7 +17,7 @@
 """
 
 
-from vplants.plantgl.all import Vector3
+from openalea.plantgl.all import Vector3
 
 __all__ = ['Frame']
 
@@ -37,7 +37,7 @@ class Frame(object):
     #def __init__(self, heading=Vector3(0.,0.,1.), up=Vector3(0.,1.,0.),
     #left=Vector3(1.,0.,0.)):
     def __init__(self, heading=Vector3(0., 1., 0.), up=Vector3(0., 0., 1.),
-                  left=Vector3(1., 0., 0.)):
+                 left=Vector3(1., 0., 0.)):
         self.heading = heading
         self.left = up
         self.up = left
