@@ -18,15 +18,15 @@ import calendar
 
 class Tp_date(object):
     def __init__(self, onset_year = 1994,
-                    optimal_temperature = 1.1,
-                    chilling_effect_interval = 20,
-                    chilling_effect_onset_month = 10,
-                    chilling_effect_onset_day = 30,
-                    chilling_quantity_required = 56,
-                    characteristic_temperature = 9.0,
-                    heat_sigmoidal = False,
-                    sigmoidal_slope = 6.0,
-                    heat_quantity_required = 83.58):
+                optimal_temperature = 1.1,
+                chilling_effect_interval = 20,
+                chilling_effect_onset_month = 10,
+                chilling_effect_onset_day = 30,
+                chilling_quantity_required = 56,
+                characteristic_temperature = 9.0,
+                heat_sigmoidal = False,
+                sigmoidal_slope = 6.0,
+                heat_quantity_required = 83.58):
 
         self.onset_year = onset_year
         self.optimal_temperature = optimal_temperature
@@ -125,13 +125,3 @@ class Test(object):
             t.write(str(tp_date.dormancy_break_date[2]) + "/" + str(tp_date.dormancy_break_date[1]) + ",")
             t.write(str(tp_date.bud_break_date[2]) + "/" + str(tp_date.bud_break_date[1]) + "\n")
         t.close()
-
-
-
-
-
-
-
-
-
-

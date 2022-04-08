@@ -22,7 +22,7 @@ __all__ = [
     ]
 
 
-class growth_unit_data(object): 
+class growth_unit_data(object):
     """A simple class for the growth unit data structure
 
     This class is used within the Lpy file only at the production level.
@@ -47,5 +47,3 @@ class growth_unit_data(object):
         self.index = index
         self.year =year
         self.inflorescence = inflorescence
-
-

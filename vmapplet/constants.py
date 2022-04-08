@@ -2,7 +2,7 @@
 
 
 
-defines trigonometric constants such as 
+defines trigonometric constants such as
 
 .. math::
 
@@ -14,4 +14,3 @@ from scipy import pi
 quarter_pi = pi * 0.25
 half_pi    = pi * 0.5
 two_pi     = 2. * pi
-

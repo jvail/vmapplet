@@ -18,9 +18,9 @@
 """
 
 
-from vplants.plantgl.all import Vector3
-from constants import pi
-from physics import Frame
+from openalea.plantgl.all import Vector3
+from ..constants import pi
+from ..physics import Frame
 
 
 class Tree():
@@ -74,7 +74,7 @@ class Tree():
         # the original mappelt code the initial hlu frame as follows
         #self.initial_hlu  = Frame(Vector3( 0.0, 1.0, 0.0), Vector3( 0.0, 0.0, 1.0), Vector3(-1.0, 0.0, 0.0)); #
         # this one seems to work, which seems logival since HLU when the tree starts corresponds to zxy or zyx.
-        self.initial_hlu                     = Frame(Vector3( 0.0, 0.0, 1.0), Vector3( 0.0, 1.0, 0.0), Vector3(1., 0.0, 0.));
+        self.initial_hlu                     = Frame(Vector3( 0.0, 0.0, 1.0), Vector3( 0.0, 1.0, 0.0), Vector3(1., 0.0, 0.))
         # the original one from mapplet leads to trunk being horizontal
         #self.initial_hlu                     = Frame(Vector3( 0.0, 1.0, 0.0), Vector3( 0.0, 0.0, 1.0), Vector3(-1., 0.0, 0.));
         self.spur_death_probability          = spur_death_probability
@@ -92,7 +92,7 @@ class Tree():
         # Count the number of first-order branches (note that the parent_branch_id starts from 0)
         # Added by Han on 02-05-2011
         self.first_branches                  = 0
-        self.tropism                         = Vector3(0.0, 0.0, tropism); #// same as in N original mapplet
+        self.tropism                         = Vector3(0.0, 0.0, tropism) #// same as in N original mapplet
         self.fruits                          = 0
 
     def convert_to_radians(self):

@@ -15,12 +15,21 @@
 
 import glob
 import os
-import sys
-#from amlPy   import *
-#from openalea.plantgl.all import *
-import cPickle
-from openalea.stocatree.metamer import metamer_data
-#from openalea.mtg.aml import VtxList
+from openalea.mtg import MTG
+from openalea.mtg.aml import (
+    Feature,
+    MTGRoot,
+    Ancestors,
+    Successor,
+    Class,
+    Components,
+    Pos,
+    Descendants,
+    Order,
+    Extremities,
+    Father,
+    VtxList,
+)
 
 class File_Index(object):
     def __init__(self, dir):
@@ -45,24 +54,24 @@ class File_Index(object):
 
     #The list of file names (e.g. ["hi"])
     def fn_list(self, extn):
-      fn_l = []
-      for f in self.file_list(extn):
-        (n,e) = os.path.splitext(f)
-        fn_l.append(n)
-      #return fn_l
-      #If the file names are pure integers, then sort them with "their values"
-        try:
-            #Convert them into int type at first
-            for i in range(len(fn_l)):
-                fn_l[i] = int(fn_l[i])
-            #And then sort the int numbers
-            fn_l.sort()
-            #And then convert them back to str type
-            for i in range(len(fn_l)):
-                fn_l[i] = str(fn_l[i])
-            return fn_l
-        except:
-            return fn_l
+        fn_l = []
+        for f in self.file_list(extn):
+            (n,e) = os.path.splitext(f)
+            fn_l.append(n)
+        #return fn_l
+        #If the file names are pure integers, then sort them with "their values"
+            try:
+                #Convert them into int type at first
+                for i in range(len(fn_l)):
+                    fn_l[i] = int(fn_l[i])
+                #And then sort the int numbers
+                fn_l.sort()
+                #And then convert them back to str type
+                for i in range(len(fn_l)):
+                    fn_l[i] = str(fn_l[i])
+                return fn_l
+            except:
+                return fn_l
 
     #A dictionary of file names and their FULL directories
     #(e.g. {"1":"c:\\1.txt"})
@@ -75,11 +84,10 @@ class File_Index(object):
         return dic
 
 class Mtg_Processing(object):
-    def __init__(self, myfile, \
-                    attr_list=["observation", "length", "leaf_state", \
-                                "leaf_area", "ta_pgl", "sa_pgl", \
-                                "star_pgl", "unit_id", "branch_id", \
-                                "lstring_id", "zone", "radius"]):
+    def __init__(self, myfile,attr_list=["observation", "length", "leaf_state",
+                                        "leaf_area", "ta_pgl", "sa_pgl",
+                                        "star_pgl", "unit_id", "branch_id",
+                                        "lstring_id", "zone", "radius"]):
         #File path + file name
         self.file = myfile
         self.mtg = MTG(self.file)
@@ -374,41 +382,41 @@ class Cp_Lstring(object):
         #print len(lstring), len(self.pseudo_lstring)
 
         for i in range(len(self.pseudo_lstring)):
-          try:
-            for attr in vars(self.pseudo_lstring[i][0]).keys():
-              if attr in vars(self.lstring[i][0]).keys():
-                if attr == "leaf_state":
-                  self.pseudo_lstring[i][0].leaf_state = self.lstring[i][0].leaf_state
-                  self.pseudo_lstring[i][0].leaf.state = self.lstring[i][0].leaf.state
-                  #print i, self.lstring[i][0].leaf.state, self.pseudo_lstring[i][0].leaf.state, self.pseudo_lstring[i-1][0].leaf.state
-                else:
-                  vars(self.pseudo_lstring[i][0])[attr] = vars(self.lstring[i][0])[attr]
-                  #print i, self.lstring[i][0].leaf_area, self.pseudo_lstring[i][0].leaf_area
-              else:
+            try:
+                for attr in vars(self.pseudo_lstring[i][0]).keys():
+                    if attr in vars(self.lstring[i][0]).keys():
+                        if attr == "leaf_state":
+                            self.pseudo_lstring[i][0].leaf_state = self.lstring[i][0].leaf_state
+                            self.pseudo_lstring[i][0].leaf.state = self.lstring[i][0].leaf.state
+                            #print i, self.lstring[i][0].leaf.state, self.pseudo_lstring[i][0].leaf.state, self.pseudo_lstring[i-1][0].leaf.state
+                        else:
+                            vars(self.pseudo_lstring[i][0])[attr] = vars(self.lstring[i][0])[attr]
+                            #print i, self.lstring[i][0].leaf_area, self.pseudo_lstring[i][0].leaf_area
+                    else:
+                        continue
+            except:
                 continue
-          except:
-            continue
 
-        """
-        for i in range(len(self.pseudo_lstring)):
-            try:
-                print i, self.lstring[i][0].leaf.state, self.pseudo_lstring[i][0].leaf.state
-                print i, self.lstring[i][0].leaf_area, self.pseudo_lstring[i][0].leaf_area
-                print i, self.lstring[i][0].length, self.pseudo_lstring[i][0].length
-            except:
-                continue
-        """
-        """
-        tp = open("check.txt", "w")
-        for i in range(len(self.pseudo_lstring)):
-            try:
-                tp.write("{0}, {1}, {2}\n".format(i, self.lstring[i][0].leaf.state, self.pseudo_lstring[i][0].leaf.state))
-                tp.write("{0}, {1}, {2}\n".format(i, self.lstring[i][0].leaf_area, self.pseudo_lstring[i][0].leaf_area))
-                tp.write("{0}, {1}, {2}\n".format(i, self.lstring[i][0].length, self.pseudo_lstring[i][0].length))
-            except:
-                continue
-        tp.close()
-        """
+            """
+            for i in range(len(self.pseudo_lstring)):
+                try:
+                    print i, self.lstring[i][0].leaf.state, self.pseudo_lstring[i][0].leaf.state
+                    print i, self.lstring[i][0].leaf_area, self.pseudo_lstring[i][0].leaf_area
+                    print i, self.lstring[i][0].length, self.pseudo_lstring[i][0].length
+                except:
+                    continue
+            """
+            """
+            tp = open("check.txt", "w")
+            for i in range(len(self.pseudo_lstring)):
+                try:
+                    tp.write("{0}, {1}, {2}\n".format(i, self.lstring[i][0].leaf.state, self.pseudo_lstring[i][0].leaf.state))
+                    tp.write("{0}, {1}, {2}\n".format(i, self.lstring[i][0].leaf_area, self.pseudo_lstring[i][0].leaf_area))
+                    tp.write("{0}, {1}, {2}\n".format(i, self.lstring[i][0].length, self.pseudo_lstring[i][0].length))
+                except:
+                    continue
+            tp.close()
+            """
 
 #A class for merging statistical files (not ubiquitous for all situations)
 class Merge(object):
@@ -455,17 +463,14 @@ class Find_missed(object):
         for i in range(plan_size):
             search_target = csv_delimiter + str(i) + csv_delimiter
             if search_target not in content:
-                print i, "is not there", "\n"
+                print(i, "is not there", "\n")
             elif content.count(search_target) < 5:
-                print i, "is not five", "\n"
+                print(i, "is not five", "\n")
             elif content.count(search_target) > 5:
-                print i, "is more than five", "\n"
+                print(i, "is more than five", "\n")
 
         """
         for i in range(len(counters)):
             if counters[i] < group_size:
                 print i, "is not five", "\n"
         """
-
-
-

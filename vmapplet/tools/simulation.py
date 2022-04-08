@@ -72,8 +72,8 @@ class SimulationStocatree(SimulationInterface):
 
         # the tree representation as a lstring should be set just before saving to avoid duplication
         # and be deleted after loading to continue simulation
-        self.lstring          = None    
-        
+        self.lstring          = None
+
         # Data structure that store output
         # should probably replaced and/or cleaned
         self.data             = None
@@ -85,29 +85,26 @@ class SimulationStocatree(SimulationInterface):
         # between 01/01 when budbreak date is calculated and the calculated date
         self.bud_break        = None
 
-        
+
     def load_save(self, lstr, dat, tr, bbreak):
-      """
-      Gather all simulation element that are necessary to be able to reload it
-      before being serialized
-      """
-      self.lstring = lstr
-      self.data = dat
-      self.tree = tr
-      self.bud_break = bbreak      
+        """
+        Gather all simulation element that are necessary to be able to reload it
+        before being serialized
+        """
+        self.lstring = lstr
+        self.data = dat
+        self.tree = tr
+        self.bud_break = bbreak
 
     def unload_save(self):
-      """
-      Free some memory by setting some attributs back to None
-      """
-      self.lstring          = None    
-      self.data             = None
-      self.tree             = None
+        """
+        Free some memory by setting some attributs back to None
+        """
+        self.lstring          = None
+        self.data             = None
+        self.tree             = None
 
 
     def func_leaf_area_init(self, filename='functions.fset', func_name='leaf_area'):
         """read the functions.fset once for all the metamers"""
         self.func_leaf_area = ReadFunction(filename, func_name)
-
-
-

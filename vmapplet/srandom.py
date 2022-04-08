@@ -87,4 +87,3 @@ def boolean_event(probability):
     assert probability >= 0.
     assert probability <= 1.0
     return std_random.random() < probability
-

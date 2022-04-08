@@ -20,15 +20,15 @@
     from openalea.stocatree.metamer import *
 """
 
-from vplants.plantgl.all import Vector3, dot
-from openalea.stocatree.physics import rotate_frame_at_branch
-from math import acos, degrees
+from openalea.plantgl.all import Vector3, dot
+from ..physics import rotate_frame_at_branch
+from math import acos
 import constants
 from srandom import boolean_event
 try:
     import optimisation
 except:
-    print 'WARNING using non optimised code'
+    print('WARNING using non optimised code')
     import non_optimised as optimisation
 
 
@@ -85,7 +85,7 @@ class metamer_data(object):
 
         \boldsymbol \tau = \mathbf{r}\times \mathbf{F}\,\!= rF\sin \theta\,\!
 
-	"""
+    """
     def __init__(self, floral=False, number=0, hlu=None,
         zone=None, observation=None,
         parent_observation=None, parent_unit_id=None, parent_fbr_id=None,
@@ -152,7 +152,7 @@ class metamer_data(object):
         try:
             self.zone = zone_converter[zone]
         except:
-            print zone
+            print(zone)
 
         self.hlu = hlu
         self.cumulated_mass = 0.#in 'kg'
@@ -203,7 +203,7 @@ class metamer_data(object):
         // and not a temporary object.
         """
         if (self.number):
-            self.season_initial_heading = self.hlu.heading;
+            self.season_initial_heading = self.hlu.heading
             l = cambial_layer(thickness=self.radius, radius=0)
             self.layers.append(l)
             self.nlayers += 1
@@ -221,9 +221,9 @@ class metamer_data(object):
 
         #Added by Han on 11-07-2012, as a flag to control first-year sylleptic growth
         self.sylleptic = False
-        #Flag to set if a metamer should be pruned 
+        #Flag to set if a metamer should be pruned
         self.to_prune = False
-        #Flag to signal a cut 
+        #Flag to signal a cut
         self.cut = False
 
     #def reorient_frame(self, initial_hlu, rotation_velocity, length):
@@ -273,8 +273,8 @@ class metamer_data(object):
 
         if self.leaf.state != 'scar':
             if simulation.events.leaf_out.active:
-                    self.leaf.state = 'scar'
-               
+                self.leaf.state = 'scar'
+
             if simulation.events.leaf_fall.active:
                 #print "Falling proba: {0} x {1}".format(self.leaf.fall_probability , simulation.dt.days)
                 #if (boolean_event(self.leaf.fall_probability * simulation.dt.days)):
@@ -333,11 +333,11 @@ class metamer_data(object):
 
         # new cambial layer event
         if (self.year < simulation.date.year and
-            simulation.events.new_cambial_layer.active):
-            self.season_initial_heading = self.hlu.heading;
+                simulation.events.new_cambial_layer.active):
+            self.season_initial_heading = self.hlu.heading
             # if we create a new layer, then computation on previous one will
             # be redundant. Compute them once for all
-            second_moment_of_area = optimisation.second_moment_of_area_annular_section(self.layers[-1].radius, \
+            second_moment_of_area = optimisation.second_moment_of_area_annular_section(self.layers[-1].radius,
                 self.layers[-1].thickness, self.layers[-1].reaction_wood) * self.wood._reaction_wood_inertia_coefficient
             self.layers[-1].second_moment_of_area = second_moment_of_area
             #cumulate the second moment
@@ -357,11 +357,11 @@ class metamer_data(object):
         # Growth of internode
         if (self.age < self.internode._elongation_period):
             self.length += self.internode.growth_rate(self.zone) * simulation.dt.days #TODO this is in meters per day (merge to seconds ? )
-        
+
         #Updating second_moment_of_area
         second_moment_of_area = self.total_second_moment_of_area + \
             optimisation.second_moment_of_area_circle(self.radius)
-        second_moment_of_area += optimisation.second_moment_of_area_annular_section(self.layers[-1].radius, \
+        second_moment_of_area += optimisation.second_moment_of_area_annular_section(self.layers[-1].radius,
                 self.layers[-1].thickness, self.layers[-1].reaction_wood) * self.wood._reaction_wood_inertia_coefficient
 
         self.rigidity = second_moment_of_area * self.wood._youngs_modulus
@@ -422,7 +422,7 @@ class metamer_data(object):
             \Omega = \Omega' * \alpha + (1-\alpha)*\Omega
         """
         if stake and self.trunk:
-            self.rotation_velocity = Vector3();
+            self.rotation_velocity = Vector3()
             return None
 
         # Calculate the rotation velocity (Taylor-Hell, 2005)
@@ -472,38 +472,38 @@ class metamer_data(object):
                 * self.length
 
     def pruning_reaction_angle(self, phylo_angle):
-      """
-      :param hlu: Frame
-      :param phyllo_angle: float
-      :param farthest_apex: int
-      :param number: int
-      :returns branching_angle: float
-      :returns phyllotactic_angle: float
-      """
-    
-      #Determining angle between heading and vertical
-      angle_to_vert = round(acos(dot(self.hlu.heading.normed(), Vector3(0,0,1))),2)
-      print "####### Angle from heading to vert : ", angle_to_vert
-    
-      #Fixing the ratio of that angle to be used as branching angle depending on the pruning intensity
-      vert_ratio = 1 - ((1.0*self.number) / (self.number + self.farthest_apex))
-      print "####### Ratio from length : ", vert_ratio
-    
-      new_branching_angle = vert_ratio * angle_to_vert
-      print "####### Angle chosen : ", new_branching_angle
-    
-      #Determining a possible phyllotactic angle that will divert the less from vertical
-      angles = []
+        """
+        :param hlu: Frame
+        :param phyllo_angle: float
+        :param farthest_apex: int
+        :param number: int
+        :returns branching_angle: float
+        :returns phyllotactic_angle: float
+        """
 
-      #for i in range(360):
-      #  hlu = rotate_frame_at_branch(self.hlu, new_branching_angle, i)
-      #  angles.append((acos(dot(hlu.heading.normed(), Vector3(0,0,1)))))
-      #return new_branching_angle, angles.index(min(angles)) 
-    
-      for i in range(5):
-        hlu = rotate_frame_at_branch(self.hlu, new_branching_angle, i * phylo_angle + self.phyllotactic_angle)
-        angles.append((acos(dot(hlu.heading.normed(), Vector3(0,0,1)))))
-      return new_branching_angle, angles.index(min(angles)) * phylo_angle + self.phyllotactic_angle
+        #Determining angle between heading and vertical
+        angle_to_vert = round(acos(dot(self.hlu.heading.normed(), Vector3(0,0,1))),2)
+        print("####### Angle from heading to vert : ", angle_to_vert)
+
+        #Fixing the ratio of that angle to be used as branching angle depending on the pruning intensity
+        vert_ratio = 1 - ((1.0*self.number) / (self.number + self.farthest_apex))
+        print("####### Ratio from length : ", vert_ratio)
+
+        new_branching_angle = vert_ratio * angle_to_vert
+        print("####### Angle chosen : ", new_branching_angle)
+
+        #Determining a possible phyllotactic angle that will divert the less from vertical
+        angles = []
+
+        #for i in range(360):
+        #  hlu = rotate_frame_at_branch(self.hlu, new_branching_angle, i)
+        #  angles.append((acos(dot(hlu.heading.normed(), Vector3(0,0,1)))))
+        #return new_branching_angle, angles.index(min(angles))
+
+        for i in range(5):
+            hlu = rotate_frame_at_branch(self.hlu, new_branching_angle, i * phylo_angle + self.phyllotactic_angle)
+            angles.append((acos(dot(hlu.heading.normed(), Vector3(0,0,1)))))
+        return new_branching_angle, angles.index(min(angles)) * phylo_angle + self.phyllotactic_angle
 
 
 def reaction_wood_target(up, heading, previous_heading):
@@ -540,7 +540,7 @@ def reaction_wood_target(up, heading, previous_heading):
         try:
             inclination = acos(cos_ph/1.0001)
         except:
-            print 'Problem with acos(cos_ph) where cos_ph=%f' % cos_ph
+            print('Problem with acos(cos_ph) where cos_ph=%f' % cos_ph)
             inclination = 0.
     else:
         try:
@@ -552,8 +552,8 @@ def reaction_wood_target(up, heading, previous_heading):
                 inclination = -acos(cos_ph-tol)
                 ValueError('try again with tol set %s %s' % (cos_ph, cos_ph-1.))
             except:
-                print ' cos+_pu=', cos_pu, ' cos_ph=', cos_ph,  'cosgh=', cos_gh
-                print cos_ph-1.
+                print(' cos+_pu=', cos_pu, ' cos_ph=', cos_ph,  'cosgh=', cos_gh)
+                print(cos_ph-1.)
                 raise ValueError('Problem with acos(cos_ph) where cos_ph=%f' % cos_ph)
 
     percentage  = 0.1635 * (1.0 - cos_gh) - 0.1778 * inclination
@@ -586,6 +586,3 @@ def clamp_v3d_components_if_near_zero(v):
     v.x = _clamp_if_near_zero(v.x)
     v.y = _clamp_if_near_zero(v.y)
     v.z = _clamp_if_near_zero(v.z)
-
-
-

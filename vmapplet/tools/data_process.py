@@ -2,7 +2,7 @@
 This module was written by Han in April and May, 2011
 """
 
-from openalea.stocatree.csv import GroupCSV, LstringCSV
+from .csv import GroupCSV, LstringCSV
 
 class Group(object):
     def __init__(self, lstring, group_id_name = '', attribute_list = []):
@@ -232,9 +232,7 @@ class Statistics(object):
             for gid,avl in groups.iteritems():
                 # Since the value of "parent_observation" is a string, it cannot
                 # really be averaged
-                if attr == "parent_observation" \
-                            or attr == "leaf_state"\
-                            or attr == "zone":
+                if attr == "parent_observation" or attr == "leaf_state" or attr == "zone":
                     group_avg[attr].update({gid : grp.group_metamer_attributes[attr][gid][0]})
                     #print attr, group_avg[attr]
                 else:
@@ -409,6 +407,3 @@ class Statistics(object):
     def gp_stat_updt(self, group_stat, attribute_name):
         if attribute_name not in group_stat:
             group_stat.update({attribute_name: {}})
-
-
-

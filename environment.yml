@@ -15,3 +15,5 @@ dependencies:
   - cxx-compiler
   - openalea.plantgl
   - openalea.lpy
+  - openalea.mtg
+  - scipy

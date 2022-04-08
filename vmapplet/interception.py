@@ -9,7 +9,7 @@ import openalea.fractalysis.fractutils as fruti
 import openalea.fractalysis.light as lit
 import openalea.plantgl.all as pgl
 import os, shutil
-from openalea.stocatree.rw_tools import Ensure_dir
+from .tools.rw_tools import Ensure_dir
 
 """
 def metamer_star(scene):
@@ -165,9 +165,9 @@ class STAR(object):
                     lstring[id][0].sa_pgl = surf/100
                     lstring[id][0].star_pgl = 1
 
-                    print "###########################################################################################################################################"
-                    print id, d[id], surf, lstring[id][0].leaf.age, lstring[id][0].leaf.state
-                    print "###########################################################################################################################################"
+                    print("###########################################################################################################################################")
+                    print(id, d[id], surf, lstring[id][0].leaf.age, lstring[id][0].leaf.state)
+                    print("###########################################################################################################################################")
 
         if lstring[id][0].leaf.state == 'scar':
              lstring[id][0].ta_pgl = 0
@@ -238,38 +238,38 @@ def STAR(lstring,scene):
 """
 
 class Envelope(object):
-	def __init__(self, id_dict, scene, output_dir = "Envelope\\"):
-		self.id_dict = id_dict
-		self.scene = scene
-		self.expname = self.get_expname()
-		self.crrt_dir = os.getcwd()
-		self.output_dir = output_dir
+    def __init__(self, id_dict, scene, output_dir = "Envelope\\"):
+        self.id_dict = id_dict
+        self.scene = scene
+        self.expname = self.get_expname()
+        self.crrt_dir = os.getcwd()
+        self.output_dir = output_dir
 
-	def get_expname(self):
-		(f_path, f_name) = os.path.split(self.scene)
-		(f_short_name, f_extension) = os.path.splitext(f_name)
-		return f_short_name
+    def get_expname(self):
+        (f_path, f_name) = os.path.split(self.scene)
+        (f_short_name, f_extension) = os.path.splitext(f_name)
+        return f_short_name
 
-	def crt_opt_dir(self):
-		Ensure_dir(self.output_dir)
+    def crt_opt_dir(self):
+        Ensure_dir(self.output_dir)
 
-	def intercept(self):
-            self.crt_opt_dir()
-            sc = pgl.Scene(self.scene)
-            scc=fruti.centerScene(sc)
+    def intercept(self):
+        self.crt_opt_dir()
+        sc = pgl.Scene(self.scene)
+        scc=fruti.centerScene(sc)
 
-            ss = lit.ssFromDict(self.expname, scc, self.id_dict, "CvxHull")
-            ss.checkFactor(150,150,8)
-            sc1=ss.genScaleScene(1)
-            sc2=ss.genScaleScene(2)
-            sc3=ss.genScaleScene(3)
-            sc4=ss.genScaleScene(4)
-            sc1.save(self.output_dir+self.expname+"_"+"1.bgeom")
-            sc2.save(self.output_dir+self.expname+"_"+"2.bgeom")
-            sc3.save(self.output_dir+self.expname+"_"+"3.bgeom")
-            sc4.save(self.output_dir+self.expname+"_"+"4.bgeom")
+        ss = lit.ssFromDict(self.expname, scc, self.id_dict, "CvxHull")
+        ss.checkFactor(150,150,8)
+        sc1=ss.genScaleScene(1)
+        sc2=ss.genScaleScene(2)
+        sc3=ss.genScaleScene(3)
+        sc4=ss.genScaleScene(4)
+        sc1.save(self.output_dir+self.expname+"_"+"1.bgeom")
+        sc2.save(self.output_dir+self.expname+"_"+"2.bgeom")
+        sc3.save(self.output_dir+self.expname+"_"+"3.bgeom")
+        sc4.save(self.output_dir+self.expname+"_"+"4.bgeom")
 
-            for i in range(1,47):
-                ss.computeDir(skt_idx=i, distrib=[['R','R','R'],['A','R','R'],['A','A','R'], ['A','A','A']])
-            shutil.move(self.expname, self.output_dir)
-            print "######################"
+        for i in range(1,47):
+            ss.computeDir(skt_idx=i, distrib=[['R','R','R'],['A','R','R'],['A','A','R'], ['A','A','A']])
+        shutil.move(self.expname, self.output_dir)
+        print("######################")

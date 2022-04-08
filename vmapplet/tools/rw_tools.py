@@ -13,20 +13,20 @@
 import os
 
 def ensureLocalDir(dir_name):
-  d = os.path.join(os.getcwd(), dir_name)
-  if not os.path.exists(d):
-    os.makedirs(d)
+    d = os.path.join(os.getcwd(), dir_name)
+    if not os.path.exists(d):
+        os.makedirs(d)
 
 def ensureFile(file_pth):
-  if not os.path.exists(file_pth):
-    op = open(filename, "w")
-    op.close()
+    if not os.path.exists(file_pth):
+        op = open(filename, "w")
+        op.close()
 
 class Create_file(object):
-  def __init__(self, filename):
-    if not os.path.exists(filename):
-      op = open(filename, "w")
-      op.close()
+    def __init__(self, filename):
+        if not os.path.exists(filename):
+            op = open(filename, "w")
+            op.close()
 
 class Recorder(object):
     def __init__(self, filename):

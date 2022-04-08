@@ -7,12 +7,12 @@
     :Documentation: mature
     :Author: Thomas Cokelaer <Thomas.Cokelaer@sophia.inria.fr>
     :References:
-        1. Colin Smith, Costes Evelyne, On the Simulation of Apple Trees Using 
+        1. Colin Smith, Costes Evelyne, On the Simulation of Apple Trees Using
            Statistical and Biomechanical Principles, INRIA technical report, 2007
     :Revision: $Id$
     :Usage: >>> from openalea.stocatree.fruit import *
 
-.. testsetup:: 
+.. testsetup::
 
     from openalea.stocatree.fruit import *
 """
@@ -57,9 +57,9 @@ class Fruit(object):
 
         :param str state: a valid fruit state (default is flower)
 
-        The :attr:`age` and :attr:`mass` attributes are set to zero when new 
+        The :attr:`age` and :attr:`mass` attributes are set to zero when new
         instance is created.
-        
+
         .. todo:: make age and  mass real attributes
         """
         self.age = 0
@@ -110,10 +110,10 @@ class AppleFruit(Fruit):
     def __init__(self, flower_duration=10., max_relative_growth_rate=0.167, lost_time=28, max_age=147, probability=0.3, max_absolute_growth_rate=.0018):
         """**Construtor**
 
-        Inherits :meth:`get_state`, :meth:`set_state` from :class:`Fruit` class. 
+        Inherits :meth:`get_state`, :meth:`set_state` from :class:`Fruit` class.
         The method :meth:`compute_mass` is redefined.
 
-        The following arguments may be provided and are specific to apple trees. There 
+        The following arguments may be provided and are specific to apple trees. There
         are mainly used to compute the mass of the fruit as a function of its age except for
         the :attr:`probbility` attribute that is the probability of fruitification.
 

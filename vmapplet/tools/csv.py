@@ -104,4 +104,3 @@ class ExprecCSV(GroupCSV):
         for v in self.item_value_list:
             self.op.write(str(v) + ",")
         self.op.write("\n")
-

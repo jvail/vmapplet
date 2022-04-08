@@ -17,8 +17,7 @@
     a = apex_data()
 """
 
-#import physics
-from physics import Frame
+from ..physics import Frame
 
 __all__ = ['apex_data']
 
@@ -247,8 +246,8 @@ class apex_data(object):
             return 'sylleptic_large'
             #return 'large'
         else:
-          #should never reach this line, however old sequences may contain 9s
-          return 'dormant'
+            #should never reach this line, however old sequences may contain 9s
+            return 'dormant'
 
     def max_terminal_radius_target(self):
         """Set the max terminal radius :attr:`target_radius`
@@ -288,7 +287,7 @@ class apex_data(object):
     #Added by Han on 11-07-2012, to be used as a condition to control the first-year sylleptic growth from trunk
     def trunk_sylleptic(self):
         index = self.sequence[self.sequence_position][1]
-        print "==============================================================="
+        print("===============================================================")
         if index == 0:
             return False
         elif index == 1:

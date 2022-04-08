@@ -149,7 +149,7 @@ class observation(colorInterface):
             color = self.colors[observation]
             return color
         else:
-            raise ValueError("wrong observation argument (%s). Must be in %s" \
+            raise ValueError("wrong observation argument (%s). Must be in %s"
                 % (observation, self.colors.keys()))
 
 
@@ -217,7 +217,7 @@ class zone(colorInterface):
             shoot_colour = self.colors[zone]
             return shoot_colour
         else:
-            raise ValueError("wrong zone argument (%s). Must be in %s" \
+            raise ValueError("wrong zone argument (%s). Must be in %s"
                 % (zone, self.colors.keys()))
 
 
@@ -245,7 +245,7 @@ class year(colorInterface):
         color  =int(self.colors['base'] + year - starting_year)
         color  = min(color, self.colors['max'])
         return color
-        
+
 class pruning(colorInterface):
     """
     Set a ccolor code for pruning rendering
@@ -266,5 +266,3 @@ class pruning(colorInterface):
             return self.colors['prune']
         else:
             return self.colors['base']
-
-

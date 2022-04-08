@@ -276,15 +276,5 @@ class AppleLeaf(Leaf):
             #Unlike the definition of "reduced" maximum area with Equition 21 at Page 21 in Smith's
             # report, this reduced maximum area is re-defined as: (Nt/Np)*Amax
             self.area = relative_area * number * self._inversed_preformed_leaves *self.max_area
-        print relative_area
+        print(relative_area)
         return self.area
-
-
-
-
-
-
-
-
-
-
