@@ -1,0 +1,17 @@
+name: vmapplet
+channels:
+  - fredboudon
+  - conda-forge
+dependencies:
+  - jupyterlab
+  - jupyterlab_widgets
+  - matplotlib
+  - pip
+  - flake8
+  - boost
+  - boost-cpp
+  - cppyy
+  - cmake
+  - cxx-compiler
+  - openalea.plantgl
+  - openalea.lpy

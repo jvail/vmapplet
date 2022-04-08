@@ -1,27 +1,24 @@
 __revision__ = " $Id$ "
-try:
-    import openalea.stocatre.optimisation as optimisation
-except:
-    import openalea.stocatree.non_optimised as optimisation
-import openalea.stocatree.constants as constants
-from openalea.stocatree.output import Data
-from openalea.stocatree.colors import Colors
-from openalea.stocatree.tree import Tree
-from openalea.stocatree.leaf import AppleLeaf
-from openalea.stocatree.fruit import AppleFruit
-from openalea.stocatree.wood import Wood
-from openalea.stocatree.internode import Internode
-from openalea.stocatree.apex import apex_data
+import non_optimised as optimisation
+import constants
+from .output import Data
+from .colors import Colors
+from .organs.tree import Tree
+from .organs.leaf import AppleLeaf
+from .organs.fruit import AppleFruit
+from .organs.wood import Wood
+from .organs.internode import Internode
+from .organs.apex import apex_data
 from openalea.plantik.tools.config import ConfigParams
-from openalea.stocatree.tools.simulation import SimulationStocatree
-from openalea.stocatree.sequences import Markov, generate_sequence, terminal_fate
-from openalea.stocatree.metamer import metamer_data
-from openalea.stocatree.growth_unit import growth_unit_data
+from .tools.simulation import SimulationStocatree
+from .sequences import Markov, generate_sequence, terminal_fate
+from .organs.metamer import metamer_data
+from .organs.growth_unit import growth_unit_data
 from openalea.sequence_analysis import HiddenSemiMarkov
-from vplants.plantgl.all import Vector3, cross, Viewer
-from openalea.stocatree.srandom import boolean_event
-from openalea.stocatree.physics import rotate_frame_at_branch, rupture
-from openalea.stocatree.tools.surface import *
+from openalea.plantgl.all import Vector3, cross, Viewer
+from .srandom import boolean_event
+from .physics import rotate_frame_at_branch, rupture
+from .tools.surface import *
 from openalea.stocatree import get_shared_data
 
 # Import the module for light interception (added by Han, 25-11-10)
@@ -30,12 +27,12 @@ from openalea.plantgl.all import Sphere, Viewer, Box, Vector3
 
 # This is to use the scene to calculate the leaf area, silhouette area as well as STAR
 # based on size and number of pixels in plantgl
-#from openalea.stocatree.interception import STAR
-from openalea.stocatree.data_process import Group, Statistics
-from openalea.stocatree.temperature_effects import Tp_date
-from openalea.stocatree.csv import ExprecCSV
-from openalea.stocatree.rw_tools import Ensure_dir
-from openalea.stocatree.file_tools import Cp_Lstring
+from .interception import STAR
+from .tools.data_process import Group, Statistics
+from .temperature_effects import Tp_date
+from .tools.csv import ExprecCSV
+from .tools.rw_tools import Ensure_dir, Recorder
+from .tools.file_tools import Cp_Lstring
 
 import time
 import os
@@ -50,13 +47,12 @@ from openalea.sequence_analysis import _sequence_analysis as sa
 # This is to fix the seed when generating Markov chain, added by Han on 12-04-2011
 #sa.srand(1000)
 
-from openalea.stocatree.rw_tools import Ensure_dir, Recorder
 
 from lockfile import MkdirFileLock as Filelock
 
 import cPickle
 
-from openalea.stocatree.pipe import get_new_radius
+from .pipe import get_new_radius
 
 #def pprint(*args):
 #  s=' '.join(str(arg) for arg in args)
@@ -102,7 +98,7 @@ else:
       #output_directory = options.general.single_dir
 
 Ensure_dir(output_directory)
-print output_directory
+print(output_directory)
 
 #r = Recorder("ParallelResults/" + "current_exp.h")
 #r.clear()
@@ -292,7 +288,7 @@ def Start():
 def StartEach():
     global track_month
     if simulation.date.month != track_month:
-      print "Simulation # {0} enters month {1} of year {2}".format(options.stocatree.select_trunk, simulation.date.month, simulation.date.year)
+      print(f"Simulation # {0} enters month {1} of year {2}".format(options.stocatree.select_trunk, simulation.date.month, simulation.date.year))
       track_month = simulation.date.month
     #print simulation.date.month, simulation.date.day
     #Added by Han on 06-12-2011
@@ -429,9 +425,9 @@ def EndEach(lstring,scene):
                 system_second = system_time.second
 
                 #Added by Han on 26-04-2011
-                print "######"
-                print simulation.date.year
-                print "######"
+                print("######")
+                print(simulation.date.year)
+                print("######")
 
                 # Added by Han on 26-04-2011
                 #To interact with the light environment using plantGL:
@@ -464,7 +460,7 @@ def EndEach(lstring,scene):
                         data.mtg.build_filename("Single_Exp%d_%4.0f_%02d_%02d" \
                         % (int(current_experiment), simulation.date.year, simulation.date.month, simulation.date.day))
                 data.mtg.init()
-                print "DataMTG", data.mtg.filename
+                print("DataMTG", data.mtg.filename)
                 data.mtg.save(lstring, simulation.date, tree.trunk_radius)
 
             # save the lstring
@@ -487,7 +483,7 @@ def EndEach(lstring,scene):
                     lpk = open(sub_dir+str(current_experiment)+".lpk", "w")
                     cPickle.dump(pseudo_lstring, lpk, 0)
                     lpk.close()
-                    print sub_dir
+                    print(sub_dir)
                 data.l_string.init()
                 data.l_string.save(lstring, simulation.date)
             if options.output.counts:
@@ -980,7 +976,7 @@ metamer(m) > metamer(mr) apex(a):
 
 metamer(m):
     if (options.stocatree.ruptures and rupture(m.cumulated_torque, m.radius, wood._modulus_of_rupture)):
-        print 'EXTRAORDINARY EVENT: There was a rupture in the system.\n'
+        print('EXTRAORDINARY EVENT: There was a rupture in the system.\n')
         produce Label('Cut') Cut()
     #if (m.observation!= 'dormant' and  not m.developped and simulation.events.bud_break.active):
     #This condition was modified by Han in May 2011 to enable the temperature effect on bud break
