@@ -378,7 +378,8 @@ def StartEach():
         #Added by Han on 06-07-2012, to update the plastochron if necessary
         growth_duration = date(1994, int(options.general.pause_month), int(options.general.pause_day)) - date(bud_date.year, bud_date.month, bud_date.day)
         growth_days = growth_duration.days
-        new_plastochron = int(math.floor(growth_days/trunk_len))
+        print(trunk_len, growth_duration, growth_days)
+        new_plastochron = 0 if trunk_len == 0 else int(math.floor(growth_days/trunk_len))
 
         #if new_plastochron < options.internode.plastochron:
         if new_plastochron < default_plastochron:
