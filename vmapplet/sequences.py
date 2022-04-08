@@ -26,6 +26,7 @@ from .structure_analysis import (
     srand
 )
 from . import (
+    get_shared_data,
     srandom
 )
 
@@ -387,7 +388,8 @@ def generate_trunk(trunk_seq='sequences.seq', select=0):
         >>> deterministic_sequence = generate_trunk(select=1)
 
     """
-    s = np.loadtxt(trunk_seq)
+    select = select[0] if type(select) == list else select
+    s = np.loadtxt(get_shared_data(trunk_seq), str)
     print('There are {0} sequences in the files'.format(len(s)))
     assert 0 <= select < len(s)
     seq = list(s[select])

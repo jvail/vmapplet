@@ -2,9 +2,9 @@
 __revision__ = " $ Id: MAppleT.lpy 2014 DDS $ "
 
 # First, read the configuration file
-from openalea.plantik.tools.config import ConfigParams
+from vmapplet.plantik.tools.config import ConfigParams
 if "options" not in globals().keys():
-  print "Reading MAppleT.ini file myself, if not present...crash"
+  print("Reading MAppleT.ini file myself, if not present...crash")
   options = ConfigParams('MAppleT.ini')
 
 ###### FIXING THE RANDOM SEED ##########################
@@ -20,11 +20,11 @@ import os.path as op
 import math
 import datetime
 
-import cPickle
+import pickle
 
 import openalea.plantgl.all as pgl
 
-from openalea.sequence_analysis import HiddenSemiMarkov
+from vmapplet.structure_analysis import HiddenSemiMarkov, StatError
 
 try:
     import openalea.stocatree.optimisation as optimisation

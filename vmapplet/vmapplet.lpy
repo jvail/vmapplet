@@ -23,8 +23,7 @@ from openalea.plantgl.all import (
 )
 
 import vmapplet.non_optimised as optimisation
-import vmapplet.constants
-from vmapplet import get_shared_data
+from vmapplet import get_shared_data, constants
 from vmapplet.plantik.tools.config import ConfigParams
 from vmapplet.output import Data
 from vmapplet.colors import Colors
@@ -132,10 +131,10 @@ markov.hsm_98_long = HiddenSemiMarkov.ascii_read(StatError(), get_shared_data('f
 # are used to store the user parameters and are used by the metamer_data
 # class to create new metamers.
 # tree is unique throughout the simulation, so only one instance is used
-#tree            = Tree(**options.tree.__dict__)
+tree            = Tree(**options.tree.__dict__)
 # wood and internode are unique as well isnce they only contain parameters
-#wood            = Wood(**options.wood.__dict__)
-#internode       = Internode(**options.internode.__dict__)
+wood            = Wood(**options.wood.__dict__)
+internode       = Internode(**options.internode.__dict__)
 
 #!!! apices and leaves are specific to a metamer later on a deepcopy is used.
 
@@ -287,7 +286,7 @@ def Start():
 def StartEach():
     global track_month
     if simulation.date.month != track_month:
-      print(f"Simulation # {0} enters month {1} of year {2}".format(options.stocatree.select_trunk, simulation.date.month, simulation.date.year))
+      print(f"Simulation # {0} enters day {1} month {2} of year {3}".format(options.stocatree.select_trunk, simulation.date.day, simulation.date.month, simulation.date.year))
       track_month = simulation.date.month
     #print simulation.date.month, simulation.date.day
     #Added by Han on 06-12-2011
@@ -378,7 +377,6 @@ def StartEach():
         #Added by Han on 06-07-2012, to update the plastochron if necessary
         growth_duration = date(1994, int(options.general.pause_month), int(options.general.pause_day)) - date(bud_date.year, bud_date.month, bud_date.day)
         growth_days = growth_duration.days
-        print(trunk_len, growth_duration, growth_days)
         new_plastochron = 0 if trunk_len == 0 else int(math.floor(growth_days/trunk_len))
 
         #if new_plastochron < options.internode.plastochron:
@@ -661,7 +659,7 @@ metamer(ml) branch() << metamer(m) :
     m.organ_activity(simulation)
     if options.stocatree.mechanics:
         m.hlu = rotate_frame_at_branch(ml.hlu, ml.branching_angle,  ml.phyllotactic_angle);
-        m.hlu = optimisation.reorient_frame(m.hlu, m.rotation_velocity, m.length)
+        m.hlu = optimisation.reorient_frame(m.hlu, m.rotation_velocity, m.rv_norm, m.length)
     m.update_position(ml.position)
     produce metamer(m)
 
@@ -669,7 +667,7 @@ metamer(ml) << metamer(m):
     m.update_metamer_parameters(simulation)
     m.organ_activity(simulation)
     if options.stocatree.mechanics:
-        m.hlu = optimisation.reorient_frame(ml.hlu, m.rotation_velocity, m.length)
+        m.hlu = optimisation.reorient_frame(ml.hlu, m.rotation_velocity, m.rv_norm, m.length)
     m.update_position(ml.position)
     produce metamer(m)
 
@@ -861,6 +859,7 @@ group 4:
 
 
 metamer(m) < apex(a):
+    # print('metamer(m) < apex(a)', a.hlu)
     # if plastochron is reached, we produce a new metamer
     #if (a.sequence_position > 0 and m.age >= m.internode._plastochron):
     #Modified by Han on 12-07-2012 (Since the internode._plastochron is never changed in the internode module, the "options.internode.plastochron" could be used directly here)
@@ -904,6 +903,7 @@ metamer(m) < apex(a):
 
 
 apex(a):
+    # print('apex(a)', a.hlu)
     #if Debug:print 'APEX seq pos=',a.sequence_position
     #if (a.sequence_position > 0):
     if (a.sequence_position > 0):
