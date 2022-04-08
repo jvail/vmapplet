@@ -12,12 +12,12 @@
 
     :Code: in progress but mature
     :Documentation: mature
-    :Tests: 
+    :Tests:
     :Author: Thomas Cokelaer <Thomas.Cokelaer@sophia.inria.fr>
     :Revision: $Id$
     :Usage: >>> from openalea.plantik.tools.colors import *
 
-.. testsetup:: 
+.. testsetup::
 
     from openalea.plantik.tools.colors import *
 """
@@ -26,7 +26,7 @@
 __all__ = ['Colors', 'gradient', 'Green', 'TransGreen']
 
 
-from vplants.plantgl.all import Material, Color3
+from openalea.plantgl.all import Material, Color3
 
 
 class Colors(object):
@@ -77,31 +77,31 @@ class Colors(object):
                                         emission, 1, transparency)
         self.green = self.create_rgb_color(0,0,255, 'green', 2, Color3(0,0,0),
                                         emission, 1, transparency)
-        
+
     @staticmethod
     def create_rgb_color(r, g, b, name="not specified",
-                             diffusion=1, 
-                             specular=Color3(40,40,40), 
+                             diffusion=1,
+                             specular=Color3(40,40,40),
                              emission=Color3(0,0,0),
                              shininess=0,
                              transparency=0):
         """Alias to Material, allows to easily add colors to your class
-        
+
         This is a staticmethod, which can therefore be used outside::
-        
+
             mycolor = Colors.create_rgb_color(0,10,0, name='test')
         """
         c = Color3(r, g, b)
-             
-        return Material(name, c, diffusion, specular, emission, shininess, 
+
+        return Material(name, c, diffusion, specular, emission, shininess,
                             transparency)
-    
-    
+
+
 def gradient( intense ):
     """Generates a gradient of 8 colors, return the intense'th one
 
     :param int intense:
-    
+
     >>> gradient(1)
     Material(name='not specified',ambient=Color3(115,255,0),diffuse=1,shininess=0,transparency=0.5)
     """
@@ -115,9 +115,9 @@ def gradient( intense ):
     gradient.append( Colors.create_rgb_color( 255, 95, 0, transparency=0.5 ) )
     gradient.append( Colors.create_rgb_color( 255, 0, 0, transparency=0.5 ) )
     return gradient[ intense ]
-    
+
 #: predefined colors are transparent TransGreen
-TransGreen = Colors.create_rgb_color(0, 255, 0, transparency=0.5, 
+TransGreen = Colors.create_rgb_color(0, 255, 0, transparency=0.5,
                                      name='transGreen')
 #: predefined colors is Green
 Green = Colors.create_rgb_color(0, 100, 0, name='Green', diffusion=2 )

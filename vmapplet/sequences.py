@@ -18,16 +18,16 @@
     from openalea.stocatree.sequences import *
 """
 
-from openalea.sequence_analysis import HiddenSemiMarkov
-from openalea.sequence_analysis._sequence_analysis import _SemiMarkovIterator, _HiddenSemiMarkov
-from openalea.sequence_analysis._sequence_analysis import srand
-#srand(123)
-
 import random
-import srandom
 import numpy as np
-#import cPickle
-#import os
+
+from .structure_analysis import (
+    SemiMarkovIterator,
+    srand
+)
+from . import (
+    srandom
+)
 
 
 
@@ -277,12 +277,10 @@ def generate_hsm_sequence(hsm, sequence_length=100):
     #from openalea.sequence_analysis._sequence_analysis import _SemiMarkovIterator, _HiddenSemiMarkov
     #from openalea.sequence_analysis import HiddenSemiMarkov
 
-    if type(hsm)==HiddenSemiMarkov or type(hsm)==_HiddenSemiMarkov:
-        iterator =  _SemiMarkovIterator(hsm)
-        simulation = iterator.simulation(sequence_length, True)
-    else:
-        print("expected hsm datatype. Got %s" % type(hsm))
-        return None
+
+    iterator =  SemiMarkovIterator(hsm)
+    simulation = iterator.simulation(sequence_length, True)
+
     #processes = hsm.nb_output_process() + 1
     #used to free memory in the c++ code
 

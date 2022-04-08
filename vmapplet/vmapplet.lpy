@@ -1,58 +1,54 @@
 __revision__ = " $Id$ "
-import non_optimised as optimisation
-import constants
-from .output import Data
-from .colors import Colors
-from .organs.tree import Tree
-from .organs.leaf import AppleLeaf
-from .organs.fruit import AppleFruit
-from .organs.wood import Wood
-from .organs.internode import Internode
-from .organs.apex import apex_data
-from openalea.plantik.tools.config import ConfigParams
-from .tools.simulation import SimulationStocatree
-from .sequences import Markov, generate_sequence, terminal_fate
-from .organs.metamer import metamer_data
-from .organs.growth_unit import growth_unit_data
-from openalea.sequence_analysis import HiddenSemiMarkov
-from openalea.plantgl.all import Vector3, cross, Viewer
-from .srandom import boolean_event
-from .physics import rotate_frame_at_branch, rupture
-from .tools.surface import *
-from openalea.stocatree import get_shared_data
-
-# Import the module for light interception (added by Han, 25-11-10)
-#from openalea.fractalysis.light.directLight import diffuseInterception
-from openalea.plantgl.all import Sphere, Viewer, Box, Vector3
-
-# This is to use the scene to calculate the leaf area, silhouette area as well as STAR
-# based on size and number of pixels in plantgl
-from .interception import STAR
-from .tools.data_process import Group, Statistics
-from .temperature_effects import Tp_date
-from .tools.csv import ExprecCSV
-from .tools.rw_tools import Ensure_dir, Recorder
-from .tools.file_tools import Cp_Lstring
 
 import time
 import os
 import datetime
 import random
 import math
+import pickle
+from datetime import (
+    date,
+    datetime,
+    timedelta
+)
 
-from datetime import date, datetime, timedelta
+import vmapplet
 
-# This is used to fix the seed when generating Markov chain, added by Han on 12-04-2011
-from openalea.sequence_analysis import _sequence_analysis as sa
-# This is to fix the seed when generating Markov chain, added by Han on 12-04-2011
-#sa.srand(1000)
+from openalea.plantgl.all import (
+    Sphere,
+    Viewer,
+    Box,
+    Vector3,
+    cross
+)
 
-
-from lockfile import MkdirFileLock as Filelock
-
-import cPickle
-
-from .pipe import get_new_radius
+import vmapplet.non_optimised as optimisation
+import vmapplet.constants
+from vmapplet import get_shared_data
+from vmapplet.plantik.tools.config import ConfigParams
+from vmapplet.output import Data
+from vmapplet.colors import Colors
+from vmapplet.organs.tree import Tree
+from vmapplet.organs.leaf import AppleLeaf
+from vmapplet.organs.fruit import AppleFruit
+from vmapplet.organs.wood import Wood
+from vmapplet.organs.internode import Internode
+from vmapplet.organs.apex import apex_data
+from vmapplet.tools.simulation import SimulationStocatree
+from vmapplet.sequences import Markov, generate_sequence, terminal_fate
+from vmapplet.organs.metamer import metamer_data
+from vmapplet.organs.growth_unit import growth_unit_data
+from vmapplet.structure_analysis import HiddenSemiMarkov
+from vmapplet.srandom import boolean_event
+from vmapplet.physics import rotate_frame_at_branch, rupture
+from vmapplet.tools.surface import *
+# from vmapplet.interception import STAR
+from vmapplet.tools.data_process import Group, Statistics
+from vmapplet.temperature_effects import Tp_date
+from vmapplet.tools.csv import ExprecCSV
+from vmapplet.tools.rw_tools import Ensure_dir, Recorder
+from vmapplet.tools.file_tools import Cp_Lstring
+from vmapplet.pipe import get_new_radius
 
 #def pprint(*args):
 #  s=' '.join(str(arg) for arg in args)
@@ -431,9 +427,9 @@ def EndEach(lstring,scene):
 
                 # Added by Han on 26-04-2011
                 #To interact with the light environment using plantGL:
-                star = STAR(lstring, scene)
-                star.collect(lstring, scene)
-                star.process_shoot(lstring, scene)
+                # star = STAR(lstring, scene)
+                # star.collect(lstring, scene)
+                # star.process_shoot(lstring, scene)
 
                 # Added by Han on 03-05-2011
                 current_time = datetime.utcnow()
@@ -607,9 +603,9 @@ def End(lstring,scene):
 
     time2 = time.time()
 
-    if options.stocatree.movie is True:
-        from openalea.plantik.tools.movies import create_movie
-        create_movie(input_glob='stocatree*png', output_filename='stocatree')
+    # if options.stocatree.movie is True:
+    #     from openalea.plantik.tools.movies import create_movie
+    #     create_movie(input_glob='stocatree*png', output_filename='stocatree')
 
     if options.general.pararun == False:
         if options.general.batchmode == False:

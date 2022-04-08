@@ -23,18 +23,18 @@
 
 """
 
-
-from openalea.plantgl.all import Vector3, cross, Matrix3
-import constants
-import numpy
 from math import cos, sin
+
+import numpy
+from openalea.plantgl.all import Vector3, cross, Matrix3
+from . import constants
 try:
     import optimisation
 except:
     print('WARNING using non optimised code')
-    import non_optimised as optimisation
+    from . import non_optimised as optimisation
 
-from frame import Frame
+from .frame import Frame
 
 
 error_tolerance = 0.0001

@@ -17,7 +17,7 @@
     a = apex_data()
 """
 
-from ..physics import Frame
+from ..frame import Frame
 
 __all__ = ['apex_data']
 

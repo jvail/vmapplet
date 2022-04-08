@@ -20,7 +20,7 @@
 
 """
 from openalea.plantgl.all import Vector3, Vector4, Scaled, BezierPatch
-from vplants.plantik import get_shared_data
+# from vplants.plantik import get_shared_data
 
 __all__ = ['createSurface', 'leafSurface']
 
@@ -39,13 +39,13 @@ def createSurface(filename=None, ustride=10, vstride=10):
         SIZE: 1.00
         patch
         TOP COLOR: 0 DIFFUSE: 0.00 BOTTOM COLOR: 0 DIFFUSE: 0.00
-        AL: ~ A: ~ AR: ~ 
-        L: ~ R: ~ 
-        BL: ~ B: ~ BR: ~ 
-        -0.01 -0.01 1.00  0.00 -0.02 0.99  0.00 -0.01 1.00  0.00 -0.01 1.00  
-        -0.43 0.13 0.76  -0.16 0.34 0.27  0.21 0.34 0.27  0.43 0.12 0.76  
-        -0.75 0.00 0.19  -0.25 0.00 0.19  0.25 0.00 0.19  0.75 0.00 0.19  
-        -0.01 0.00 -0.01  -0.01 0.00 -0.01  0.00 0.00 -0.01  -0.01 0.00 -0.01 
+        AL: ~ A: ~ AR: ~
+        L: ~ R: ~
+        BL: ~ B: ~ BR: ~
+        -0.01 -0.01 1.00  0.00 -0.02 0.99  0.00 -0.01 1.00  0.00 -0.01 1.00
+        -0.43 0.13 0.76  -0.16 0.34 0.27  0.21 0.34 0.27  0.43 0.12 0.76
+        -0.75 0.00 0.19  -0.25 0.00 0.19  0.25 0.00 0.19  0.75 0.00 0.19
+        -0.01 0.00 -0.01  -0.01 0.00 -0.01  0.00 0.00 -0.01  -0.01 0.00 -0.01
 
     :param str filename: the filename of the surface data
     :param int ustride: number of points in u direction
@@ -79,7 +79,7 @@ def createSurface(filename=None, ustride=10, vstride=10):
     v = f.readline().split()
     heading = Vector3(float(v[2]),float(v[4]),float(v[6]))
 
-    # read up 
+    # read up
     v = f.readline().split()
     up = Vector3(float(v[2]),float(v[4]),float(v[6]))
 
@@ -87,7 +87,7 @@ def createSurface(filename=None, ustride=10, vstride=10):
     v = f.readline().split()
     size = float(v[1])
 
-    # read name 
+    # read name
     name = f.readline().split()[0]
     # read ctrl points
     for i in xrange(4):
@@ -116,4 +116,3 @@ def leafSurface(u_stride=6, v_stride=6):
     s = createSurface(get_shared_data('leaf_surface.s'), u_stride, v_stride)
     s.name = 'leaf'
     return s
-

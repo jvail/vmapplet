@@ -6,8 +6,7 @@ dependencies:
   - jupyterlab
   - jupyterlab_widgets
   - matplotlib
-  - pip
-  - flake8
+  - scipy
   - boost
   - boost-cpp
   - cppyy
@@ -16,4 +15,6 @@ dependencies:
   - openalea.plantgl
   - openalea.lpy
   - openalea.mtg
-  - scipy
+  - pyqglviewer
+  - flake8
+  - pip

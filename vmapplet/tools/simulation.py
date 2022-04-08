@@ -16,10 +16,10 @@
     from openalea.stocatree.tools.simulation import *
 """
 
-from openalea.plantik.simulation.calendar import Calendar, Events, Event
-from openalea.plantik.simulation.simulation import SimulationInterface
+# from plantik.simulation.calendar import Calendar, Events, Event
+from ..plantik.simulation.simulation import SimulationInterface
 #from openalea.stocatree.tools.read_function import ReadFunction
-from read_function import ReadFunction
+from .read_function import ReadFunction
 import datetime
 
 

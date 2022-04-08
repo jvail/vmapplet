@@ -4,9 +4,11 @@
 
 """
 
-from openalea.plantgl.all import Vector3, cross
-from frame import Frame
 from math import cos, sin, pow, fabs, acos
+
+from openalea.plantgl.all import Vector3, cross
+
+from .frame import Frame
 
 
 def rotate(v3x,  v3y,  v3z,  angle,  vx,  vy,  vz):

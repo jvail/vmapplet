@@ -21,16 +21,16 @@
 
 
 import openalea.lpy as lpy
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQGLViewer import *
 import time
-from openalea.plantgl.all import *
+from openalea.plantgl.all import (
+    QApplication
+)
 #from openalea.mtg.io import lpy2mtg, mtg2lpy, axialtree2mtg, mtg2axialtree
 #from openalea.mtg.aml import *
-import openalea.misc.lsprofcalltree as lsprofcalltree
+# import openalea.misc.lsprofcalltree as lsprofcalltree
 import sys
 #import openalea.mtg.traversal as traversal
-from math import sqrt
 
 #import tools
 #from tools import strahler, strahler_symmetry, mtg_plot
@@ -43,25 +43,25 @@ def runlpy(filename='experiment1.lpy', verbose=False, show=True):
 
 
     .. seealso:: vplants.Lpy package
-    
-    
+
+
     :param str filename: a valid filename representing the LPy file
     :param bool verbose: (default is False)
 
 
     :Example:
-    
+
     ::
-    
+
         from openalea.plantik.tools.runlpy import runlpy
         from openalea.plantik import get_shared_data
-        filename = get_shared_data('pruning.lpy') 
+        filename = get_shared_data('pruning.lpy')
         (lsystem, lstring) = runlpy(filename, show=False)
         scene = lsystem.getLastComputeScene()
     """
 
     if verbose:
-        print 'starting simulation'
+        print('starting simulation')
     time1 = time.time()
     l = lpy.Lsystem(filename)
     Viewer.animation(False)
@@ -77,22 +77,22 @@ def runlpy(filename='experiment1.lpy', verbose=False, show=True):
         scales[m.name] = m.scale
 
     if verbose:
-        print scales
-        print parameters
+        print(scales)
+        print(parameters)
 
     #scales = {'A':4,'I':4,'L':4, 'B':2,'U':3, 'P':1}
-    #assert parameters == {'A': ['Apex'], 
-    #                      'I': ['Internode'],  
-    #                      'L': ['Leaf'], 
-    #                      'P':['Plant'], 
-    #                      'B':['Branch'], 
-    #                      'U':['GrowthUnit'], 
+    #assert parameters == {'A': ['Apex'],
+    #                      'I': ['Internode'],
+    #                      'L': ['Leaf'],
+    #                      'P':['Plant'],
+    #                      'B':['Branch'],
+    #                      'U':['GrowthUnit'],
     #                      }
 
     max_step = l.derivationLength
     if verbose:
-        print "max step is ", max_step
-    
+        print("max step is ", max_step)
+
     tree = l.iterate(1)
     for i in range(0, max_step):
         tree = l.iterate(i, 1, tree)
@@ -101,7 +101,7 @@ def runlpy(filename='experiment1.lpy', verbose=False, show=True):
 
         #print mtg1.property('Apex')[0]
         #[mtg2.order(id) for id in mtg2.property('Apex')]
-        # update the radisu using a pipe model 
+        # update the radisu using a pipe model
 
         # 2 is the Root's id
         #for vid in traversal.post_order(mtg2, 2)
@@ -113,11 +113,11 @@ def runlpy(filename='experiment1.lpy', verbose=False, show=True):
         #del tree1[-1]
         #assert str(tree)==str(tree1[1])
     #print 'strahler=', strahler(mtg1)
-    
+
     time2 = time.time()
     if verbose:
-        print 'Simulation took %s' % str(time2-time1)
-        
+        print('Simulation took %s' % str(time2-time1))
+
     if show:
         l.plot(tree)
         Viewer.frameGL.setBgColor(170,170,255)
@@ -148,7 +148,6 @@ def runlpy(filename='experiment1.lpy', verbose=False, show=True):
 
 if __name__=="__main__":
     import cProfile
-    import sys
     if len(sys.argv)!=2 and len(sys.argv)!=3:
         raise ValueError("usage: python runlpy.py filename.lpy --profiling")
     filename = sys.argv[1]
@@ -169,4 +168,3 @@ if __name__=="__main__":
         data.close()
     else:
         runlpy(filename)
-

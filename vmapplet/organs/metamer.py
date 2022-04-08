@@ -20,16 +20,18 @@
     from openalea.stocatree.metamer import *
 """
 
-from openalea.plantgl.all import Vector3, dot
-from ..physics import rotate_frame_at_branch
 from math import acos
-import constants
-from srandom import boolean_event
+
+from openalea.plantgl.all import Vector3, dot
+
+from ..physics import rotate_frame_at_branch
+from .. import constants
+from ..srandom import boolean_event
 try:
-    import optimisation
-except:
+    from .. import optimisation
+except Exception:
     print('WARNING using non optimised code')
-    import non_optimised as optimisation
+    from .. import non_optimised as optimisation
 
 
 

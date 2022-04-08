@@ -18,8 +18,8 @@
     from openalea.stocatree.tools.surface import *
 
 """
-from openalea.stocatree import get_shared_data
-from openalea.plantik.tools.surface import createSurface
+from .. import get_shared_data
+from ..plantik.tools.surface import createSurface
 
 __all__ = ['leafSurface','petalSurface','groundSurface']
 
@@ -59,5 +59,3 @@ def petalSurface(u_stride=6, v_stride=6):
     s = createSurface(get_shared_data('petal_surface.s'), u_stride, v_stride)
     s.name = 'petal'
     return s
-
-

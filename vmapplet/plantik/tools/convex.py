@@ -11,7 +11,7 @@
 
     :Code: mature but could be improved to be more generic
     :Documentation: up-to-date
-    :Tests: 100% 
+    :Tests: 100%
     :Author: Thomas Cokelaer <Thomas.Cokelaer@sophia.inria.fr>
     :Revision: $Id$
     :References: pgl_utils
@@ -22,7 +22,7 @@
     from openalea.plantik.tools.convex import *
 """
 import openalea.plantgl.all as pgl
-from vplants.plantik.tools.colors import Green
+from .colors import Green
 
 
 def get_leaves_from_scene(scene):
@@ -57,7 +57,7 @@ def cvxHull( shape_list_or_scene , color=Green):
 
     :param Scene scene: a scene with shapes to process
     :param color color: a PGL Material to place on the convex hull
-    :return: a PGL shape 
+    :return: a PGL shape
 
     ::
 
@@ -84,11 +84,10 @@ def totalSurface(scene):
     """Returns the total surface of the shape in a scene
 
     :param Scene scene: a PGL scene with shapes
-    :return: the total surface area 
+    :return: the total surface area
 
     .. todo:: what are the units ? """
     sum = 0
     for i in scene:
         sum += pgl.surface(i.geometry)
     return sum
-
