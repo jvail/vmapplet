@@ -276,11 +276,11 @@ def Start():
     global trunk_len
 
     #Added by Han on 06-07-2012, to calculate the length of corresponding sequence
-    # seq_op = open(get_shared_data("sequences.seq"))
-    # sequences = pickle.load(seq_op.buffer)
-    # for i in sequences[int(options.stocatree.select_trunk)]:
-    #     if i!=9:
-    #         trunk_len+=1
+    seq_op = open(get_shared_data("sequences.seq"))
+    sequences = pickle.loads(seq_op.read().encode())
+    for i in sequences[int(options.stocatree.select_trunk)]:
+        if i!=9:
+            trunk_len+=1
 
 
 
