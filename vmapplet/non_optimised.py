@@ -88,13 +88,14 @@ def reaction_wood_target(up, heading, previous_heading):
         try:
             inclination = acos(cos_ph)
         except:
-            #pass
-            print(str(cos_ph))
+            pass
+            # print(str(cos_ph))
     else:
         try:
             inclination = -acos(cos_ph)
         except:
-            print(str(cos_ph))
+            pass
+            # print(str(cos_ph))
     percentage  = 0.1635 * (1.0 - cos_gh) - 0.1778 * inclination
     r = 3.14159*2. * percentage
 

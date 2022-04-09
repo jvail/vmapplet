@@ -286,7 +286,7 @@ def Start():
 def StartEach():
     global track_month
     if simulation.date.month != track_month:
-      print(f"Simulation # {0} enters day {1} month {2} of year {3}".format(options.stocatree.select_trunk, simulation.date.day, simulation.date.month, simulation.date.year))
+    #   print(f"Simulation # {0} enters day {1} month {2} of year {3}".format(options.stocatree.select_trunk, simulation.date.day, simulation.date.month, simulation.date.year))
       track_month = simulation.date.month
     #print simulation.date.month, simulation.date.day
     #Added by Han on 06-12-2011
@@ -646,7 +646,8 @@ axiom():
     temp.update(options.markov.__dict__)
     apex_parameters = temp
     a = apex_data(tree.initial_hlu, 'trunk', **apex_parameters)
-    produce  root() apex(a)
+    # produce  root() apex(a)
+    produce apex(a)
 
 
 # Update the parameters of each metamer (age, reaction wood,

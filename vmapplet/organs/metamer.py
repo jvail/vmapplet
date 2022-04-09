@@ -154,7 +154,8 @@ class metamer_data(object):
         try:
             self.zone = zone_converter[zone]
         except:
-            print(zone)
+            pass
+            # print(zone)
 
         self.hlu = hlu
         self.cumulated_mass = 0.#in 'kg'

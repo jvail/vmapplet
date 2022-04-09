@@ -558,7 +558,8 @@ class Data(object):
         #for x,y in self.options.iteritems():
         #    file.write(str(x) + "\t\t" + str(y)+"\n")
         #file.close()
-        print("Data.save() is not implemented")
+        # print("Data.save() is not implemented")
+        pass
 
     def close_all(self):
         """

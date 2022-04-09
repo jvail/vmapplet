@@ -69,8 +69,8 @@ and is equivalent to the following PlantGL implementation::
 
 """
 
-from vplants.plantgl.all import Vector3, cross
-from frame import Frame
+from openalea.plantgl.all import Vector3, cross
+from .frame import Frame
 
 cdef extern from "math.h":
     float sinf(float theta)
