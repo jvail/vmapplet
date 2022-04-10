@@ -12,8 +12,7 @@ from datetime import (
     timedelta
 )
 
-import vmapplet
-
+from vmapplet import get_shared_data, constants, optimisation
 from openalea.plantgl.all import (
     Sphere,
     Viewer,
@@ -23,7 +22,6 @@ from openalea.plantgl.all import (
 )
 
 # import vmapplet.optimisation
-from vmapplet import get_shared_data, constants, optimisation
 from vmapplet.plantik.tools.config import ConfigParams
 from vmapplet.output import Data
 from vmapplet.colors import Colors
@@ -93,7 +91,7 @@ else:
       #output_directory = options.general.single_dir
 
 ensureLocalDir(output_directory)
-print(output_directory)
+# print(output_directory)
 
 #r = Recorder("ParallelResults/" + "current_exp.h")
 #r.clear()

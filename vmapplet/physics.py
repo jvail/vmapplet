@@ -29,7 +29,7 @@ import numpy
 from openalea.plantgl.all import Vector3, cross, Matrix3
 from . import constants
 try:
-    import optimisation
+    from . import optimisation
 except:
     print('WARNING using non optimised code')
     from . import non_optimised as optimisation
@@ -207,26 +207,26 @@ def rotate_frame_at_branch(initial_hlu, branching_angle, phyllotactic_angle):
 
     hlu = Frame(initial_hlu.heading, initial_hlu.up, initial_hlu.left)
 
-    hlu.heading = optimisation.rotate(
+    hlu.heading = Vector3(optimisation.rotate(
         initial_hlu.left.x, initial_hlu.left.y, initial_hlu.left.z,
         branching_angle,
-        initial_hlu.heading.x, initial_hlu.heading.y, initial_hlu.heading.z)
-    hlu.up = optimisation.rotate(
+        initial_hlu.heading.x, initial_hlu.heading.y, initial_hlu.heading.z))
+    hlu.up = Vector3(optimisation.rotate(
         initial_hlu.left.x, initial_hlu.left.y, initial_hlu.left.z,
         branching_angle,
-        initial_hlu.up.x, initial_hlu.up.y, initial_hlu.up.z)
+        initial_hlu.up.x, initial_hlu.up.y, initial_hlu.up.z))
     hlu.heading.normalize()
     hlu.up.normalize()
 
 
-    hlu.heading = optimisation.rotate(initial_hlu.heading.x, initial_hlu.heading.y,
+    hlu.heading = Vector3(optimisation.rotate(initial_hlu.heading.x, initial_hlu.heading.y,
                          initial_hlu.heading.z,
         phyllotactic_angle,
-        hlu.heading.x, hlu.heading.y, hlu.heading.z)
-    hlu.up = optimisation.rotate(
+        hlu.heading.x, hlu.heading.y, hlu.heading.z))
+    hlu.up = Vector3(optimisation.rotate(
         initial_hlu.heading.x, initial_hlu.heading.y, initial_hlu.heading.z,
         phyllotactic_angle,
-        hlu.up.x, hlu.up.y, hlu.up.z)
+        hlu.up.x, hlu.up.y, hlu.up.z))
 
     hlu.heading.normalize()
     hlu.up.normalize()
