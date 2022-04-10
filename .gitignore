@@ -1,3 +1,7 @@
+# lpy / plantgl
+*.bgeom
+
+
 # ignore cmake stuff
 
 CMakeLists.txt.user
