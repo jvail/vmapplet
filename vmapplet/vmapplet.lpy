@@ -22,8 +22,8 @@ from openalea.plantgl.all import (
     cross
 )
 
-import vmapplet.non_optimised as optimisation
-from vmapplet import get_shared_data, constants
+# import vmapplet.optimisation
+from vmapplet import get_shared_data, constants, optimisation
 from vmapplet.plantik.tools.config import ConfigParams
 from vmapplet.output import Data
 from vmapplet.colors import Colors
@@ -750,7 +750,6 @@ group 3:
 apex(a):
     #tp = True or (a.get_observation() == 'sylleptic_short' or a.get_observation() == 'sylleptic_medium' or a.get_observation() == 'sylleptic_large')
     #print tp
-
     #if (a.sequence_position == 0 and a.get_observation()!='dormant' and
       #(a.parent_observation == 'floral' or simulation.events.bud_break.active)):
     #This condition was modified by Han in May 2011 to enable the temperature effect on bud break
@@ -763,7 +762,6 @@ apex(a):
     if(a.sequence_position == 0 and a.get_observation()!='dormant' and (a.parent_observation == 'floral' or bud_break or (sylleptic_year and a.year < simulation.date.year and (a.get_observation() == 'small' or a.get_observation() == 'medium' or a.get_observation() == 'large')))):
       old_observation = a.get_observation()
       a.parent_observation = old_observation
-
       #Added by Han on 15-05-2012
       if a.parent_observation == 'sylleptic_short':
           a.parent_observation = 'small'
@@ -774,7 +772,6 @@ apex(a):
       elif a.parent_observation == 'sylleptic_large':
           a.parent_observation = 'large'
           a.set_observation('large')
-
       #a.sequence  = generate_sequence(a.get_observation(),\
       #    markov, simulation.date.year, options.stocatree.second_year_draws,
       #    select_trunk=[int(options.stocatree.select_trunk)])
@@ -788,7 +785,6 @@ apex(a):
       a.sequence  = generate_sequence(a.get_observation(),\
           markov, simulation.date.year, options.stocatree.second_year_draws,
           select_trunk=[int(options.stocatree.select_trunk)])
-
       a.sequence_position = len(a.sequence)
       if (a.get_observation()=='trunk'):
           a.set_observation('large')
@@ -798,8 +794,6 @@ apex(a):
           a.set_observation('dormant')
       else:
           a.set_observation(terminal_fate(simulation.date.year,a.get_observation()))
-
-
       #a.radius = 0
       #Modified by Han on 05-03-2012, according to the discussion with
       #Evelyne on 27-02-2012
@@ -808,12 +802,10 @@ apex(a):
       #Changed back to original by Han on 21-03-2012
       a.radius = 0
       a.max_terminal_radius_target()
-
       #CHANGES tree.growth_units
       tree.growth_units += 1
       #record the unit id that this apex belongs to (the id values start from 0)
       a.parent_unit_id = tree.growth_units-1
-
       #update counts
       if options.output.counts:
           if a.parent_observation=='floral':
@@ -830,23 +822,18 @@ apex(a):
                   data.counts.len_26_to_40+=1
               else:
                   data.counts.len_over_40+=1
-
-
       # save sequences into output data
       #if (options.output.sequences and simulation.date.year < 1999 and (a.parent_observation in ['large','medium','small'])):
       #    data.sequences.save(a.sequence, a.sequence_position)
       if (options.output.sequences and simulation.date.year < 1999 and (a.parent_observation in ['large', 'medium', 'small'])):
           data.sequences.save(a.sequence, a.sequence_position)
-
       #Added by Han on 29-05-2012
       #Note that a.year was initially smaller than simulation.date.year
       #Once a growth unit is finished, a.year will be set as the same
       #This is to avoid the production of two growth units at the same axis
       #at the same year
       a.year = simulation.date.year
-
       nproduce growth_unit(growth_unit_data(tree.growth_units, simulation.date.year, a.parent_observation == 'floral')) apex(a)
-
     else:
         produce apex(a)
 #X:
@@ -872,13 +859,11 @@ metamer(m) < apex(a):
         else:
             number = 1
         #print fruit_parameters
-
         ##The following lines were added by Han on 01-03-2012, to allow the leaf
         ##and fruit parameters to be updated according to the re-definition outside lpy
         ##(in parasuper_pc.py) instead of using the ini file.
         leaf_parameters = options.leaf.__dict__
         fruit_parameters = options.fruit.__dict__
-
         mn = metamer_data(floral=flower, number=number, hlu=a.hlu,
           zone=a.sequence[a.sequence_position][0], observation=a.get_observation_from_sequence(),
                       parent_observation=a.parent_observation, parent_unit_id=a.parent_unit_id, parent_fbr_id=a.parent_fbr_id, parent_tree_id=a.parent_tree_id,
@@ -887,10 +872,8 @@ metamer(m) < apex(a):
                       fruit=AppleFruit(**fruit_parameters), leaf=AppleLeaf(**leaf_parameters))
         mn.trunk = a.trunk
         mn.year = simulation.date.year
-
         #Added by Han on 11-07-2012
         mn.sylleptic = a.sylleptic
-
         #print a.sequence_position, a.sequence[a.sequence_position][0], a.sequence[a.sequence_position][1]
         #produce metamer(mn) apex(a)
         #Modified by Han on 16-05-2012
@@ -912,24 +895,19 @@ apex(a):
         branching_angle = tree.branching_angle;
         flower = (a.sequence_position == 0 and a.parent_observation=='floral')
         #TODO check first and second index of a.sequence versus lsystem.l code
-
         ##The following lines were added by Han on 01-03-2012, to allow the leaf
         ##and fruit parameters to be updated according to the re-definition outside lpy
         ##(in parasuper_pc.py) instead of using the ini file.
         leaf_parameters = options.leaf.__dict__
         fruit_parameters = options.fruit.__dict__
-
         m = metamer_data(floral=flower, number=1, hlu=a.hlu, zone=a.sequence[a.sequence_position][0], observation=a.get_observation_from_sequence(),
                               parent_observation= a.parent_observation, parent_unit_id=a.parent_unit_id, parent_fbr_id=a.parent_fbr_id, parent_tree_id=a.parent_tree_id,
                               p_angle=(tree.phyllotactic_angle), b_angle=branching_angle, wood=wood, internode=internode,
                               fruit=AppleFruit(**fruit_parameters), leaf=AppleLeaf(**leaf_parameters))
         m.trunk = a.trunk
         m.year = simulation.date.year
-
-
         #Added by Han on 11-07-2012
         m.sylleptic = a.sylleptic
-
         #print a.sequence_position, a.sequence[a.sequence_position][0], a.sequence[a.sequence_position][1]
         #produce metamer(m) apex(a)
         #Modified by Han on 16-05-2012
@@ -952,7 +930,6 @@ metamer(m) > metamer(mr) apex(a):
             produce metamer(m)
         m.branching_angle = tree.floral_branching_angle
         hlu = rotate_frame_at_branch(m.hlu, m.branching_angle, m.phyllotactic_angle);
-
         ##The following four lines were added by Han on 01-03-2012, to make sure
         ##the apex parameters can be updated through "options" that is refreshed
         ##outside lpy (in parasuper_pc.py) for sensitivity analysis.
@@ -960,10 +937,8 @@ metamer(m) > metamer(mr) apex(a):
         temp.update(options.apex.__dict__)
         temp.update(options.markov.__dict__)
         apex_parameters = temp
-
         sylleptic_apex = apex_data(hlu, terminal_fate(simulation.date.year, 'floral'), **apex_parameters)
         sylleptic_apex.parent_observation = 'floral'
-
         if m.parent_fbr_id == 0:
             tree.first_branches +=1
             #The parent_fbr_id ranges from 0 to tree.first_branches (rather than to tree.frist-branches-1)
@@ -972,7 +947,6 @@ metamer(m) > metamer(mr) apex(a):
             sylleptic_apex.parent_fbr_id = tree.first_branches
         else:
             sylleptic_apex.parent_fbr_id = m.parent_fbr_id
-
         produce metamer(m) SB() branch() apex(sylleptic_apex) EB()
 
 metamer(m):
@@ -988,7 +962,6 @@ metamer(m):
     if (m.observation!= 'dormant' and  not m.developped and (bud_break or ((m.observation == 'small' or m.observation == 'medium' or m.observation == 'large') and m.parent_observation == "trunk" and m.sylleptic == True))):
         m.developped = True
         hlu = rotate_frame_at_branch(m.hlu, m.branching_angle, m.phyllotactic_angle)
-
         ##The following four lines were added by Han on 01-03-2012, to make sure
         ##the apex parameters can be updated through "options" that is refreshed
         ##outside lpy (in parasuper_pc.py) for sensitivity analysis.
@@ -996,9 +969,7 @@ metamer(m):
         temp.update(options.apex.__dict__)
         temp.update(options.markov.__dict__)
         apex_parameters = temp
-
         a = apex_data(hlu, m.observation, **apex_parameters)
-
         if m.parent_fbr_id == 0:
             tree.first_branches +=1
             #The parent_fbr_id ranges from 0 to tree.first_branches (rather than to tree.frist-branches-1)
@@ -1041,7 +1012,6 @@ metamer(m):
     #Modified by Han on 06-03-2012
     nproduce SetWidth(m.radius*10) SetColor(shoot_colour) F(m.length*10)
     d2r = 180.0 / constants.pi
-
     if (m.fruit.state == 'flower'):
         #TODO the five flowers are at the same place !!
         scale = 5.
@@ -1080,15 +1050,12 @@ metamer(m):
         if r==0:
             r=0.1
         norm = 0.3
-
         colors.leaf = 15
-
         if options.stocatree.light_interception is True:
           if m.leaf.lg > norm:
             norm = m.leaf.lg
             #print 'NORM mst be change to %s' % m.leaf.lg
             #print (m.leaf.area/Leaf.area_max),  m.leaf.lg/norm
-
           colors.leaf = int(leaf_color_min + (leaf_color_max - leaf_color_min) * m.leaf.lg / norm)
           #colors.leaf = int(leaf_color_max - (leaf_color_max - leaf_color_min) * m.leaf.lg/norm)
           #print *********************
@@ -1096,15 +1063,12 @@ metamer(m):
           #print 'llllgggg', m.leaf.lg, m.leaf.size, m.leaf.size/m.leaf.leaf_max_area, color
           #if colors.leaf<=35 : print 'color', color
           #if colors.leaf>=54 : print 'color', color
-
           #if m.leaf.lg > norm:
               #print 'light interception', color, m.leaf.lg
         else:
           colors.leaf = 15
-
         if m.leaf.lg == 0:
           colors.leaf =15
-
         #check max total mass should be less than 0.66 grams
         if simulation.events.autumn.active is False:
             nproduce SB() SetColor(colors.leaf)
@@ -1115,7 +1079,6 @@ metamer(m):
         #TODO take m radisu into account
         #nproduce (RollL(m.phyllotactic_angle * d2r) Up(90.0) SetWidth(0.002) F(r *0.1) RollToVert() PglShape(leaf_surface, r) EB())
         #r = math.sqrt(m.leaf_area*1000)
-
         #The calculation of r was re-designed by Han on 13-05-2011. The value 0.006154 is the leaf surface returned from plantGL when r is set as 1.
         r = math.sqrt(m.leaf_area/0.006154)
         #The following n-production was modified by Han on 16-05-2011.
