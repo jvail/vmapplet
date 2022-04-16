@@ -1,4 +1,4 @@
-name: vmapplet
+name: vmapplet-test
 channels:
   - fredboudon
   - conda-forge
@@ -12,13 +12,11 @@ dependencies:
   - cppyy
   - cmake
   - cxx-compiler
-  - cython
-  - openalea.plantgl
   - openalea.lpy
   - openalea.mtg
-  - pyqglviewer
-  - node
+  - nodejs # for pgljupyter in case it is not available locally
   - xlrd
   - flake8
+  - pip
   - pip:
     - pgljupyter

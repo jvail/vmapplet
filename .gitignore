@@ -17,7 +17,7 @@ CTestTestfile.cmake
 _deps
 build
 lib
-
+_skbuild
 
 # .gitignore for python and jupyter notebook
 

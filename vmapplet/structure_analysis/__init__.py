@@ -4,7 +4,8 @@ import cppyy
 path = __path__[0]
 cppyy.add_include_path(path + '/src')
 cppyy.add_library_path(path + '/lib')
-cppyy.include(path + '/src/markov.h')
+#print(path)
+cppyy.include(path + '/markov.h')
 
 cppyy.load_library('stat_tool')
 cppyy.load_library('sequence_analysis')

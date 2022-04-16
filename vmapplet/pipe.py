@@ -48,4 +48,3 @@ def get_new_radius(ra, rb, exponent=2.49, previous_rt=-1):
     rbp = pow(rb, exponent)
     newrt =  pow(rap+rbp, exponent_invert)
     return newrt
-

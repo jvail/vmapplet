@@ -390,7 +390,7 @@ def generate_trunk(trunk_seq='sequences.seq', select=0):
     """
     select = select[0] if type(select) == list else select
     s = np.loadtxt(get_shared_data(trunk_seq), str)
-    print('There are {0} sequences in the files'.format(len(s)))
+    # print('There are {0} sequences in the files'.format(len(s)))
     assert 0 <= select < len(s)
     seq = list(s[select])
     sequence =[]
