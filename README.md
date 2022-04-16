@@ -4,6 +4,8 @@ MAppleT sources and openalea dependencies copied and modified are from openalea/
 
 ## Install
 
+Only tested on debian 10.
+
 #### Create Conda Environment
 
 ```sh
