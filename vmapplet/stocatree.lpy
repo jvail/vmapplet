@@ -39,7 +39,6 @@ from vmapplet.structure_analysis import HiddenSemiMarkov, StatError
 from vmapplet.srandom import boolean_event
 from vmapplet.physics import rotate_frame_at_branch, rupture
 from vmapplet.tools.surface import *
-# from vmapplet.interception import STAR
 from vmapplet.tools.data_process import Group, Statistics
 from vmapplet.temperature_effects import Tp_date
 from vmapplet.tools.csv import ExprecCSV

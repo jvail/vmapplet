@@ -2,7 +2,6 @@
 
 MAppleT sources and openalea dependencies copied and modified are from openalea/incubator.
 
-
 ## Install
 
 #### Create Conda Environment
@@ -14,6 +13,8 @@ conda activate vmapplet-test
 ```
 
 #### Install VMAppleT
+
+Only a local dev install will work.
 
 ```sh
 pip install -e .
