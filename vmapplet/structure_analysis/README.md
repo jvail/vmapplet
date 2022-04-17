@@ -1,5 +1,7 @@
+Build structural_analysis without scikit-build
+
 ```sh
-conda activate vmapplet
+conda activate vmapplet-test
 cd vmapllet/structural_analysis
 mkdir build && cd build && cmake .. && make -j4
 ```
