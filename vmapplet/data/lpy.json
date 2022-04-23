@@ -1,0 +1,295 @@
+{
+    "schema": "lpy",
+    "version": "1.0",
+    "options": {},
+    "materials": [
+        {
+            "type": "Material",
+            "id": 94312036052128,
+            "ambient": [
+                19,
+                19,
+                19
+            ],
+            "diffuse": 0.0,
+            "name": "background",
+            "index": 0
+        },
+        {
+            "type": "Material",
+            "id": 94312035292544,
+            "ambient": [
+                255,
+                0,
+                0
+            ],
+            "diffuse": 1.0,
+            "name": "error",
+            "index": 1
+        },
+        {
+            "type": "Material",
+            "id": 94312035241360,
+            "ambient": [
+                0,
+                35,
+                35
+            ],
+            "diffuse": 3.0,
+            "name": "dormant",
+            "index": 2
+        },
+        {
+            "type": "Material",
+            "id": 94312033123792,
+            "ambient": [
+                0,
+                0,
+                27
+            ],
+            "diffuse": 3.0,
+            "name": "large",
+            "index": 3
+        },
+        {
+            "type": "Material",
+            "id": 94312036328288,
+            "ambient": [
+                51,
+                0,
+                51
+            ],
+            "diffuse": 3.0,
+            "name": "medium",
+            "index": 4
+        },
+        {
+            "type": "Material",
+            "id": 94312036328400,
+            "ambient": [
+                18,
+                0,
+                0
+            ],
+            "diffuse": 3.0,
+            "name": "small",
+            "index": 5
+        },
+        {
+            "type": "Material",
+            "id": 94312036328512,
+            "ambient": [
+                45,
+                45,
+                0
+            ],
+            "diffuse": 3.0,
+            "specular": [
+                49,
+                23,
+                9
+            ],
+            "name": "floral",
+            "index": 6
+        },
+        {
+            "type": "Material",
+            "id": 94312036328624,
+            "ambient": [
+                0,
+                29,
+                29
+            ],
+            "diffuse": 3.0,
+            "name": "zone_dormant_start",
+            "index": 7
+        },
+        {
+            "type": "Material",
+            "id": 94312036328736,
+            "ambient": [
+                0,
+                31,
+                0
+            ],
+            "diffuse": 2.67742,
+            "name": "zone_small",
+            "index": 8
+        },
+        {
+            "type": "Material",
+            "id": 94312036328848,
+            "ambient": [
+                41,
+                41,
+                0
+            ],
+            "diffuse": 3.0,
+            "name": "zone_diffuse",
+            "index": 9
+        },
+        {
+            "type": "Material",
+            "id": 94312036328960,
+            "ambient": [
+                41,
+                0,
+                0
+            ],
+            "diffuse": 3.0,
+            "name": "zone_medium",
+            "index": 10
+        },
+        {
+            "type": "Material",
+            "id": 94312036329664,
+            "ambient": [
+                30,
+                0,
+                30
+            ],
+            "diffuse": 3.0,
+            "name": "zone_floral",
+            "index": 11
+        },
+        {
+            "type": "Material",
+            "id": 94312036329776,
+            "ambient": [
+                0,
+                0,
+                31
+            ],
+            "diffuse": 3.0,
+            "name": "zone_dormant_end",
+            "index": 12
+        },
+        {
+            "type": "Material",
+            "id": 94312035323504,
+            "ambient": [
+                45,
+                45,
+                45
+            ],
+            "diffuse": 3.0,
+            "name": "zone_none",
+            "index": 13
+        },
+        {
+            "type": "Material",
+            "id": 94312036123056,
+            "ambient": [
+                25,
+                40,
+                214
+            ],
+            "diffuse": 1.0,
+            "shininess": 0.47,
+            "transparency": 0.5,
+            "name": "fruit",
+            "index": 14
+        },
+        {
+            "type": "Material",
+            "id": 94312035563744,
+            "ambient": [
+                243,
+                241,
+                18
+            ],
+            "diffuse": 1.0,
+            "name": "leaf",
+            "index": 15
+        },
+        {
+            "type": "Material",
+            "id": 94312036018016,
+            "ambient": [
+                222,
+                18,
+                210
+            ],
+            "diffuse": 1.0,
+            "name": "autumn_leaf",
+            "index": 16
+        },
+        {
+            "type": "Material",
+            "id": 94312036155568,
+            "ambient": [
+                107,
+                59,
+                54
+            ],
+            "diffuse": 1.91589,
+            "transparency": 0.17,
+            "name": "petal",
+            "index": 17
+        },
+        {
+            "type": "Material",
+            "id": 94312036130432,
+            "ambient": [
+                82,
+                64,
+                45
+            ],
+            "diffuse": 2.56098,
+            "shininess": 0.0,
+            "name": "stamen",
+            "index": 18
+        },
+        {
+            "type": "Material",
+            "id": 94312035347344,
+            "ambient": [
+                49,
+                29,
+                25
+            ],
+            "diffuse": 2.55102,
+            "shininess": 0.0,
+            "name": "bark",
+            "index": 19
+        },
+        {
+            "type": "Material",
+            "id": 94312035363984,
+            "ambient": [
+                0,
+                85,
+                0
+            ],
+            "diffuse": 1.38824,
+            "name": "ground",
+            "index": 20
+        }
+    ],
+    "parameters": [
+        {
+            "name": "internode",
+            "enabled": true,
+            "scalars": [
+                {
+                    "name": "max_length",
+                    "value": 0.05,
+                    "type": "Float",
+                    "min": 0.01,
+                    "max": 0.1,
+                    "precision": 2
+                },
+                {
+                    "name": "fruit_radius_per_kilo",
+                    "value": 2.52,
+                    "type": "Float",
+                    "min": 1,
+                    "max": 5,
+                    "precision": 2
+                }
+            ],
+            "items": []
+        }
+    ],
+    "credits": {}
+}
