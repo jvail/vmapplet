@@ -5,7 +5,7 @@
     "materials": [
         {
             "type": "Material",
-            "id": 94312036052128,
+            "id": 94668061027200,
             "ambient": [
                 19,
                 19,
@@ -17,7 +17,7 @@
         },
         {
             "type": "Material",
-            "id": 94312035292544,
+            "id": 94668063265424,
             "ambient": [
                 255,
                 0,
@@ -29,7 +29,7 @@
         },
         {
             "type": "Material",
-            "id": 94312035241360,
+            "id": 94668063260016,
             "ambient": [
                 0,
                 35,
@@ -41,7 +41,7 @@
         },
         {
             "type": "Material",
-            "id": 94312033123792,
+            "id": 94668063260128,
             "ambient": [
                 0,
                 0,
@@ -53,7 +53,7 @@
         },
         {
             "type": "Material",
-            "id": 94312036328288,
+            "id": 94668063151344,
             "ambient": [
                 51,
                 0,
@@ -65,7 +65,7 @@
         },
         {
             "type": "Material",
-            "id": 94312036328400,
+            "id": 94668061081376,
             "ambient": [
                 18,
                 0,
@@ -77,7 +77,7 @@
         },
         {
             "type": "Material",
-            "id": 94312036328512,
+            "id": 94668063119072,
             "ambient": [
                 45,
                 45,
@@ -94,7 +94,7 @@
         },
         {
             "type": "Material",
-            "id": 94312036328624,
+            "id": 94668062556368,
             "ambient": [
                 0,
                 29,
@@ -106,7 +106,7 @@
         },
         {
             "type": "Material",
-            "id": 94312036328736,
+            "id": 94668060936320,
             "ambient": [
                 0,
                 31,
@@ -118,7 +118,7 @@
         },
         {
             "type": "Material",
-            "id": 94312036328848,
+            "id": 94668061065520,
             "ambient": [
                 41,
                 41,
@@ -130,7 +130,7 @@
         },
         {
             "type": "Material",
-            "id": 94312036328960,
+            "id": 94668061836592,
             "ambient": [
                 41,
                 0,
@@ -142,7 +142,7 @@
         },
         {
             "type": "Material",
-            "id": 94312036329664,
+            "id": 94668061147888,
             "ambient": [
                 30,
                 0,
@@ -154,7 +154,7 @@
         },
         {
             "type": "Material",
-            "id": 94312036329776,
+            "id": 94668061854016,
             "ambient": [
                 0,
                 0,
@@ -166,7 +166,7 @@
         },
         {
             "type": "Material",
-            "id": 94312035323504,
+            "id": 94668061886624,
             "ambient": [
                 45,
                 45,
@@ -178,7 +178,7 @@
         },
         {
             "type": "Material",
-            "id": 94312036123056,
+            "id": 94668060533552,
             "ambient": [
                 25,
                 40,
@@ -192,7 +192,7 @@
         },
         {
             "type": "Material",
-            "id": 94312035563744,
+            "id": 94668062862976,
             "ambient": [
                 243,
                 241,
@@ -204,7 +204,7 @@
         },
         {
             "type": "Material",
-            "id": 94312036018016,
+            "id": 94668061952096,
             "ambient": [
                 222,
                 18,
@@ -216,7 +216,7 @@
         },
         {
             "type": "Material",
-            "id": 94312036155568,
+            "id": 94668062795520,
             "ambient": [
                 107,
                 59,
@@ -229,7 +229,7 @@
         },
         {
             "type": "Material",
-            "id": 94312036130432,
+            "id": 94668062376752,
             "ambient": [
                 82,
                 64,
@@ -242,7 +242,7 @@
         },
         {
             "type": "Material",
-            "id": 94312035347344,
+            "id": 94668060450784,
             "ambient": [
                 49,
                 29,
@@ -255,7 +255,7 @@
         },
         {
             "type": "Material",
-            "id": 94312035363984,
+            "id": 94668061420816,
             "ambient": [
                 0,
                 85,
@@ -284,6 +284,68 @@
                     "value": 2.52,
                     "type": "Float",
                     "min": 1,
+                    "max": 5,
+                    "precision": 2
+                },
+                {
+                    "name": "elongation_period",
+                    "value": 10,
+                    "type": "Float",
+                    "min": 1,
+                    "max": 100.0,
+                    "precision": 1
+                },
+                {
+                    "name": "min_length",
+                    "value": 0.0001,
+                    "type": "Float",
+                    "min": 0.0001,
+                    "max": 0.01,
+                    "precision": 5
+                },
+                {
+                    "name": "plastochron",
+                    "value": 3,
+                    "type": "Float",
+                    "min": 1,
+                    "max": 10,
+                    "precision": 1
+                }
+            ],
+            "items": []
+        },
+        {
+            "name": "tree",
+            "enabled": true,
+            "scalars": [
+                {
+                    "name": "branching_angle",
+                    "value": 45,
+                    "type": "Float",
+                    "min": 0.0,
+                    "max": 180,
+                    "precision": 2
+                },
+                {
+                    "name": "phyllotactic_angle",
+                    "value": -182.32,
+                    "type": "Float",
+                    "min": -360,
+                    "max": 360,
+                    "precision": 2
+                }
+            ],
+            "items": []
+        },
+        {
+            "name": "fruit",
+            "enabled": true,
+            "scalars": [
+                {
+                    "name": "fruit_radius_per_kilo",
+                    "value": 1.0,
+                    "type": "Float",
+                    "min": 0.5,
                     "max": 5,
                     "precision": 2
                 }

@@ -50,7 +50,19 @@ from vmapplet.pipe import get_new_radius
 options = ConfigParams(get_shared_data('stocatree.ini'))
 
 extern (max_length = options.internode.max_length)
+extern (min_length = options.internode.min_length)
+extern (elongation_period = options.internode.elongation_period)
+extern (plastochron = options.internode.plastochron)
 options.internode.max_length = max_length
+options.internode.min_length = min_length
+options.internode.elongation_period = elongation_period
+options.internode.plastochron = plastochron
+
+extern (branching_angle = options.tree.branching_angle)
+extern (phyllotactic_angle = options.tree.phyllotactic_angle)
+options.tree.branching_angle = branching_angle
+options.tree.phyllotactic_angle = phyllotactic_angle
+
 extern (fruit_radius_per_kilo = 1.)
 
 #def pprint(*args):
@@ -529,7 +541,6 @@ def EndEach(lstring,scene):
     # Rendering happens after 'update parameters'.  'output' is only
     # called conditionally; mostly, the simulation goes straight from
     # 'output parameters' to 'physics'
-
     if simulation.phase == initialisation:
         useGroup(update_parameters)
         simulation.phase = update_parameters
