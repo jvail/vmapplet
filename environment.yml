@@ -5,6 +5,7 @@ channels:
 dependencies:
   - jupyterlab
   - jupyterlab_widgets
+  - toml
   - matplotlib
   - scipy
   - boost

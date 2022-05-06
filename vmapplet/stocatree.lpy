@@ -1,6 +1,7 @@
 __revision__ = " $Id$ "
 
 import time
+import io
 import os
 import datetime
 import random
@@ -11,8 +12,8 @@ from datetime import (
     datetime,
     timedelta
 )
+import toml
 
-from vmapplet import get_shared_data, constants, optimisation
 from openalea.plantgl.all import (
     Sphere,
     Viewer,
@@ -21,8 +22,7 @@ from openalea.plantgl.all import (
     cross
 )
 
-# import vmapplet.optimisation
-from vmapplet.plantik.tools.config import ConfigParams
+from vmapplet import get_shared_data, constants, optimisation
 from vmapplet.output import Data
 from vmapplet.colors import Colors
 from vmapplet.organs.tree import Tree
@@ -45,9 +45,11 @@ from vmapplet.tools.csv import ExprecCSV
 from vmapplet.tools.rw_tools import ensureLocalDir, Recorder
 from vmapplet.tools.file_tools import Cp_Lstring
 from vmapplet.pipe import get_new_radius
+from vmapplet.tools.dotdict import DotDict
 
-
-options = ConfigParams(get_shared_data('stocatree.ini'))
+options = {}
+with io.open(get_shared_data('stocatree.toml')) as file:
+    options = toml.load(file, _dict=DotDict)
 
 extern (max_length = options.internode.max_length)
 extern (min_length = options.internode.min_length)
