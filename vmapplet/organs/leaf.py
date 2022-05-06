@@ -1,45 +1,27 @@
-#!/usr/bin/env python
-#-*- coding: utf-8 -*-
-"""
-.. topic:: Summary
-
-    A module dedicated to the leaves
-
-    :Code: mature
-    :Documentation: mature
-    :Author: Thomas Cokelaer <Thomas.Cokelaer@sophia.inria.fr>
-    :Revision: $Id$
-    :Usage: >>> from openalea.stocatree.leaf import *
-    :References:
-
-        1. Colin Smith, Costes Evelyne, On the Simulation of Apple Trees
-           Using Statistical and Biomechanical Principles, INRIA
-           technical report, 2007
-
-.. testsetup::
-
-    from openalea.stocatree.leaf import *
-"""
-
 import numpy
 from scipy import interpolate
-sigmoid = numpy.array([ 0.00247262,  0.00669285,  0.01798621,  0.04742587,
-                       0.11920292,   0.26894142,  0.5       ,  0.73105858,
-                       0.88079708,  0.95257413,  0.98201379,  0.99330715,
-                       0.99752738])
 
-days = numpy.arange(0,13)
+sigmoid = numpy.array([
+    0.00247262, 0.00669285, 0.01798621, 0.04742587,
+    0.11920292, 0.26894142, 0.5, 0.73105858,
+    0.88079708, 0.95257413, 0.98201379, 0.99330715,
+    0.99752738
+])
 
-leaf_options = {'fall_probability': 0.1,
-    'maturation':12,
+days = numpy.arange(0, 13)
+
+leaf_options = {
+    'fall_probability': 0.1,
+    'maturation': 12,
     'mass_per_area': 0.220,
     'max_area': 0.0030,
     'min_final_area': 0.0020,
     'petiole_radius': 0.0006,
-    'preformed_leaves': 8}
+    'preformed_leaves': 8
+}
 
 
-class Leaf(object):
+class Leaf:
     """a base class interface for leaves
 
     A leaf is defined by an **age**, a **mass** and a **surface** (area). Moreover,
@@ -63,18 +45,18 @@ class Leaf(object):
 
     """
     valid_state = ['scar', 'growing']
+
     def __init__(self):
-        self.mass = 0.               # in g
-        self.area = 0.              # in m^2
-        self.age = 0.                # in days
-        self.max_area = None        # in m**2
-        self.mass_per_area = None   # g/m**2
-        self.maturation = None      # in days
+        self.mass = 0.  # [g]
+        self.area = 0.  # [m**2]
+        self.age = 0.  # [D]
+        self.max_area = None  # [m**2]
+        self.mass_per_area = None  # [g/m**2]
+        self.maturation = None  # [D]
         self.func_leaf_area = None
         self._state = Leaf.valid_state[0]
 
         self.pathogen = False
-
 
     def compute_mass(self):
         """Compute the mass of the leaf and returns its value (in kgrams)
@@ -101,16 +83,20 @@ class Leaf(object):
             if getattr(self, attr) is None:
                 raise NotImplementedError("%s is None. Set a value." % attr)
 
-
     def _get_state(self):
         return self._state
+
     def _set_state(self, state):
         if state in Leaf.valid_state:
             self._state = state
         else:
-            raise ValueError("state must be in %s , %s provided" % (Leaf.valid_state,state))
-    state = property(fget=_get_state, fset=_set_state,
-                    doc="setter/getter for the state attribute given a valid state")
+            raise ValueError("state must be in %s , %s provided" % (Leaf.valid_state, state))
+
+    state = property(
+        fget=_get_state,
+        fset=_set_state,
+        doc="setter/getter for the state attribute given a valid state"
+    )
 
 
 class AppleLeaf(Leaf):
@@ -167,23 +153,20 @@ class AppleLeaf(Leaf):
 
         self.state = state
 
-        self.fall_probability = fall_probability         #per day
-        self.maturation       = maturation         #day
-        self.mass_per_area    = mass_per_area          #kg/m**2
-        self.max_area         = max_area           #m^2
-        self.min_final_area   = min_final_area           #m^2
-        self.area_range       = self.max_area - self.min_final_area # unit:cm^2
-        self.petiole_radius   = petiole_radius          #m
-
+        self.fall_probability = fall_probability  # [D]
+        self.maturation = maturation  # [D]
+        self.mass_per_area = mass_per_area  # [kg/m**2]
+        self.max_area = max_area  # [m**2]
+        self.min_final_area = min_final_area  # [m**2]
+        self.area_range = self.max_area - self.min_final_area  # [cm**2]
+        self.petiole_radius = petiole_radius  # [m]
         self.maturity = False
-
-
         self.preformed_leaves = preformed_leaves
         self._inversed_preformed_leaves = 1. / self.preformed_leaves
 
         self.initialisation()
 
-        #others (added by Han, 25-11-10)
+        # others (added by Han, 25-11-10)
         self.lg = 0.            # light interception (STAR)
         # Added by Han on 17-04-2011:
         self.silhouette_area = 0
@@ -202,7 +185,7 @@ class AppleLeaf(Leaf):
         This function should give results equivalent to :meth:`compute_area`.
         """
         if not self.maturity:
-            maturity = self.age/float(self.maturation)# dimensionless
+            maturity = self.age / float(self.maturation)  # [-]
             if (maturity > 1.0):
                 self.maturiry = True
                 maturity = 1.0
@@ -210,16 +193,15 @@ class AppleLeaf(Leaf):
         else:
             relative_area = 1.
 
-        # tree.Tree().preformed_leaves =8
         if number >= self.preformed_leaves:
             self.area = self.max_area * relative_area
         else:
-            #self.area= relative_area * (number * self._inversed_preformed_leaves
+            # self.area= relative_area * (number * self._inversed_preformed_leaves
             #                            * self.area_range + self.min_final_area)
-            #Modified by Han on 28-02-2012, according to the discussion with Evelyne on 27-02-2012
-            #Unlike the definition of "reduced" maximum area with Equition 21 at Page 21 in Smith's
+            # Modified by Han on 28-02-2012, according to the discussion with Evelyne on 27-02-2012
+            # Unlike the definition of "reduced" maximum area with Equition 21 at Page 21 in Smith's
             # report, this reduced maximum area is re-defined as: (Nt/Np)*Amax
-            self.area = relative_area * number * self._inversed_preformed_leaves *self.max_area
+            self.area = relative_area * number * self._inversed_preformed_leaves * self.max_area
 
         return self.area
 
@@ -262,7 +244,7 @@ class AppleLeaf(Leaf):
 
         .. plot:: pyplots/leaf.py
         """
-        if  self.age >= self.maturation:
+        if self.age >= self.maturation:
             relative_area = 1.
         else:
             relative_area = interpolate.interp1d(days, sigmoid)(self.age)
@@ -270,11 +252,11 @@ class AppleLeaf(Leaf):
         if number >= self.preformed_leaves:
             self.area = self.max_area * relative_area
         else:
-            #self.area= relative_area * (number * self._inversed_preformed_leaves
+            # self.area= relative_area * (number * self._inversed_preformed_leaves
             #                            * self.area_range + self.min_final_area)
-            #Modified by Han on 28-02-2012, according to the discussion with Evelyne on 27-02-2012
-            #Unlike the definition of "reduced" maximum area with Equition 21 at Page 21 in Smith's
+            # Modified by Han on 28-02-2012, according to the discussion with Evelyne on 27-02-2012
+            # Unlike the definition of "reduced" maximum area with Equition 21 at Page 21 in Smith's
             # report, this reduced maximum area is re-defined as: (Nt/Np)*Amax
-            self.area = relative_area * number * self._inversed_preformed_leaves *self.max_area
+            self.area = relative_area * number * self._inversed_preformed_leaves * self.max_area
         # print(relative_area)
         return self.area

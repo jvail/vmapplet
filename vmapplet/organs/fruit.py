@@ -1,36 +1,17 @@
-"""
-.. topic:: fruit.py summary
-
-    A module dedicated to fruits
-
-    :Code: mature
-    :Documentation: mature
-    :Author: Thomas Cokelaer <Thomas.Cokelaer@sophia.inria.fr>
-    :References:
-        1. Colin Smith, Costes Evelyne, On the Simulation of Apple Trees Using
-           Statistical and Biomechanical Principles, INRIA technical report, 2007
-    :Revision: $Id$
-    :Usage: >>> from openalea.stocatree.fruit import *
-
-.. testsetup::
-
-    from openalea.stocatree.fruit import *
-"""
-
 from math import log, exp
 
 
-config_options = {'flower_duration': 10.,
-                'max_relative_growth_rate': 0.167,
-                'lost_time' : 28,
-                'max_age' : 147,
-                'probability' : 0.3,
-                'max_absolute_growth_rate' : 0.0018}
+config_options = {
+    'flower_duration': 10.,
+    'max_relative_growth_rate': 0.167,
+    'lost_time': 28,
+    'max_age': 147,
+    'probability': 0.3,
+    'max_absolute_growth_rate': 0.0018
+}
 
 
-
-
-class Fruit(object):
+class Fruit:
     """a base class interface for fruits
 
     A fruit is defined by an **age**, a **mass** and a **state** that may be
@@ -52,6 +33,7 @@ class Fruit(object):
 
     """
     states = ['flower', 'no_flower', 'fruit_scar', 'fruit']
+
     def __init__(self, state='flower'):
         """**Constructor**
 
@@ -66,19 +48,20 @@ class Fruit(object):
         self._state = state
         self.mass = 0.
 
-
     def _set_state(self, state):
         if state in Fruit.states:
             self._state = state
         else:
-            raise ValueError("state must be in %s , %s provided" % (Fruit.state,state))
+            raise ValueError("state must be in %s , %s provided" % (Fruit.state, state))
+
     def _get_state(self):
         return self._state
-    state = property(fget=_get_state, fset=_set_state,
-                    doc="getter/setter of :attr:`state` of the component to be specified by the user")
 
-
-
+    state = property(
+        fget=_get_state,
+        fset=_set_state,
+        doc="getter/setter of :attr:`state` of the component to be specified by the user"
+    )
 
     def compute_mass(self):
         """a method that computes the mass of the fruit and returns its value"""
@@ -130,15 +113,14 @@ class AppleFruit(Fruit):
         """
         Fruit.__init__(self)
 
-        self._flower_duration          = flower_duration
+        self._flower_duration = flower_duration
         self._max_relative_growth_rate = max_relative_growth_rate
-        self._lost_time                = lost_time
-        self._max_age                  = max_age
-        self._probability              = probability
+        self._lost_time = lost_time
+        self._max_age = max_age
+        self._probability = probability
         self._max_absolute_growth_rate = max_absolute_growth_rate
         # units in kg so r be dimensionless. r is used by compute_mass()
         self._r = self._max_absolute_growth_rate / self._max_relative_growth_rate
-
 
     def compute_mass(self):
         """Computes the fruit mass according to Lakso et al
@@ -178,6 +160,6 @@ class AppleFruit(Fruit):
         #  // default mass unit = kg, time unit = second, ...
         fruit_age = min(self.age - self._flower_duration, self._max_age)
 
-        i = log(1.0 + exp((self._max_relative_growth_rate  * (fruit_age - self._lost_time))))
+        i = log(1.0 + exp((self._max_relative_growth_rate * (fruit_age - self._lost_time))))
         self.mass = self._r * i
         return self.mass

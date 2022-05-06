@@ -1,33 +1,11 @@
-#!/usr/bin/env python
-#-*- coding: utf-8 -*-
-"""
-.. topic:: internode.py summary
-
-   A module dedicated to define an internode
-
-    :Code: mature
-    :Documentation: mature
-    :Author: Thomas Cokelaer <Thomas.Cokelaer@sophia.inria.fr>
-    :Revision: $Id$
-    :Usage: >>> from openalea.stocatree.internode import *
-
-.. testsetup::
-
-    from openalea.stocatree.internode import *
-"""
-
-__all__ = ['Internode']
-
-
-
 internode_options = {
-    'min_length'          : 0.0001,
-    'elongation_period'   : 10.,
-    'plastochron'         : 3.}
+    'min_length': 0.0001,
+    'elongation_period': 10.,
+    'plastochron': 3.
+}
 
 
-
-class Internode(object):
+class Internode:
     """Internode class to be used within a metamer
 
     >>> i = Internode()
@@ -38,7 +16,7 @@ class Internode(object):
 
     """
     def __init__(self, min_length=0.0001, elongation_period=10.,
-                 plastochron=3.0, max_length = 3.0):
+                 plastochron=3.0, max_length=3.0):
         """
         The "final_length_amplifier" attribute was added by Han on 14-04-2011.
         """
@@ -58,7 +36,7 @@ class Internode(object):
         :param elongation period:
 
         """
-        self._min_length = min_length # switch to meters
+        self._min_length = min_length
         self._plastochron = plastochron
         self._elongation_period = elongation_period
         self._max_length = max_length
@@ -124,17 +102,15 @@ class Internode(object):
         self._final_else = 0.25 * self._max_length/1.5
         """
 
-        #Modified by Han on 07-03-2012 according to Evelyne's knowledge (because of instability prbs in bio-mechanics)
-        self._final_none = self._max_length/1.5
-        self._final_dormant_start = 0.25 * self._max_length/1.5
-        self._final_small = 0.5 * self._max_length/1.5
-        self._final_diffuse = self._max_length/1.5
-        self._final_medium = 0.75 * self._max_length/1.5
-        self._final_floral = 0.5 * self._max_length/1.5
-        self._final_dormant_end = 0.25 * self._max_length/1.5
-        self._final_else = 0.25 * self._max_length/1.5
-
-
+        # Modified by Han on 07-03-2012 according to Evelyne's knowledge (because of instability prbs in bio-mechanics)
+        self._final_none = self._max_length / 1.5
+        self._final_dormant_start = 0.25 * self._max_length / 1.5
+        self._final_small = 0.5 * self._max_length / 1.5
+        self._final_diffuse = self._max_length / 1.5
+        self._final_medium = 0.75 * self._max_length / 1.5
+        self._final_floral = 0.5 * self._max_length / 1.5
+        self._final_dormant_end = 0.25 * self._max_length / 1.5
+        self._final_else = 0.25 * self._max_length / 1.5
 
         """
         # The following parameters were added by Han on 14-04-2011
@@ -166,10 +142,10 @@ class Internode(object):
 
         # cm2m = 0.01
 
-        #10 and none are not equivalent. Thhe else at the end corerspond to 10
+        # 10 and none are not equivalent. Thhe else at the end corerspond to 10
         # When the apex leads the growth of the trunk, the returned value is "None"
         # (Noted by Han on 11-04-2011)
-        if uzone == None:
+        if uzone is None:
             res = self._final_none / self._elongation_period
         elif uzone == 'dormant_start':
             res = self._final_dormant_start / self._elongation_period

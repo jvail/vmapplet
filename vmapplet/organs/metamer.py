@@ -1,45 +1,13 @@
-"""
-.. topic:: summary
-
-    This module contains structures, classes, functions that were defined
-    within the lsystem in MAppleT but that could be written outside in stocatree
-    to have more modularities. Yet, the functionalities and usage are almost
-    identical.
-
-    :Code: mature
-    :Documentation: to be completed
-    :Author: Thomas Cokelaer <Thomas.Cokelaer@sophia.inria.fr>
-    :References:
-        1. Colin Smith, Costes Evelyne, On the Simulation of Apple Trees Using
-           Statistical and Biomechanical Principles, INRIA technical report, 2007
-    :Revision: $Id$
-    :Usage: >>> from openalea.stocatree.metamer import *
-
-.. testsetup::
-
-    from openalea.stocatree.metamer import *
-"""
-
 from math import acos
 
 from openalea.plantgl.all import Vector3, dot
 
+from .. import (
+    constants,
+    optimisation
+)
 from ..physics import rotate_frame_at_branch
-from .. import constants
 from ..srandom import boolean_event
-try:
-    from .. import optimisation
-except Exception:
-    print('WARNING using non optimised code')
-    from .. import non_optimised as optimisation
-
-
-
-__all__ = [
-    'metamer_data',
-    'reaction_wood_target',
-    'clamp_v3d_components_if_near_zero',
-    'cambial_layer']
 
 
 class cambial_layer():
@@ -61,17 +29,17 @@ class cambial_layer():
 
 
 zone_converter = {
-    0:'dormant_start',
-    1:'small',
-    2:'diffuse',
-    3:'medium',
-    4:'floral',
-    5:'dormant_end',
-    None:None
-    }
+    0: 'dormant_start',
+    1: 'small',
+    2: 'diffuse',
+    3: 'medium',
+    4: 'floral',
+    5: 'dormant_end',
+    None: None
+}
 
 
-class metamer_data(object):
+class MetamerData:
     r"""Class to define metamer data structure
 
 
@@ -88,12 +56,14 @@ class metamer_data(object):
         \boldsymbol \tau = \mathbf{r}\times \mathbf{F}\,\!= rF\sin \theta\,\!
 
     """
-    def __init__(self, floral=False, number=0, hlu=None,
+    def __init__(
+        self, floral=False, number=0, hlu=None,
         zone=None, observation=None,
         parent_observation=None, parent_unit_id=None, parent_fbr_id=None,
         parent_tree_id=0,
         p_angle=0., b_angle=0.,
-        wood=None, internode=None, fruit=None, leaf=None):
+        wood=None, internode=None, fruit=None, leaf=None
+    ):
         """**Constructor**
 
 
@@ -118,22 +88,22 @@ class metamer_data(object):
         parent_fbr_id: the id of the parent branch (the branch where the metamer is located)
         # If the parent_fbr_id is 0, it represents "trunk".
         """
-        if leaf == None:
+        if leaf is None:
             raise ValueError("leaf must be provided as a Leaf class")
         else:
             self.leaf = leaf
 
-        if fruit == None:
+        if fruit is None:
             raise ValueError("fruit must be provided as a Fruit class")
         else:
             self.fruit = fruit
 
-        if wood == None:
+        if wood is None:
             raise ValueError("wood must be provided as a Wood class")
         else:
             self.wood = wood
 
-        if internode == None:
+        if internode is None:
             raise ValueError("internode must be provided as a Internode class")
         else:
             self.internode = internode
@@ -153,85 +123,80 @@ class metamer_data(object):
 
         try:
             self.zone = zone_converter[zone]
-        except:
+        except Exception:
             pass
-            # print(zone)
 
         self.hlu = hlu
-        self.cumulated_mass = 0.#in 'kg'
+        self.cumulated_mass = 0.  # [kg]
         self.radius = self.leaf.petiole_radius         # petiole_radius is in m
         self.offset = 0   # used to shift first branching node to keep it from disapearing into cambial growth
-        self.cumulated_torque = Vector3(0. ,0. ,0. )
-        self.developped = False #// to avoid more than 1 lateral shoot
-        self.phyllotactic_angle = p_angle #// azimuth / parent metamer (around h) #TODO must be in [0,2pi]
-        self.branching_angle = b_angle #TODO must be in [0,2pi]
-        self.rigidity = 0. # in Pa * m**4
-        self.age = 0 # in days
+        self.cumulated_torque = Vector3(0., 0., 0.)
+        self.developped = False  # to avoid more than 1 lateral shoot
+        self.phyllotactic_angle = p_angle  # azimuth / parent metamer (around h) #TODO must be in [0,2pi]
+        self.branching_angle = b_angle  # TODO must be in [0,2pi]
+        self.rigidity = 0.  # in Pa * m**4
+        self.age = 0  # in days
         self.year = 0
         self.length = self.internode._min_length              # internode units is in m
-        if floral==True:
+        if floral:
             self.fruit.state = 'flower'
         else:
             self.fruit.state = 'no_flower'
 
         self.trunk = False
 
-        #Vector3D are initilised to 0,0,0 but could have been anything.
-        self.rotation_memory = Vector3(0.,0.,0.)  # // remaining rotation after harvest
-        self.rotation_velocity = Vector3(0.,0.,0.) # acting_rotation + rotation_memory
-        self.acting_rotation = Vector3(0.,0.,0.)   # // due to mass and tropism actions
-        self.position = Vector3(0.,0.,0.)           #// absolute
+        # Vector3D are initilised to 0,0,0 but could have been anything.
+        self.rotation_memory = Vector3(0., 0., 0.)  # remaining rotation after harvest
+        self.rotation_velocity = Vector3(0., 0., 0.)  # acting_rotation + rotation_memory
+        self.acting_rotation = Vector3(0., 0., 0.)  # due to mass and tropism actions
+        self.position = Vector3(0., 0., 0.)  # absolute
 
-        #Rotation velocity is normalized and its norm is saved in rv_norm
+        # Rotation velocity is normalized and its norm is saved in rv_norm
         self.rv_norm = self.rotation_velocity.normalize()
+        self.season_initial_heading = self.hlu.heading  # used to compute reaction wood
+        self.external_layer = 0  # index in vector cambial::pool
 
-
-        self.season_initial_heading = self.hlu.heading #// used to compute reaction wood
-        self.external_layer = 0 #// index in vector cambial::pool
-
-        #TEST
+        # TEST
         self.layers = []
         self.nlayers = 0
         self.total_second_moment_of_area = 0.
 
-        self.pre_harvest_mass = 0.0 #in g #// used to compute rotation_memory
-        self.pre_harvest_radius = 0 #in meters
+        self.pre_harvest_mass = 0.0  # in g # used to compute rotation_memory
+        self.pre_harvest_radius = 0  # in meters
         self.pre_harvest_rotation = Vector3(0.0, 0.0, 0.0)
-        """
 
-        // The conditional on 'number' is to get around a bug in LPFG.
-        // LPFG creates lots of temporary instances of objects that are
-        // never used.  We only want the constructor to have an effect
-        // when the object is one that is actually used in the structure
-        // and not a temporary object.
+        """
+        The conditional on 'number' is to get around a bug in LPFG.
+        LPFG creates lots of temporary instances of objects that are
+        never used.  We only want the constructor to have an effect
+        when the object is one that is actually used in the structure
+        and not a temporary object.
         """
         if (self.number):
             self.season_initial_heading = self.hlu.heading
-            l = cambial_layer(thickness=self.radius, radius=0)
-            self.layers.append(l)
+            layer = cambial_layer(thickness=self.radius, radius=0)
+            self.layers.append(layer)
             self.nlayers += 1
 
-        #The following attributes were added by Han on 29-04-2011
-        #They are mainly used in the "attribute_list" for statistics output
+        # The following attributes were added by Han on 29-04-2011
+        # They are mainly used in the "attribute_list" for statistics output
         self.leaf_state = ''
         self.leaf_area = 0
-        #Leaf area returned from plangGL after light interception
+        # Leaf area returned from plangGL after light interception
         self.ta_pgl = 0
-        #Silhouette area returned from plantGL after light interception
+        # Silhouette area returned from plantGL after light interception
         self.sa_pgl = 0
         self.star_pgl = 0
 
-
-        #Added by Han on 11-07-2012, as a flag to control first-year sylleptic growth
+        # Added by Han on 11-07-2012, as a flag to control first-year sylleptic growth
         self.sylleptic = False
-        #Flag to set if a metamer should be pruned
+        # Flag to set if a metamer should be pruned
         self.to_prune = False
-        #Flag to signal a cut
+        # Flag to signal a cut
         self.cut = False
 
-    #def reorient_frame(self, initial_hlu, rotation_velocity, length):
+    # def reorient_frame(self, initial_hlu, rotation_velocity, length):
     #    self.hlu.reorient_frame(initial_hlu, rotation_velocity, length)
-
 
     def __str__(self):
         res = '\n number %s\n' % self.number
@@ -270,7 +235,7 @@ class metamer_data(object):
                 self.fruit.state = 'fruit_scar'
                 self.fruit.mass = 0.
             else:
-                self.fruit.mass = self.fruit.compute_mass() #useless ? mass already set by compute_mass
+                self.fruit.mass = self.fruit.compute_mass()  # useless ? mass already set by compute_mass
         elif self.fruit._state == 'fruit_scar':
             self.fruit.mass = 0.
 
@@ -279,11 +244,11 @@ class metamer_data(object):
                 self.leaf.state = 'scar'
 
             if simulation.events.leaf_fall.active:
-                #print "Falling proba: {0} x {1}".format(self.leaf.fall_probability , simulation.dt.days)
-                #if (boolean_event(self.leaf.fall_probability * simulation.dt.days)):
+                # print "Falling proba: {0} x {1}".format(self.leaf.fall_probability , simulation.dt.days)
+                # if (boolean_event(self.leaf.fall_probability * simulation.dt.days)):
                 if (boolean_event(self.leaf.fall_probability)):
                     self.leaf.state = 'scar'
-            #elif simulation.events.leaf_forced_fall:
+            # elif simulation.events.leaf_forced_fall:
             #    self.leaf.state = 'scar'
             # aware that next if is not an elif
             if self.leaf.state == 'growing':
@@ -292,8 +257,8 @@ class metamer_data(object):
                 # area based on the function (.fset) rather than using the numpy array (Han, 04-2011)
                 if self.leaf.age < self.leaf.maturation:
                     self.leaf.compute_area_from_func(self.number, simulation.func_leaf_area)
-                #if self.leaf.age < self.leaf.maturation:
-                    #self.leaf.compute_area(self.number)
+                # if self.leaf.age < self.leaf.maturation:
+                    # self.leaf.compute_area(self.number)
                 self.leaf.compute_mass()
 
         # added by Han on 29-04-2011
@@ -307,11 +272,7 @@ class metamer_data(object):
         self.leaf_state = self.leaf.state
         self.leaf_area = self.leaf.area
 
-
         return additional_fruit
-
-
-
 
     def update_metamer_parameters(self, simulation, cambial=None):
         """update metamer parameters
@@ -340,32 +301,34 @@ class metamer_data(object):
             self.season_initial_heading = self.hlu.heading
             # if we create a new layer, then computation on previous one will
             # be redundant. Compute them once for all
-            second_moment_of_area = optimisation.second_moment_of_area_annular_section(self.layers[-1].radius,
-                self.layers[-1].thickness, self.layers[-1].reaction_wood) * self.wood._reaction_wood_inertia_coefficient
+            second_moment_of_area = optimisation.second_moment_of_area_annular_section(
+                self.layers[-1].radius,
+                self.layers[-1].thickness,
+                self.layers[-1].reaction_wood) * self.wood._reaction_wood_inertia_coefficient
             self.layers[-1].second_moment_of_area = second_moment_of_area
-            #cumulate the second moment
+            # cumulate the second moment
             self.total_second_moment_of_area += second_moment_of_area
-            l = cambial_layer(radius=self.radius)
-            self.layers.append(l)
-            self.nlayers+=1
+            layer = cambial_layer(radius=self.radius)
+            self.layers.append(layer)
+            self.nlayers += 1
 
-
-        #TEST if not the central layer
+        # TEST if not the central layer
         # TODO days or seconds ?
         if self.nlayers >= 2:
             r = optimisation.reaction_wood_target(self.hlu.up, self.hlu.heading, self.season_initial_heading)
             if r > self.layers[-1].reaction_wood:
-                self.layers[-1].reaction_wood += self.wood._reaction_wood_rate  * simulation.dt.days * (r - self.layers[-1].reaction_wood)
+                self.layers[-1].reaction_wood += self.wood._reaction_wood_rate * simulation.dt.days * (r - self.layers[-1].reaction_wood)
 
         # Growth of internode
         if (self.age < self.internode._elongation_period):
-            self.length += self.internode.growth_rate(self.zone) * simulation.dt.days #TODO this is in meters per day (merge to seconds ? )
+            self.length += self.internode.growth_rate(self.zone) * simulation.dt.days  # TODO this is in meters per day (merge to seconds ? )
 
-        #Updating second_moment_of_area
+        # Updating second_moment_of_area
         second_moment_of_area = self.total_second_moment_of_area + \
             optimisation.second_moment_of_area_circle(self.radius)
-        second_moment_of_area += optimisation.second_moment_of_area_annular_section(self.layers[-1].radius,
-                self.layers[-1].thickness, self.layers[-1].reaction_wood) * self.wood._reaction_wood_inertia_coefficient
+        second_moment_of_area += optimisation.second_moment_of_area_annular_section(
+            self.layers[-1].radius,
+            self.layers[-1].thickness, self.layers[-1].reaction_wood) * self.wood._reaction_wood_inertia_coefficient
 
         self.rigidity = second_moment_of_area * self.wood._youngs_modulus
 
@@ -389,15 +352,14 @@ class metamer_data(object):
         """
         self.cumulated_mass = constants.pi * self.radius * self.radius \
             * self.length * self.wood._density
-        self.cumulated_mass += self.leaf.mass+ self.fruit.mass
+        self.cumulated_mass += self.leaf.mass + self.fruit.mass
 
         if mr is not None:
             self.cumulated_mass += mr.cumulated_mass
         if mb is not None:
             self.cumulated_mass += mb.cumulated_mass
 
-
-    def calculate_rotation_velocity(self, simulation,  stake=True):
+    def calculate_rotation_velocity(self, simulation, stake=True):
         r"""Calculate the rotation velocity
 
         :param bool stake: (default is True)
@@ -429,7 +391,7 @@ class metamer_data(object):
             return None
 
         # Calculate the rotation velocity (Taylor-Hell, 2005)
-        self.acting_rotation = self.cumulated_torque/self.rigidity
+        self.acting_rotation = self.cumulated_torque / self.rigidity
 
         # Hypothesis: the shape memory is proportional to the mass
         # removed (inspired by Almeras. 2002)
@@ -440,7 +402,7 @@ class metamer_data(object):
                 delta_mass = (self.pre_harvest_mass - self.cumulated_mass) / self.pre_harvest_mass
             else:
                 delta_mass = 0
-            #delta_mass = 0.5
+            # delta_mass = 0.5
             self.rotation_memory = self.pre_harvest_rotation * delta_mass
 
         new_rotation_velocity = self.acting_rotation + self.rotation_memory
@@ -451,11 +413,9 @@ class metamer_data(object):
             (1.0 - simulation.rotation_convergence.step)
 
         self.rv_norm = self.rotation_velocity.normalize()
-        #print("Rotation velocity = {0} = new {1} + self {2}".format(self.rotation_velocity, new_rotation_velocity * simulation.rotation_convergence.step, self.rotation_velocity * (1.0-simulation.rotation_convergence.step)))
 
     def update_position(self, left_metamer_position=None):
         """Update position according to the left metamer position
-
 
         :param left_metamer_position: (default None)
 
@@ -468,7 +428,7 @@ class metamer_data(object):
             position = left metamer position + HLU.heading * length
 
         """
-        if left_metamer_position == None:
+        if left_metamer_position is None:
             self.position = self.hlu.heading * self.length
         else:
             self.position = left_metamer_position + self.hlu.heading \
@@ -484,28 +444,25 @@ class metamer_data(object):
         :returns phyllotactic_angle: float
         """
 
-        #Determining angle between heading and vertical
-        angle_to_vert = round(acos(dot(self.hlu.heading.normed(), Vector3(0,0,1))),2)
-        print("####### Angle from heading to vert : ", angle_to_vert)
+        # Determining angle between heading and vertical
+        angle_to_vert = round(acos(dot(self.hlu.heading.normed(), Vector3(0, 0, 1))), 2)
 
-        #Fixing the ratio of that angle to be used as branching angle depending on the pruning intensity
-        vert_ratio = 1 - ((1.0*self.number) / (self.number + self.farthest_apex))
-        print("####### Ratio from length : ", vert_ratio)
+        # Fixing the ratio of that angle to be used as branching angle depending on the pruning intensity
+        vert_ratio = 1 - ((1.0 * self.number) / (self.number + self.farthest_apex))
 
         new_branching_angle = vert_ratio * angle_to_vert
-        print("####### Angle chosen : ", new_branching_angle)
 
-        #Determining a possible phyllotactic angle that will divert the less from vertical
+        # Determining a possible phyllotactic angle that will divert the less from vertical
         angles = []
 
-        #for i in range(360):
-        #  hlu = rotate_frame_at_branch(self.hlu, new_branching_angle, i)
-        #  angles.append((acos(dot(hlu.heading.normed(), Vector3(0,0,1)))))
-        #return new_branching_angle, angles.index(min(angles))
+        # for i in range(360):
+        #   hlu = rotate_frame_at_branch(self.hlu, new_branching_angle, i)
+        #   angles.append((acos(dot(hlu.heading.normed(), Vector3(0,0,1)))))
+        # return new_branching_angle, angles.index(min(angles))
 
         for i in range(5):
             hlu = rotate_frame_at_branch(self.hlu, new_branching_angle, i * phylo_angle + self.phyllotactic_angle)
-            angles.append((acos(dot(hlu.heading.normed(), Vector3(0,0,1)))))
+            angles.append((acos(dot(hlu.heading.normed(), Vector3(0, 0, 1)))))
         return new_branching_angle, angles.index(min(angles)) * phylo_angle + self.phyllotactic_angle
 
 
@@ -534,39 +491,37 @@ def reaction_wood_target(up, heading, previous_heading):
     :param previous_heading: vector3
     :returns: reaction_wood (double)
     """
-    #multiply by gravity normalised
+
+    # multiply by gravity normalised
     cos_gh = Vector3(0.0, 0.0, 1.0) * heading
     cos_pu = previous_heading * up
     cos_ph = previous_heading * heading
 
-    if cos_pu*cos_ph >= 0.0:
+    if cos_pu * cos_ph >= 0.0:
         try:
-            inclination = acos(cos_ph/1.0001)
-        except:
+            inclination = acos(cos_ph / 1.0001)
+        except Exception:
             print('Problem with acos(cos_ph) where cos_ph=%f' % cos_ph)
             inclination = 0.
     else:
         try:
             inclination = -acos(cos_ph)
-        except:
+        except Exception:
             tol = 1e-6
             try:
-
-                inclination = -acos(cos_ph-tol)
-                ValueError('try again with tol set %s %s' % (cos_ph, cos_ph-1.))
-            except:
-                print(' cos+_pu=', cos_pu, ' cos_ph=', cos_ph,  'cosgh=', cos_gh)
-                print(cos_ph-1.)
+                inclination = -acos(cos_ph - tol)
+                ValueError('try again with tol set %s %s' % (cos_ph, cos_ph - 1.))
+            except Exception:
+                print('cos+_pu=', cos_pu, ' cos_ph=', cos_ph, 'cosgh=', cos_gh)
+                print(cos_ph - 1.)
                 raise ValueError('Problem with acos(cos_ph) where cos_ph=%f' % cos_ph)
 
-    percentage  = 0.1635 * (1.0 - cos_gh) - 0.1778 * inclination
+    percentage = 0.1635 * (1.0 - cos_gh) - 0.1778 * inclination
     r = constants.two_pi * percentage
-    #if r!=0:
-    #    print ' cos+_pu=', cos_pu, ' cos_ph=', cos_ph, ' incl=',inclination, ' percentage', percentage, 'r=', r
 
-    if (r < 0.0):
+    if r < 0.0:
         r = 0.0
-    elif (r > constants.pi):
+    elif r > constants.pi:
         r = constants.pi
 
     return r

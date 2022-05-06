@@ -1,42 +1,25 @@
-#!/usr/bin/env python
-#-*- coding: utf-8 -*-
-"""
-.. topic:: apex.py summary
-
-    Module dedicated to apices
-
-    :Code: mature
-    :Documentation: mature
-    :Author: Thomas Cokelaer <Thomas.Cokelaer@sophia.inria.fr>
-    :Usage: >>> from openalea.stocatree.apex import *
-    :Revision: $Id: fruit.py 8635 2010-04-14 08:48:47Z cokelaer $
-
-.. testsetup::
-
-    from openalea.stocatree.apex import *
-    a = apex_data()
-"""
-
 from ..frame import Frame
 
-__all__ = ['apex_data']
+apex_options = {
+    'terminal_expansion_rate': 0.00002,
+    'minimum_size': 0.00075,
+    'maximum_size': 0.006
+}
 
-apex_options = {'terminal_expansion_rate':0.00002,
-            'minimum_size':0.00075,
-            'maximum_size':0.006}
-
-markov_options = {'maximum_length':70,
-            'minimum_length':4}
+markov_options = {
+    'maximum_length': 70,
+    'minimum_length': 4
+}
 
 
-class apex_data(object):
+class ApexData:
     """An apex class to be used in stocatree
 
     :Usage:
 
     First, you need to create an instance of the apex
 
-    >>> a = apex_data()
+    >>> a = ApexData()
 
     There are several default parameters described in the constructor
     documentation. You can now access to the attributes such as the
@@ -78,9 +61,8 @@ class apex_data(object):
 
     """
 
-    #states = ['dormant', 'large', 'medium', 'small', 'floral', 'trunk',
-    #         'new_shoot']
-    #The content of "states" were changed by Han on 09-05-2012
+    # states = ['dormant', 'large', 'medium', 'small', 'floral', 'trunk', 'new_shoot']
+    # The content of "states" were changed by Han on 09-05-2012
     states = ['dormant', 'large', 'medium', 'small', 'floral', 'trunk',
               'new_shoot', 'sylleptic_small', 'sylleptic_medium', 'sylleptic_large']
 
@@ -119,7 +101,7 @@ class apex_data(object):
 
 
         """
-        self.sequence_position  = 0
+        self.sequence_position = 0
         self._observation = None
         self.set_observation(observation)
         self.parent_observation = 'new_shoot'
@@ -161,26 +143,26 @@ class apex_data(object):
 
         # Since only one tree is investigated at this stage, there is no need to
         # update this parameter:
-        self.parent_tree_id= 0
+        self.parent_tree_id = 0
 
-        #Added by Han on 29-05-2012
-        #The value will be set to be the same with the current year once a
-        #growth unit (sequence) is fully generated
-        #This is to avoid there are two growth units at the same year
+        # Added by Han on 29-05-2012
+        # The value will be set to be the same with the current year once a
+        # growth unit (sequence) is fully generated
+        # This is to avoid there are two growth units at the same year
         self.year = 1993
 
-        #Added by Han on 06-07-2012
-        #This is to avoid "1,2,3,4" growth units to be syllpetic at the first year
+        # Added by Han on 06-07-2012
+        # This is to avoid "1,2,3,4" growth units to be syllpetic at the first year
         self.sylleptic = sylleptic
 
-        #Flag to show that this apex was generated as a reaction to pruning
+        # Flag to show that this apex was generated as a reaction to pruning
         self.from_pruning = False
-        #Information related to pruning reaction
+        # Information related to pruning reaction
         self.rank = 0
         self.react_pos = 0
         self.closest_apex = 0
         self.farthest_apex = 0
-        #the cumulated sum of metamers sons
+        # the cumulated sum of metamers sons
         self.sons_nb = 0
 
     def set_observation(self, observation):
@@ -196,19 +178,19 @@ class apex_data(object):
 
         """
 
-        if observation in apex_data.states:
-            #if observation == 'sylleptic_small':
+        if observation in ApexData.states:
+            # if observation == 'sylleptic_small':
             #    self._observation = 'small'
-            #elif observation == 'sylleptic_medium':
+            # elif observation == 'sylleptic_medium':
             #    self._observation = 'medium'
-            #elif observation == 'sylleptic_large':
+            # elif observation == 'sylleptic_large':
             #    self._observation = 'large'
-            #else:
+            # else:
             #    self._observation = observation
             self._observation = observation
         else:
             raise ValueError("observation must be in %s , %s provided"
-                             % (apex_data.states, observation))
+                             % (ApexData.states, observation))
 
     def get_observation(self):
         """returns the current apex observation"""
@@ -218,35 +200,35 @@ class apex_data(object):
         """return observation corresponding to the current position"""
         index = self.sequence[self.sequence_position][1]
         if index == 0:
-            #self.sylleptic = False
+            # self.sylleptic = False
             return 'dormant'
         elif index == 1:
-            #self.sylleptic = False
+            # self.sylleptic = False
             return 'large'
         elif index == 2:
-            #self.sylleptic = False
+            # self.sylleptic = False
             return 'medium'
         elif index == 3:
-            #self.sylleptic = False
+            # self.sylleptic = False
             return 'small'
         elif index == 4:
-            #self.sylleptic = False
+            # self.sylleptic = False
             return 'floral'
-        #The following indexes were added by Han on 30-04-2012
+        # The following indexes were added by Han on 30-04-2012
         elif index == 5:
-            #self.sylleptic = True
+            # self.sylleptic = True
             return 'sylleptic_small'
-            #return 'small'
+            # return 'small'
         elif index == 6:
-            #self.sylleptic = True
+            # self.sylleptic = True
             return 'sylleptic_medium'
-            #return 'medium'
+            # return 'medium'
         elif index == 7:
-            #self.sylleptic = True
+            # self.sylleptic = True
             return 'sylleptic_large'
-            #return 'large'
+            # return 'large'
         else:
-            #should never reach this line, however old sequences may contain 9s
+            # should never reach this line, however old sequences may contain 9s
             return 'dormant'
 
     def max_terminal_radius_target(self):
@@ -275,19 +257,18 @@ class apex_data(object):
 
         """
         assert self.sequence_position >= self.sequence_minimum_length
-        res = self.minimum_size + self.radius_range * (self.sequence_position
-                    - self.sequence_minimum_length) / self.sequence_length_range
+        res = self.minimum_size + self.radius_range * (
+            self.sequence_position - self.sequence_minimum_length
+        ) / self.sequence_length_range
         self.target_radius = res
-
 
     def terminal_expansion(self, dt):
         self.radius = self.radius + self.terminal_expansion_rate * dt
         self.expansion_days_counter += dt
 
-    #Added by Han on 11-07-2012, to be used as a condition to control the first-year sylleptic growth from trunk
+    # Added by Han on 11-07-2012, to be used as a condition to control the first-year sylleptic growth from trunk
     def trunk_sylleptic(self):
         index = self.sequence[self.sequence_position][1]
-        print("===============================================================")
         if index == 0:
             return False
         elif index == 1:
@@ -298,14 +279,14 @@ class apex_data(object):
             return False
         elif index == 4:
             return False
-        #The following indexes were added by Han on 30-04-2012
+        # The following indexes were added by Han on 30-04-2012
         elif index == 5:
             return True
-            #return 'sylleptic_short'
+            # return 'sylleptic_short'
         elif index == 6:
             return True
-            #return 'sylleptic_medium'
+            # return 'sylleptic_medium'
         elif index == 7:
             return True
-            #return 'sylleptic_large'
-        #should never reach this line
+            # return 'sylleptic_large'
+        # should never reach this line

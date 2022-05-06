@@ -1,28 +1,4 @@
-#!/usr/bin/env python
-#-*- coding: utf-8 -*-
-"""
-.. topic:: growth_unit.py summary
-
-    A module dedicated to growth units
-
-    :Code: mature
-    :Documentation: mature
-    :Author: Thomas Cokelaer <Thomas.Cokelaer@sophia.inria.fr>
-    :Revision: $Id: fruit.py 8635 2010-04-14 08:48:47Z cokelaer $
-    :Usage: from openalea.stocatree.growth_unit import *
-
-.. testsetup::
-
-    from openalea.stocatree.growth_unit import *
-"""
-
-
-__all__ = [
-    'growth_unit_data'
-    ]
-
-
-class growth_unit_data(object):
+class GrowthUnitData:
     """A simple class for the growth unit data structure
 
     This class is used within the Lpy file only at the production level.
@@ -45,5 +21,5 @@ class growth_unit_data(object):
 
         """
         self.index = index
-        self.year =year
+        self.year = year
         self.inflorescence = inflorescence

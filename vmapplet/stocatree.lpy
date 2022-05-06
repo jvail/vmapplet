@@ -30,11 +30,11 @@ from vmapplet.organs.leaf import AppleLeaf
 from vmapplet.organs.fruit import AppleFruit
 from vmapplet.organs.wood import Wood
 from vmapplet.organs.internode import Internode
-from vmapplet.organs.apex import apex_data
+from vmapplet.organs.apex import ApexData
 from vmapplet.tools.simulation import SimulationStocatree
 from vmapplet.sequences import Markov, generate_sequence, terminal_fate
-from vmapplet.organs.metamer import metamer_data
-from vmapplet.organs.growth_unit import growth_unit_data
+from vmapplet.organs.metamer import MetamerData
+from vmapplet.organs.growth_unit import GrowthUnitData
 from vmapplet.structure_analysis import HiddenSemiMarkov, StatError
 from vmapplet.srandom import boolean_event
 from vmapplet.physics import rotate_frame_at_branch, rupture
@@ -662,7 +662,7 @@ axiom():
     temp.update(options.apex.__dict__)
     temp.update(options.markov.__dict__)
     apex_parameters = temp
-    a = apex_data(tree.initial_hlu, 'trunk', **apex_parameters)
+    a = ApexData(tree.initial_hlu, 'trunk', **apex_parameters)
     # produce  root() apex(a)
     produce apex(a)
 
@@ -850,7 +850,7 @@ apex(a):
       #This is to avoid the production of two growth units at the same axis
       #at the same year
       a.year = simulation.date.year
-      nproduce growth_unit(growth_unit_data(tree.growth_units, simulation.date.year, a.parent_observation == 'floral')) apex(a)
+      nproduce growth_unit(GrowthUnitData(tree.growth_units, simulation.date.year, a.parent_observation == 'floral')) apex(a)
     else:
         produce apex(a)
 #X:
@@ -881,7 +881,7 @@ metamer(m) < apex(a):
         ##(in parasuper_pc.py) instead of using the ini file.
         leaf_parameters = options.leaf.__dict__
         fruit_parameters = options.fruit.__dict__
-        mn = metamer_data(floral=flower, number=number, hlu=a.hlu,
+        mn = MetamerData(floral=flower, number=number, hlu=a.hlu,
           zone=a.sequence[a.sequence_position][0], observation=a.get_observation_from_sequence(),
                       parent_observation=a.parent_observation, parent_unit_id=a.parent_unit_id, parent_fbr_id=a.parent_fbr_id, parent_tree_id=a.parent_tree_id,
                       p_angle=(m.phyllotactic_angle + tree.phyllotactic_angle),
@@ -917,7 +917,7 @@ apex(a):
         ##(in parasuper_pc.py) instead of using the ini file.
         leaf_parameters = options.leaf.__dict__
         fruit_parameters = options.fruit.__dict__
-        m = metamer_data(floral=flower, number=1, hlu=a.hlu, zone=a.sequence[a.sequence_position][0], observation=a.get_observation_from_sequence(),
+        m = MetamerData(floral=flower, number=1, hlu=a.hlu, zone=a.sequence[a.sequence_position][0], observation=a.get_observation_from_sequence(),
                               parent_observation= a.parent_observation, parent_unit_id=a.parent_unit_id, parent_fbr_id=a.parent_fbr_id, parent_tree_id=a.parent_tree_id,
                               p_angle=(tree.phyllotactic_angle), b_angle=branching_angle, wood=wood, internode=internode,
                               fruit=AppleFruit(**fruit_parameters), leaf=AppleLeaf(**leaf_parameters))
@@ -954,7 +954,7 @@ metamer(m) > metamer(mr) apex(a):
         temp.update(options.apex.__dict__)
         temp.update(options.markov.__dict__)
         apex_parameters = temp
-        sylleptic_apex = apex_data(hlu, terminal_fate(simulation.date.year, 'floral'), **apex_parameters)
+        sylleptic_apex = ApexData(hlu, terminal_fate(simulation.date.year, 'floral'), **apex_parameters)
         sylleptic_apex.parent_observation = 'floral'
         if m.parent_fbr_id == 0:
             tree.first_branches +=1
@@ -986,7 +986,7 @@ metamer(m):
         temp.update(options.apex.__dict__)
         temp.update(options.markov.__dict__)
         apex_parameters = temp
-        a = apex_data(hlu, m.observation, **apex_parameters)
+        a = ApexData(hlu, m.observation, **apex_parameters)
         if m.parent_fbr_id == 0:
             tree.first_branches +=1
             #The parent_fbr_id ranges from 0 to tree.first_branches (rather than to tree.frist-branches-1)
