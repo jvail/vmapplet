@@ -1,0 +1,24 @@
+name: vmapplet-test
+channels:
+  - fredboudon
+  - conda-forge
+dependencies:
+  - jupyterlab
+  - jupyterlab_widgets
+  - toml
+  - matplotlib
+  - scipy
+  - boost
+  - boost-cpp
+  - cppyy
+  - cmake
+  - cxx-compiler
+  - openalea.lpy=3.8.2 # pgljupyter editor does not work with lpy>3.8
+  - openalea.mtg
+  - nodejs # for pgljupyter in case it is not available locally
+  - xlrd
+  - flake8
+  - pip
+  - pip:
+    - pgljupyter
+    - ..
