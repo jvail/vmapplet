@@ -1,7 +1,4 @@
 """
-
-
-
 defines trigonometric constants such as
 
 .. math::
@@ -12,5 +9,5 @@ defines trigonometric constants such as
 from scipy import pi
 
 quarter_pi = pi * 0.25
-half_pi    = pi * 0.5
-two_pi     = 2. * pi
+half_pi = pi * 0.5
+two_pi = 2. * pi

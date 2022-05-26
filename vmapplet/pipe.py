@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-#-*- coding: utf-8 -*-
 """
 .. topic:: pipe.py summary
 
@@ -9,11 +7,6 @@
     :Documentation: mature
     :Author: Thomas Cokelaer <Thomas.Cokelaer@sophia.inria.fr>
     :Revision: $Id$
-    :Usage: >>> from openalea.stocatree.pipe import *
-
-.. testsetup::
-
-    from openalea.stocatree.pipe import *
 """
 
 
@@ -43,8 +36,10 @@ def get_new_radius(ra, rb, exponent=2.49, previous_rt=-1):
     :return: :math:`r_t` the new radius
 
     """
-    exponent_invert = 1./exponent
+
+    exponent_invert = 1. / exponent
     rap = pow(ra, exponent)
     rbp = pow(rb, exponent)
-    newrt =  pow(rap+rbp, exponent_invert)
+    newrt = pow(rap + rbp, exponent_invert)
+
     return newrt

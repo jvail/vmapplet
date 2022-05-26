@@ -244,21 +244,16 @@ class MetamerData:
                 self.leaf.state = 'scar'
 
             if simulation.events.leaf_fall.active:
-                # print "Falling proba: {0} x {1}".format(self.leaf.fall_probability , simulation.dt.days)
-                # if (boolean_event(self.leaf.fall_probability * simulation.dt.days)):
                 if (boolean_event(self.leaf.fall_probability)):
                     self.leaf.state = 'scar'
-            # elif simulation.events.leaf_forced_fall:
-            #    self.leaf.state = 'scar'
-            # aware that next if is not an elif
+
             if self.leaf.state == 'growing':
                 # If the value of "maturation" needs to be manipulated for sensitivity
                 # analysis for instance, it would be easier to calculate the leaf
                 # area based on the function (.fset) rather than using the numpy array (Han, 04-2011)
                 if self.leaf.age < self.leaf.maturation:
                     self.leaf.compute_area_from_func(self.number, simulation.func_leaf_area)
-                # if self.leaf.age < self.leaf.maturation:
-                    # self.leaf.compute_area(self.number)
+
                 self.leaf.compute_mass()
 
         # added by Han on 29-04-2011
@@ -267,8 +262,9 @@ class MetamerData:
             self.ta_pgl = 0
             self.sa_pgl = 0
             self.star_pgl = 0
-        # Note that, in lpy code, the update_metamer_parameters() is used in advance of the organ_activity()
-        # Thus the self.leaf_state and the self.leaf_area should be updated here rather than in update_metamer_parameters()
+        # Note that, in lpy code, the update_metamer_parameters() is used in advance of the
+        # organ_activity(). Thus the self.leaf_state and the self.leaf_area should be updated
+        # here rather than in update_metamer_parameters()
         self.leaf_state = self.leaf.state
         self.leaf_area = self.leaf.area
 
@@ -402,7 +398,6 @@ class MetamerData:
                 delta_mass = (self.pre_harvest_mass - self.cumulated_mass) / self.pre_harvest_mass
             else:
                 delta_mass = 0
-            # delta_mass = 0.5
             self.rotation_memory = self.pre_harvest_rotation * delta_mass
 
         new_rotation_velocity = self.acting_rotation + self.rotation_memory
@@ -454,11 +449,6 @@ class MetamerData:
 
         # Determining a possible phyllotactic angle that will divert the less from vertical
         angles = []
-
-        # for i in range(360):
-        #   hlu = rotate_frame_at_branch(self.hlu, new_branching_angle, i)
-        #   angles.append((acos(dot(hlu.heading.normed(), Vector3(0,0,1)))))
-        # return new_branching_angle, angles.index(min(angles))
 
         for i in range(5):
             hlu = rotate_frame_at_branch(self.hlu, new_branching_angle, i * phylo_angle + self.phyllotactic_angle)

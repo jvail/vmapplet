@@ -35,7 +35,7 @@ stake = true
 # Select a specific trunk among the 4 trunk sequences available (starts at 0)
 select_trunk = 0
 # Enable/Disable the rotation calculations (mechanics)
-mechanics = false
+mechanics = true
 # render mode  may be bark, observations, zones, reaction_wood, year
 render_mode = 'bark'
 # should be an integer. This is the number of elements of the shapes (e.g., leaf)

@@ -13,8 +13,7 @@ class GrowthUnitData:
 
     """
     def __init__(self, index=0, year=0, inflorescence=False):
-        """Constructor
-
+        """
         :param index: the index of this growth unit (default is 0)
         :param year: default is 0
         :param inflorescence: default is False

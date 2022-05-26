@@ -11,11 +11,6 @@
     :Documentation: mature
     :Author: Thomas Cokelaer <Thomas.Cokelaer@sophia.inria.fr>
     :Revision: $Id$
-    :Usage: >>> from openalea.stocatree.sequences import *
-
-.. testsetup:: *
-
-    from openalea.stocatree.sequences import *
 """
 
 import random
@@ -30,23 +25,6 @@ from . import (
     srandom
 )
 
-
-
-
-__all__ = [
-    'DataTerminalFate',
-    'terminal_fate',
-    'Markov',
-    'generate_trunk',
-    '_non_parametric_distribution',
-    '_generate_random_draw_sequence',
-    'generate_floral_sequence',
-    'generate_short_sequence',
-    'generate_hsm_sequence',
-    'generate_bounded_hsm_sequence',
-    'generate_sequence',
-    'length_pool'
-]
 
 class Markov():
     """class to manage all the markov and hidden semi markov sequences
@@ -64,8 +42,7 @@ class Markov():
 
     """
     def __init__(self, maximum_length=70, minimum_length=4):
-        """**constructor**
-
+        """
         :param max_sequence_length: the maximum length of markov sequence (default is 100)
         :param max_length: the maximum length (default is 70)
         :param min_length: the minimum length (default is 4)
@@ -87,19 +64,19 @@ class Markov():
         assert maximum_length > minimum_length
         assert minimum_length > 0
 
-        self.max_sequence_length  =  100
-        self.maximum_length       =  maximum_length
-        self.minimum_length       =  minimum_length
-        self.hsm_medium           =  None
-        self.hsm_long             =  None
-        self.hsm_short            =  None
-        self.hsm_medium1          =  None
-        self.hsm_medium2          =  None
-        self.hsm_medium3          =  None
-        self.hsm_long1            =  None
-        self.hsm_long2            =  None
-        self.hsm_long3            =  None
-        self.hsm_long4            =  None
+        self.max_sequence_length = 100
+        self.maximum_length = maximum_length
+        self.minimum_length = minimum_length
+        self.hsm_medium = None
+        self.hsm_long = None
+        self.hsm_short = None
+        self.hsm_medium1 = None
+        self.hsm_medium2 = None
+        self.hsm_medium3 = None
+        self.hsm_long1 = None
+        self.hsm_long2 = None
+        self.hsm_long3 = None
+        self.hsm_long4 = None
 
 
 class DataTerminalFate(object):
@@ -139,32 +116,33 @@ class DataTerminalFate(object):
         (2000, 'small') : [0.000, 0.000, 0.350, 0.650],
         (2000, 'floral'): [0.000, 0.200, 0.800, 0.000],}
     """
-    #Modified by Costes on 30-05-2012
+    # Modified by Costes on 30-05-2012
     data = {
-        (1, 'large') : [0.500, 0.167, 0.000, 0.333],
+        (1, 'large'): [0.500, 0.167, 0.000, 0.333],
         (1, 'medium'): [0.000, 0.000, 0.000, 1.000],
-        (1, 'small') : [0.100, 0.100, 0.300, 0.500],
+        (1, 'small'): [0.100, 0.100, 0.300, 0.500],
         (1, 'floral'): [0.100, 0.300, 0.600, 0.000],
-        (2, 'large') : [0.246, 0.185, 0.000, 0.569],
+        (2, 'large'): [0.246, 0.185, 0.000, 0.569],
         (2, 'medium'): [0.016, 0.238, 0.032, 0.714],
-        (2, 'small') : [0.066, 0.067, 0.317, 0.550],
+        (2, 'small'): [0.066, 0.067, 0.317, 0.550],
         (2, 'floral'): [0.317, 0.250, 0.433, 0.000],
-        (3, 'large') : [0.351, 0.106, 0.010, 0.533],
+        (3, 'large'): [0.351, 0.106, 0.010, 0.533],
         (3, 'medium'): [0.123, 0.148, 0.063, 0.666],
-        (3, 'small') : [0.015, 0.094, 0.453, 0.438],
+        (3, 'small'): [0.015, 0.094, 0.453, 0.438],
         (3, 'floral'): [0.182, 0.249, 0.569, 0.000],
-        (4, 'large') : [0.213, 0.082, 0.000, 0.705],
+        (4, 'large'): [0.213, 0.082, 0.000, 0.705],
         (4, 'medium'): [0.027, 0.046, 0.016, 0.911],
-        (4, 'small') : [0.000, 0.024, 0.205, 0.771],
+        (4, 'small'): [0.000, 0.024, 0.205, 0.771],
         (4, 'floral'): [0.003, 0.413, 0.584, 0.000],
-        (5, 'large') : [0.100, 0.050, 0.000, 0.850],
+        (5, 'large'): [0.100, 0.050, 0.000, 0.850],
         (5, 'medium'): [0.000, 0.020, 0.130, 0.850],
-        (5, 'small') : [0.000, 0.000, 0.375, 0.625],
+        (5, 'small'): [0.000, 0.000, 0.375, 0.625],
         (5, 'floral'): [0.008, 0.325, 0.667, 0.000],
-        (6, 'large') : [0.000, 0.100, 0.000, 0.900],
+        (6, 'large'): [0.000, 0.100, 0.000, 0.900],
         (6, 'medium'): [0.000, 0.050, 0.050, 0.900],
-        (6, 'small') : [0.000, 0.000, 0.350, 0.650],
-        (6, 'floral'): [0.000, 0.200, 0.800, 0.000],}
+        (6, 'small'): [0.000, 0.000, 0.350, 0.650],
+        (6, 'floral'): [0.000, 0.200, 0.800, 0.000]
+    }
 
     def __init__(self):
         """Constructor description
@@ -177,7 +155,7 @@ class DataTerminalFate(object):
           4. 'floral'
 
         """
-        self.codes = {'large':0, 'medium':1, 'small':2, 'floral':3}
+        self.codes = {'large': 0, 'medium': 1, 'small': 2, 'floral': 3}
 
     def get_data_terminal_fate(self, year, code):
         """Returns the probabilities corresponding to a shoot code and a year
@@ -193,7 +171,7 @@ class DataTerminalFate(object):
         :returns: an array containing the probabilities to have a large, medium,
             small or floral sequence.
         """
-        #Terminal fate for year 0 and 1 are the same
+        # Terminal fate for year 0 and 1 are the same
         if year == 0:
             year = 1
         elif year < 0 or year > 6:
@@ -202,8 +180,7 @@ class DataTerminalFate(object):
         if code in self.codes.keys():
             return self.data[(year, code)]
         else:
-            raise ValueError('code must be in %s. %s provided' %
-                (self.codes.keys(), code))
+            raise ValueError('code must be in %s. %s provided' % (self.codes.keys(), code))
 
     def _check_probabilities(self):
         """Check that all arrays sum up to a probability of 1
@@ -216,7 +193,8 @@ class DataTerminalFate(object):
             >>> d._check_probabilities()
         """
         for data in self.data.values():
-            assert sum(data)==1
+            assert sum(data) == 1
+
 
 def terminal_fate(year, observation):
     """This function returns a type of metamer (large, short, ...)
@@ -236,8 +214,15 @@ def terminal_fate(year, observation):
     d = DataTerminalFate()
     data = d.get_data_terminal_fate(year, observation)
     index = _non_parametric_distribution(data)
-    codes = {1:'large', 2:'medium', 3:'small', 4:'floral'}
-    return codes[index]
+
+    if index == 1:
+        return 'large'
+    if index == 2:
+        return 'medium'
+    if index == 3:
+        return 'small'
+    if index == 4:
+        return 'floral'
 
 
 def _non_parametric_distribution(pdf):
@@ -252,7 +237,7 @@ def _non_parametric_distribution(pdf):
     .. note:: The sum of PDF must be 1 (checked by this function)
 
     """
-    assert sum(pdf)==1
+    assert sum(pdf) == 1
     target = srandom.random(1.0)
     cumulation = 0
     i = 0
@@ -261,6 +246,7 @@ def _non_parametric_distribution(pdf):
         cumulation += pdf[i]
         i += 1
     return i
+
 
 def generate_hsm_sequence(hsm, sequence_length=100):
     """Generate a Hidden Semi Markov Sequence given an input transition matrix
@@ -274,26 +260,19 @@ def generate_hsm_sequence(hsm, sequence_length=100):
 
     """
 
-    # Generate a Markov sequence
-    #from openalea.sequence_analysis._sequence_analysis import _SemiMarkovIterator, _HiddenSemiMarkov
-    #from openalea.sequence_analysis import HiddenSemiMarkov
-
-
-    iterator =  SemiMarkovIterator(hsm)
+    iterator = SemiMarkovIterator(hsm)
     simulation = iterator.simulation(sequence_length, True)
-
-    #processes = hsm.nb_output_process() + 1
-    #used to free memory in the c++ code
 
     i = 0
     sequence = []
     for i in range(0, sequence_length):
-        if simulation[0][i] == 6 :
+        if simulation[0][i] == 6:
             break
         sequence.append([simulation[0][i], simulation[1][i]])
 
     sequence.reverse()
     return sequence
+
 
 def generate_bounded_hsm_sequence(hsm, lower_bound, upper_bound):
     """Returns a bouded sequence
@@ -319,18 +298,21 @@ def generate_bounded_hsm_sequence(hsm, lower_bound, upper_bound):
         generate_bounded_hsm_sequence(markov.hsm_long,  15, 26);
 
     """
-    length = upper_bound + 1 # defines a max length for the sequence
+    length = upper_bound + 1  # defines a max length for the sequence
     count = 0
-    while length > upper_bound or length < lower_bound and count<1000:
+
+    while length > upper_bound or length < lower_bound and count < 1000:
         sequence = generate_hsm_sequence(hsm)
         length = len(sequence)
         count += 1
+
     if count == 1000:
         raise ValueError('to be done. max count limit reached in generate_bounded_hsm_sequence')
     if count > 100:
         print('Warning, count in generate_bounded_hsm_sequence was large :%d' % count)
-    #print 'Counts hsm = ', count
+
     return sequence
+
 
 def generate_short_sequence():
     """Generate a short sequence
@@ -346,13 +328,9 @@ def generate_short_sequence():
     .. todo:: check the relevance of this function
 
     """
-    seq =  []
-    seq.append([0, 0])
-    seq.append([0, 0])
-    seq.append([0, 0])
-    seq.append([0, 0])
 
-    return seq
+    return [[0, 0], [0, 0], [0, 0], [0, 0]]
+
 
 def generate_floral_sequence():
     """Generate a floral sequence
@@ -367,13 +345,8 @@ def generate_floral_sequence():
     .. todo:: do not known what this is doing what difference with short_sequence? Seems normal behaviour
     .. todo:: original code uses s(0,12) but was not used
     """
-    seq =  []
-    seq.append([0, 0])
-    seq.append([0, 0])
-    seq.append([0, 0])
-    seq.append([0, 0])
 
-    return seq
+    return [[0, 0], [0, 0], [0, 0], [0, 0]]
 
 
 def generate_trunk(trunk_seq='sequences.seq', select=0):
@@ -390,47 +363,37 @@ def generate_trunk(trunk_seq='sequences.seq', select=0):
     """
     select = select[0] if type(select) == list else select
     s = np.loadtxt(get_shared_data(trunk_seq), str)
-    # print('There are {0} sequences in the files'.format(len(s)))
+
     assert 0 <= select < len(s)
+
     seq = list(s[select])
-    sequence =[]
+    sequence = []
     for obs in seq:
         if obs == 9:
             break
         sequence.append([None, obs])
 
-    #TODO comment this to get same results as in MAppleT. ???
     sequence.reverse()
+
     return sequence
 
 
-
 def _generate_random_draw_sequence():
-    """an alternative to the long shoot  model of the 2nd year.
+    """an alternative to the long shoot  model of the 2nd year. Usually not used."""
 
-
-    Usually not used.
-
-
-    """
     max_length = 65
-    number     =  9
-
-
-    # an alternative to the long shoot
-    # model of the 2nd year. Usually not used.
-
+    number = 9
 
     second_year_branches = [
-        [0, 0, 0, 0, 0, 3, 2, 2, 1, 1,  0, 0, 0, 0, 2, 0, 1, 1, 4, 1,  4, 4, 4, 4, 4, 4, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0, 0, 0, 9,  9, 9, 9, 9, 9, 9, 9, 9, 9, 9,  9, 9, 9, 9, 9, 9, 9, 9, 9, 9,  9, 9, 9, 9, 9],
-        [0, 0, 0, 0, 4, 0, 0, 4, 0, 4,  0, 0, 4, 0, 0, 0, 0, 0, 0, 0,  9, 9, 9, 9, 9, 9, 9, 9, 9, 9,  9, 9, 9, 9, 9, 9, 9, 9, 9, 9,  9, 9, 9, 9, 9, 9, 9, 9, 9, 9,  9, 9, 9, 9, 9, 9, 9, 9, 9, 9,  9, 9, 9, 9, 9],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 3,  3, 0, 0, 0, 0, 0, 4, 4, 4, 4,  4, 3, 0, 4, 4, 4, 0, 4, 0, 4,  4, 0, 0, 4, 0, 0, 0, 2, 3, 0,  0, 0, 3, 3, 3, 3, 0, 0, 9, 9,  9, 9, 9, 9, 9, 9, 9, 9, 9, 9,  9, 9, 9, 9, 9],
-        [0, 0, 0, 0, 0, 0, 0, 3, 0, 3,  4, 0, 1, 4, 4, 1, 0, 4, 0, 1,  4, 4, 0, 4, 4, 4, 4, 4, 4, 0,  4, 4, 0, 0, 0, 1, 0, 4, 4, 4,  0, 4, 0, 4, 0, 0, 0, 3, 0, 1,  0, 0, 0, 9, 9, 9, 9, 9, 9, 9,  9, 9, 9, 9, 9],
-        [0, 0, 0, 0, 0, 0, 0, 2, 2, 4,  1, 1, 4, 3, 1, 0, 0, 4, 0, 0,  4, 0, 0, 4, 0, 4, 4, 4, 4, 4,  4, 4, 4, 0, 0, 3, 0, 0, 0, 9,  9, 9, 9, 9, 9, 9, 9, 9, 9, 9,  9, 9, 9, 9, 9, 9, 9, 9, 9, 9,  9, 9, 9, 9, 9],
-        [0, 0, 0, 0, 0, 0, 3, 2, 3, 0,  0, 3, 3, 0, 0, 0, 1, 2, 0, 1,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 4, 0, 4, 0, 0, 4,  0, 0, 0, 0, 0, 0, 9, 9, 9, 9,  9, 9, 9, 9, 9, 9, 9, 9, 9, 9,  9, 9, 9, 9, 9],
-        [0, 0, 0, 0, 4, 3, 2, 4, 4, 0,  2, 0, 3, 0, 2, 0, 0, 4, 0, 4,  4, 4, 4, 4, 0, 0, 0, 0, 0, 0,  0, 4, 0, 4, 4, 0, 0, 0, 0, 4,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  0, 3, 0, 2, 3, 0, 0, 0, 3, 2,  0, 0, 9, 9, 9],
-        [0, 0, 0, 0, 1, 4, 0, 4, 0, 3,  0, 0, 1, 3, 2, 0, 0, 0, 0, 0,  0, 0, 4, 0, 0, 0, 3, 0, 0, 1,  1, 0, 0, 3, 4, 0, 4, 0, 0, 4,  0, 4, 0, 0, 0, 0, 0, 1, 0, 3,  0, 1, 0, 0, 0, 0, 1, 9, 9, 9,  9, 9, 9, 9, 9],
-        [0, 0, 0, 0, 0, 3, 0, 3, 3, 0,  3, 0, 0, 0, 0, 0, 0, 0, 3, 0,  1, 0, 0, 4, 0, 4, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  0, 4, 0, 0, 1, 0, 0, 1, 1, 1,  1, 9, 9, 9, 9, 9, 9, 9, 9, 9,  9, 9, 9, 9, 9]
+        [0, 0, 0, 0, 0, 3, 2, 2, 1, 1, 0, 0, 0, 0, 2, 0, 1, 1, 4, 1, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
+        [0, 0, 0, 0, 4, 0, 0, 4, 0, 4, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 3, 0, 4, 4, 4, 0, 4, 0, 4, 4, 0, 0, 4, 0, 0, 0, 2, 3, 0, 0, 0, 3, 3, 3, 3, 0, 0, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
+        [0, 0, 0, 0, 0, 0, 0, 3, 0, 3, 4, 0, 1, 4, 4, 1, 0, 4, 0, 1, 4, 4, 0, 4, 4, 4, 4, 4, 4, 0, 4, 4, 0, 0, 0, 1, 0, 4, 4, 4, 0, 4, 0, 4, 0, 0, 0, 3, 0, 1, 0, 0, 0, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
+        [0, 0, 0, 0, 0, 0, 0, 2, 2, 4, 1, 1, 4, 3, 1, 0, 0, 4, 0, 0, 4, 0, 0, 4, 0, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 3, 0, 0, 0, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
+        [0, 0, 0, 0, 0, 0, 3, 2, 3, 0, 0, 3, 3, 0, 0, 0, 1, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 4, 0, 0, 4, 0, 0, 0, 0, 0, 0, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
+        [0, 0, 0, 0, 4, 3, 2, 4, 4, 0, 2, 0, 3, 0, 2, 0, 0, 4, 0, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 4, 0, 4, 4, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 2, 3, 0, 0, 0, 3, 2, 0, 0, 9, 9, 9],
+        [0, 0, 0, 0, 1, 4, 0, 4, 0, 3, 0, 0, 1, 3, 2, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 3, 0, 0, 1, 1, 0, 0, 3, 4, 0, 4, 0, 0, 4, 0, 4, 0, 0, 0, 0, 0, 1, 0, 3, 0, 1, 0, 0, 0, 0, 1, 9, 9, 9, 9, 9, 9, 9, 9],
+        [0, 0, 0, 0, 0, 3, 0, 3, 3, 0, 3, 0, 0, 0, 0, 0, 0, 0, 3, 0, 1, 0, 0, 4, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 1, 0, 0, 1, 1, 1, 1, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9]
     ]
 
     select_branch = srandom.random(number)
@@ -439,19 +402,13 @@ def _generate_random_draw_sequence():
     for i in range(0, max_length):
         if second_year_branches[select_branch][i] == 9:
             break
-        sequence.append([None,  second_year_branches[select_branch][i]])
-
+        sequence.append([None, second_year_branches[select_branch][i]])
 
     sequence.reverse()
 
     return sequence
 
 
-
-
-
-#// Generation of sequences from Markov chains, based directly on the work
-#// of Michael Renton
 def generate_sequence(obs, markov=None, year=0, second_year_draws=False,
                       trunk_seq='sequences.seq', select_trunk=0):
     """Generation of sequences from Markov chains, based directly on the work
@@ -477,11 +434,12 @@ def generate_sequence(obs, markov=None, year=0, second_year_draws=False,
 
     :returns: a random sequence
     """
-    #This fix the c++ seed at each call with a random number from the uniform law in python were the seed was also fixed
-    #Therefore the successive seeds used in c++ are fixed for a given python seed allowing to reproduce trees
-    srand(int(random.uniform(0,1e6)))
+    # This fix the c++ seed at each call with a random number from the uniform law in python
+    # were the seed was also fixed. Therefore the successive seeds used in c++ are fixed for
+    # a given python seed allowing to reproduce trees.
+    srand(int(random.uniform(0, 1e6)))
 
-    #The "sylleptic"s to the conditions as following were added by Han on 30-04-2012
+    # The "sylleptic"s to the conditions as following were added by Han on 30-04-2012
     if obs == 'trunk':
         return generate_trunk(trunk_seq=trunk_seq, select=select_trunk)
     elif obs == 'small' or obs == 'sylleptic_short':
@@ -489,9 +447,9 @@ def generate_sequence(obs, markov=None, year=0, second_year_draws=False,
     elif obs == 'floral':
         return generate_floral_sequence()
     elif obs == 'medium' or obs == 'sylleptic_medium':
-        return generate_bounded_hsm_sequence(markov.hsm_medium,  5, 15)
+        return generate_bounded_hsm_sequence(markov.hsm_medium, 5, 15)
     elif obs == 'large' or obs == 'sylleptic_large':
-        if (second_year_draws and year== 1):
+        if (second_year_draws and year == 1):
             return _generate_random_draw_sequence()
         else:
             res = length_pool(year)
@@ -505,52 +463,51 @@ def generate_sequence(obs, markov=None, year=0, second_year_draws=False,
     else:
         raise("ERROR: A bad sequence observation (%s) was passed to generate_sequence().\n" % obs)
 
-def generate_pruned_sequence(obs, react_pos, rank, closest_apex, farthest_apex, sons_nb, markov=None, year=0 ):
-    #The pruned length is assimilated to the distance to the farthest apex
 
-    #obs is the shoot type of the prunned shoot
-    #react_pos is the position of the reacting apex from the cuting point [0,2]
-    #year is the year pruned shoot creation - start date year
+def generate_pruned_sequence(obs, react_pos, rank, closest_apex, farthest_apex, sons_nb, markov=None, year=0):
+    """The pruned length is assimilated to the distance to the farthest apex
 
-    #Determining the case of pruning reaction for the 3 react-pos
-    # A : Succession - Succession - lower Cat
-    # B : Reiteration - Succession - lower Cat
-    # C : Reiteration - Reiteration - Succession
+    obs is the shoot type of the prunned shoot
+    react_pos is the position of the reacting apex from the cuting point [0,2]
+    year is the year pruned shoot creation - start date year
+
+    Determining the case of pruning reaction for the 3 react-pos
+     A : Succession - Succession - lower Cat
+     B : Reiteration - Succession - lower Cat
+     C : Reiteration - Reiteration - Succession
 
 
-    #Case of pruning a shoot w/o branching
-    #Type of shoot is generated according to the pruned length
+    Case of pruning a shoot w/o branching
+    Type of shoot is generated according to the pruned length
+    """
+
     if closest_apex == farthest_apex:
-        #ratio of pruned over total length
-        pruned_ratio = 1.0*farthest_apex / (rank + farthest_apex)
+        # ratio of pruned over total length
+        pruned_ratio = 1.0 * farthest_apex / (rank + farthest_apex)
         if pruned_ratio < 0.25:
-            #case A
-            newobs = shoot_type_react(year,obs,'A', react_pos)
+            case = 'A'
         elif pruned_ratio < 0.75:
-            #case B
-            newobs = shoot_type_react(year,obs,'B', react_pos)
+            case = 'B'
         else:
-            #Case C
-            newobs = shoot_type_react(year,obs,'C', react_pos)
-
-    #Case of pruning a shoot with branching
-    #Then depending on the pruned length and biomass represented by the sons_nb,
+            case = 'C'
+        new_obs = shoot_type_react(year, obs, case, react_pos)
     else:
-        #ratio of total biomass(sons_nb) over pruned length(farthest_apex)
-        bio_ratio = 1.0*sons_nb / farthest_apex
+        # Case of pruning a shoot with branching. Then depending on the pruned length
+        # and biomass represented by the sons_nb.
+        # ratio of total biomass(sons_nb) over pruned length(farthest_apex)
+        bio_ratio = 1.0 * sons_nb / farthest_apex
         if bio_ratio < 2:
-            #case A
-            newobs = shoot_type_react(year,obs,'A', react_pos)
+            case = 'A'
         if bio_ratio < 3:
-            #case B
-            newobs = shoot_type_react(year,obs,'B', react_pos)
+            case = 'B'
         else:
-            #case C
-            newobs = shoot_type_react(year,obs,'C', react_pos)
+            case = 'C'
+
+        new_obs = shoot_type_react(year, obs, case, react_pos)
 
     hsm_react_long, hsm_react_medium = pruned_hsmc(year, markov)
 
-    if newobs == 'trunk' or newobs == 'large' or newobs == 'sylleptic_large':
+    if new_obs == 'trunk' or new_obs == 'large' or new_obs == 'sylleptic_large':
         if farthest_apex > 30:
             return generate_bounded_hsm_sequence(hsm_react_long, 41, markov.maximum_length)
         elif farthest_apex > 20:
@@ -558,19 +515,20 @@ def generate_pruned_sequence(obs, react_pos, rank, closest_apex, farthest_apex, 
         elif farthest_apex > 8:
             return generate_bounded_hsm_sequence(hsm_react_long, 15, 26)
         else:
-            return generate_bounded_hsm_sequence(hsm_react_medium,  5, 15)
+            return generate_bounded_hsm_sequence(hsm_react_medium, 5, 15)
 
-    elif newobs == 'medium'or newobs == 'sylleptic_medium':
+    elif new_obs == 'medium' or new_obs == 'sylleptic_medium':
         if farthest_apex > 5:
-            return generate_bounded_hsm_sequence(hsm_react_long,  15, 26)
+            return generate_bounded_hsm_sequence(hsm_react_long, 15, 26)
         else:
-            return generate_bounded_hsm_sequence(hsm_react_medium,  5, 15)
+            return generate_bounded_hsm_sequence(hsm_react_medium, 5, 15)
 
-    elif newobs == 'small' or newobs == 'sylleptic_short':
+    elif new_obs == 'small' or new_obs == 'sylleptic_short':
         return generate_short_sequence()
 
-    elif newobs == 'floral':
+    elif new_obs == 'floral':
         return generate_floral_sequence()
+
 
 def shoot_type_react(year, pruned_shoot_type, pruning_case, react_pos):
 
@@ -582,7 +540,7 @@ def shoot_type_react(year, pruned_shoot_type, pruning_case, react_pos):
     else:
         reiteration = pruned_shoot_type
         succession = terminal_fate(year, pruned_shoot_type)
-        lower_cat = terminal_fate(year,terminal_fate(year, pruned_shoot_type))
+        lower_cat = terminal_fate(year, terminal_fate(year, pruned_shoot_type))
 
     if react_pos == 0:
         if pruning_case == 'A':
@@ -607,91 +565,33 @@ def shoot_type_react(year, pruned_shoot_type, pruning_case, react_pos):
             return lower_cat
 
 
-"""
-    if closest_apex == farthest_apex:
-      if obs == 'trunk' or obs == 'large' or obs == 'sylleptic_large':
-        #In case of pruned trunk, a large shoot will be generated
-        if farthest_apex > 35:
-          return generate_bounded_hsm_sequence(markov.hsm_long, 41, markov.maximum_length)
-        elif farthest_apex > 25:
-          return generate_bounded_hsm_sequence(markov.hsm_long, 26, 41)
-        elif farthest_apex > 10:
-          return generate_bounded_hsm_sequence(markov.hsm_long, 15, 26)
-        else:
-          return generate_bounded_hsm_sequence(markov.hsm_medium,  5, 15);
-      elif obs == 'medium'or obs == 'sylleptic_medium':
-        if farthest_apex > 5:
-          return generate_bounded_hsm_sequence(markov.hsm_medium,  5, 15);
-        else:
-          return generate_short_sequence()
-      elif obs == 'small' or obs == 'sylleptic_short':
-        return generate_short_sequence()
-      elif obs == 'floral':
-        return generate_floral_sequence()
-
-    #Case of pruning a shoot with branching
-    #Then depending on the pruned length and biomass represented by the sons_nb,
-    #shoot type may be upgraded or vigor increased by using previous year of HSMC
-    else:
-      print("######## Pruning reaction from shoot with branching \n \
-            closest Apex: {0} - Farthest Apex: {1} - Sons nb: {2}".format(closest_apex, farthest_apex, sons_nb))
-
-      if sons_nb >= 2*farthest_apex:
-        hsm_react_long, hsm_react_medium = pruned_hsmc(year, markov)
-      else:
-        hsm_react_long = markov.hsm_long
-        hsm_react_medium = markov.hsm_medium
-
-
-      if obs == 'trunk' or obs == 'large' or obs == 'sylleptic_large':
-        if farthest_apex > 30:
-          return generate_bounded_hsm_sequence(hsm_react_long, 41, markov.maximum_length)
-        elif farthest_apex > 20:
-          return generate_bounded_hsm_sequence(hsm_react_long, 26, 41)
-        elif farthest_apex > 8:
-          return generate_bounded_hsm_sequence(hsm_react_long, 15, 26)
-        else:
-          return generate_bounded_hsm_sequence(hsm_react_medium,  5, 15);
-      elif obs == 'medium'or obs == 'sylleptic_medium':
-        if farthest_apex > 5:
-          return generate_bounded_hsm_sequence(hsm_react_long,  15, 26);
-        else:
-          return generate_bounded_hsm_sequence(hsm_react_medium,  5, 15);
-      elif obs == 'small' or obs == 'sylleptic_short':
-        return generate_short_sequence()
-      elif obs == 'floral':
-        return generate_floral_sequence()
-"""
-
 def pruned_hsmc(year, markov):
     """
     Return a long and a medium hsmc model from the year before the current one
     """
 
-    if year in [0,1]:
+    if year in [0, 1]:
         hsmc_medium = markov.hsm_medium1
-        hsmc_long   = markov.hsm_long1
+        hsmc_long = markov.hsm_long1
     elif year == 2:
         hsmc_medium = markov.hsm_medium2
-        hsmc_long   = markov.hsm_long2
+        hsmc_long = markov.hsm_long2
     elif year == 3:
         hsmc_medium = markov.hsm_medium3
-        hsmc_long   = markov.hsm_long3
+        hsmc_long = markov.hsm_long3
     else:
         hsmc_medium = markov.hsm_medium4
-        hsmc_long   = markov.hsm_long4
+        hsmc_long = markov.hsm_long4
 
     return hsmc_long, hsmc_medium
 
 
-
-    #if the trunk was cut far enough from the top, generate the longest possible shoot, otherwise, depending on the pruned length, i.e. farthest apex
-
 def length_pool(year):
     """Returns a random number according to `year`
-
-    year should come from simulation.year
+    If the trunk was cut far enough from the top, generate the longest possible shoot, otherwise,
+    depending on the pruned length, i.e. farthest apex. year should come from simulation.year
     """
+
     pool_1995 = [0.111, 0.222, 0.667]
     pool_1996 = [0.538, 0.346, 0.116]
     pool_1997 = [0.830, 0.170, 0.000]

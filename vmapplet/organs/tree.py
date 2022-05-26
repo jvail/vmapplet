@@ -54,12 +54,7 @@ class Tree:
         self.phyllotactic_angle = phyllotactic_angle / 180.0 * pi
         self.branching_angle = branching_angle / 180.0 * pi
         self.floral_branching_angle = floral_angle / 180.0 * pi
-        # the original mappelt code the initial hlu frame as follows
-        # self.initial_hlu  = Frame(Vector3( 0.0, 1.0, 0.0), Vector3( 0.0, 0.0, 1.0), Vector3(-1.0, 0.0, 0.0)); #
-        # this one seems to work, which seems logival since HLU when the tree starts corresponds to zxy or zyx.
         self.initial_hlu = Frame(Vector3(0.0, 0.0, 1.0), Vector3(0.0, 1.0, 0.0), Vector3(1., 0.0, 0.))
-        # the original one from mapplet leads to trunk being horizontal
-        # self.initial_hlu                     = Frame(Vector3( 0.0, 1.0, 0.0), Vector3( 0.0, 0.0, 1.0), Vector3(-1., 0.0, 0.));
         self.spur_death_probability = spur_death_probability
         self.inflorescence_death_probability = inflorescence_death_probability
         self.preformed_leaves = preformed_leaves
@@ -68,12 +63,9 @@ class Tree:
         self.trunk_radius = 0.0  # in m
         self.trunk_cross_sectional_area = 0    # cm**2
         self.fruit_load = 0.  # 1/m**2
-        # self.end_terminal_expansion          = convert_to_day(11, 1);
         # Count the number of growth units (note that the parent_unit_id starts from 0):
-        # Commented by Han on 02-05-2011
         self.growth_units = 0
         # Count the number of first-order branches (note that the parent_branch_id starts from 0)
-        # Added by Han on 02-05-2011
         self.first_branches = 0
         self.tropism = Vector3(0.0, 0.0, tropism)  # same as in N original mapplet
         self.fruits = 0

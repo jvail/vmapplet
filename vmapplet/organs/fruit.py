@@ -17,26 +17,16 @@ class Fruit:
     A fruit is defined by an **age**, a **mass** and a **state** that may be
     in ['flower', 'no_flower', 'fruit_scar', 'fruit'].
 
-
     There is a setter/getter for the state.
 
     There is a compulsary method named :meth:`compute_mass`. Derived classes must
     implement this method.
 
-    >>> fruit = Fruit()
-    >>> fruit.state
-    'flower'
-    >>> fruit.age
-    0
-    >>> fruit.mass
-    0.0
-
     """
     states = ['flower', 'no_flower', 'fruit_scar', 'fruit']
 
     def __init__(self, state='flower'):
-        """**Constructor**
-
+        """
         :param str state: a valid fruit state (default is flower)
 
         The :attr:`age` and :attr:`mass` attributes are set to zero when new
@@ -44,6 +34,7 @@ class Fruit:
 
         .. todo:: make age and  mass real attributes
         """
+
         self.age = 0
         self._state = state
         self.mass = 0.
@@ -76,7 +67,6 @@ class AppleFruit(Fruit):
     :class:`~openalea.stocatree.fruit.Fruit` and specialises
     the :meth:`compute_mass` method.
 
-
     >>> fruit = AppleFruit(max_age=100., flower_duration=12.)
     >>> fruit.state
     'flower'
@@ -91,8 +81,7 @@ class AppleFruit(Fruit):
     """
 
     def __init__(self, flower_duration=10., max_relative_growth_rate=0.167, lost_time=28, max_age=147, probability=0.3, max_absolute_growth_rate=.0018):
-        """**Construtor**
-
+        """
         Inherits :meth:`get_state`, :meth:`set_state` from :class:`Fruit` class.
         The method :meth:`compute_mass` is redefined.
 

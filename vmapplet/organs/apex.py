@@ -61,8 +61,6 @@ class ApexData:
 
     """
 
-    # states = ['dormant', 'large', 'medium', 'small', 'floral', 'trunk', 'new_shoot']
-    # The content of "states" were changed by Han on 09-05-2012
     states = ['dormant', 'large', 'medium', 'small', 'floral', 'trunk',
               'new_shoot', 'sylleptic_small', 'sylleptic_medium', 'sylleptic_large']
 
@@ -114,7 +112,6 @@ class ApexData:
 
         self.radius = 0.
         self.target_radius = 0.
-        # The expansion_period attribute was added by Han on 14-04-2011
         self.expansion_period = expansion_period
         self.expansion_days_counter = 0
 
@@ -179,14 +176,6 @@ class ApexData:
         """
 
         if observation in ApexData.states:
-            # if observation == 'sylleptic_small':
-            #    self._observation = 'small'
-            # elif observation == 'sylleptic_medium':
-            #    self._observation = 'medium'
-            # elif observation == 'sylleptic_large':
-            #    self._observation = 'large'
-            # else:
-            #    self._observation = observation
             self._observation = observation
         else:
             raise ValueError("observation must be in %s , %s provided"
@@ -200,33 +189,22 @@ class ApexData:
         """return observation corresponding to the current position"""
         index = self.sequence[self.sequence_position][1]
         if index == 0:
-            # self.sylleptic = False
             return 'dormant'
         elif index == 1:
-            # self.sylleptic = False
             return 'large'
         elif index == 2:
-            # self.sylleptic = False
             return 'medium'
         elif index == 3:
-            # self.sylleptic = False
             return 'small'
         elif index == 4:
-            # self.sylleptic = False
             return 'floral'
         # The following indexes were added by Han on 30-04-2012
         elif index == 5:
-            # self.sylleptic = True
             return 'sylleptic_small'
-            # return 'small'
         elif index == 6:
-            # self.sylleptic = True
             return 'sylleptic_medium'
-            # return 'medium'
         elif index == 7:
-            # self.sylleptic = True
             return 'sylleptic_large'
-            # return 'large'
         else:
             # should never reach this line, however old sequences may contain 9s
             return 'dormant'
@@ -282,11 +260,9 @@ class ApexData:
         # The following indexes were added by Han on 30-04-2012
         elif index == 5:
             return True
-            # return 'sylleptic_short'
         elif index == 6:
             return True
-            # return 'sylleptic_medium'
         elif index == 7:
             return True
-            # return 'sylleptic_large'
-        # should never reach this line
+
+        raise ValueError("should never reach this line")
