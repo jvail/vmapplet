@@ -21,4 +21,4 @@ dependencies:
   - pip
   - pip:
     - pgljupyter
-    - ..
+    - -e ..
