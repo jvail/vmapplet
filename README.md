@@ -2,6 +2,8 @@
 
 MAppleT sources and openalea dependencies copied and modified are from openalea/incubator.
 
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jvail/vmapplet-test/master)
+
 ## Install
 
 Only tested on debian 10.
