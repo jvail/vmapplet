@@ -40,7 +40,7 @@ from vmapplet.srandom import boolean_event
 from vmapplet.physics import rotate_frame_at_branch, rupture
 from vmapplet.tools.surface import *
 from vmapplet.tools.data_process import Group, Statistics
-from vmapplet.temperature_effects import TpDate
+from vmapplet.temperature_effects import TemperatureDate
 from vmapplet.tools.csv import ExprecCSV
 from vmapplet.tools.rw_tools import ensureLocalDir, Recorder
 from vmapplet.tools.file_tools import Cp_Lstring
@@ -67,65 +67,23 @@ options.tree.phyllotactic_angle = phyllotactic_angle
 
 extern (fruit_radius_per_kilo = 1.)
 
-#def pprint(*args):
-#  s=' '.join(str(arg) for arg in args)
-#  print s[:100]+'\n'
+gravity = Vector3(0.0, 0.0, -9.81)
 
-gravity = Vector3(0.0, 0.0, -9.81);  #// in m s^-2 original mappleT
-
-# First, read the configuration file
-
-# This was changed by Han on 08-12-2011, to allow setting parameters before
-# running lsystem
-# options = None
-
-#Added by Han in May 2011
-#This is to reset the parameter values in options (based on stocatree.ini) with values assigned in Sensitivity_Parameters.ini
-# ini_reset = ConfigParams(get_shared_data('Sensitivity_Parameters.ini'))
-# for obj in ini_reset:
-#     if obj != "config":
-#         #If the object is also in options
-#         if hasattr(options,obj):
-#             #Get the value of obj (which is also an object)
-#             op_obj = getattr(options,obj)
-#             for attr in ini_reset[obj]:
-#                 if hasattr(op_obj,attr):
-#                     #Get parameter value of attr from obj
-#                     pv = getattr(ini_reset[obj],attr)
-#                     #Set attr in op_obj with the same value as in obj
-#                     setattr(op_obj,attr,pv)
-#                     setattr(options,obj,op_obj)
-
-#Modified by Han on 12-12-2011 with "pararun" option considered
 if options.general.pararun == True:
     output_directory = options.general.para_dir
 else:
-    #Added by Han in November 2010
     if options.general.batchmode == True:
-      #define the directory of the files for counting experiments and for storing output results in batchmode
-      #output_directory = "Batchmode_ExpCounters&Results/"
       output_directory = options.general.batch_dir
     else:
       output_directory = "Singlemode_ExpCounters&Results/"
-      #output_directory = options.general.single_dir
 
 ensureLocalDir(output_directory)
-# print(output_directory)
-
-#r = Recorder("ParallelResults/" + "current_exp.h")
-#r.clear()
-#lock = Filelock("ParallelResults/" + "current_exp.h")
-#lock.release()
-
-# Then, define a data structure to store outputs such as MTG, counts, sequences and so on
-# data = Data(options=options, revision=__revision__)
 
 # Initialise the simulation
 simulation = SimulationStocatree(dt=options.general.time_step,
   starting_date=int(options.general.starting_year),
   ending_date=options.general.end_year)
 
-# fixed with https://github.com/openalea-incubator/MAppleT/blob/master/share/data/MappleT_Synthetic.lpy
 data = Data(options=options, init_date=simulation.date, directory=output_directory)
 
 # Read PGLshape surfaces
@@ -135,7 +93,7 @@ ground_surface = groundSurface(stride, stride)
 petal_surface = petalSurface(stride, stride)
 
 # init markov and tree instances
-markov          = Markov(**options.markov)
+markov = Markov(**options.markov)
 markov.hsm_96_medium = HiddenSemiMarkov.ascii_read(StatError(), get_shared_data('fmodel_fuji_5_15_y3_96.txt'))
 markov.hsm_97_medium = HiddenSemiMarkov.ascii_read(StatError(), get_shared_data('fmodel_fuji_5_15_y4_97.txt'))
 markov.hsm_98_medium = HiddenSemiMarkov.ascii_read(StatError(), get_shared_data('fmodel_fuji_5_15_y5_98.txt'))
@@ -146,23 +104,13 @@ markov.hsm_98_long = HiddenSemiMarkov.ascii_read(StatError(), get_shared_data('f
 
 # The following objects (tree, wood, internode, apex_parameters, leaf, fruit
 # are used to store the user parameters and are used by the metamer_data
-# class to create new metamers.
-# tree is unique throughout the simulation, so only one instance is used
-# life time of a leaf
-tree            = Tree(**options.tree)
+# class to create new metamers. Tree is unique throughout the simulation, so
+# only one instance is used.
 # wood and internode are unique as well isnce they only contain parameters
-wood            = Wood(**options.wood)
-internode       = Internode(**options.internode)
-
-#!!! apices and leaves are specific to a metamer later on a deepcopy is used.
-
-##The following lines were moved to Start() by Han on 01-03-2012
-#temp = {}
-#temp.update(options.apex)
-#temp.update(options.markov)
-#apex_parameters = temp
-#leaf_parameters = options.leaf
-#fruit_parameters = options.fruit
+# apices and leaves are specific to a metamer later on a deepcopy is used
+tree = Tree(**options.tree)
+wood = Wood(**options.wood)
+internode = Internode(**options.internode)
 
 # setup the colors once for all
 colors = Colors()
@@ -179,24 +127,15 @@ interception_year = simulation.ending_date.year
 interception_month = simulation.ending_date.month
 interception_day = simulation.ending_date.day
 
-#Here "itr_stp" is a counter to help in determining which step the light interception should occur at.
-#Note that there are eight steps for using all the four l-system groups each time and there is no need
-#to have the light interception at each step.
+#Here "itr_stp" is a counter to help in determining which step the light
+# interception should occur at. Note that there are eight steps for using
+# all the four l-system groups each time and there is no need to have the
+# light interception at each step.
 interception_step = 7
 itr_stp = 0
 
-# This function is used to check the day for light interception: if it is the time, return True; otherwise False
-def Interception_Day():
-  interc = simulation.date.month==interception_month and simulation.date.day==interception_day
-  #interc = simulation.date.year == interception_year and simulation.date.month==interception_month and simulation.date.day==interception_day
-  #interc = simulation.date.year == simulation.ending_date.year and simulation.date.month==interception_month and simulation.date.day==interception_day
-  return interc
-
-###################################
-# DONT CHANGE ANYTHING HERE BELOW #
-###################################
-
-#define the group enumerate here 0 used for rendering. !! physics and update_parameters inverse on purpose
+# define the group enumerate here 0 used for rendering.
+# physics and update_parameters inverse on purpose
 initialisation    = 0
 update_parameters = 1
 update_structure  = 4
@@ -214,12 +153,8 @@ numerical_resolution_counter = 0
 
 global norm
 
-global track_month  #used to display month as simulation advance for tracking purpose
-track_month = 0
-
-#current_experiment = 0
 current_experiment = options.stocatree.select_trunk
-#Modified by Han on 12-12-2011 with "pararun" option considered
+
 if options.general.pararun == False:
     if options.general.batchmode == True:
         # Read the id of the current virtual experiment
@@ -234,86 +169,34 @@ if options.general.pararun == False:
           previous_experiment = -1
         current_experiment = int(previous_experiment) + 1
 
-#Added by Han on 23-05-2011
-# to prevent one processor from using wrong information that should belong to another processor
-# Or, to prevent more than one processors from using the same parameter values
-###r = Recorder(output_directory + "current_exp.h")
-
-
-
 stp = 0
-
-#The lenght of trunk sequence, added by Han on 06-07-2012
 trunk_len = 0
-#The defaul value of plastochron, added by Han on 06-07-2012
 default_plastochron = options.internode.plastochron
 
 def Start():
-    #The initialisations of tree, wood and internode were moved here by Han
-    #on 09-12-2011, to allow the correct configurations can be obtained from
-    #lpy.Lsystem("stocatree").context["options"]. If they are initialised as
-    #above rather than being here, the productions will simply use those
-    #configuraitons as defined in the "stocatree.ini" file.
-    #global tree
-    #global wood
-    #global internode
-    tree            = Tree(**options.tree)
-    wood            = Wood(**options.wood)
-    internode       = Internode(**options.internode)
-    ##The following lines were added by Han on 01-03-2012
-    temp = {}
-    temp.update(options.apex)
-    temp.update(options.markov)
-    apex_parameters = temp
+
+    tree = Tree(**options.tree)
+    wood = Wood(**options.wood)
+    internode = Internode(**options.internode)
+    apex_parameters = {
+        **options.apex,
+        **options.markov
+    }
     leaf_parameters = options.leaf
     fruit_parameters = options.fruit
 
-    #Added by Han on 23-05-2011
-    # to prevent one processor from using wrong information that should belong to another processor
-###    r.read()
-###    if r.content == "":
-###        r.write(str(current_experiment))
-###    else:
-        #print options.general.batch_dir
-        #print output_directory
-        #print current_experiment
-        #r.read()
-        #print r.content
-###        print r.content
-###        Stop()
-
-
-    global time1
-    time1 = time.time()
-    #random.seed(1000)
-    #random.seed(simulation.seed)
-    # init the data to store the required outputs (sequence, lstring, mtg, ...)
     data.open_all(current_experiment)
 
     global trunk_len
-
-    #Added by Han on 06-07-2012, to calculate the length of corresponding sequence
     seq_op = open(get_shared_data("sequences.seq"))
     sequences = pickle.loads(seq_op.read().encode())
     for i in sequences[int(options.stocatree.select_trunk)]:
-        if i!=9:
-            trunk_len+=1
-
-
+        if i != 9:
+            trunk_len += 1
 
 def StartEach():
-    global track_month
-    if simulation.date.month != track_month:
-    #   print(f"Simulation # {0} enters day {1} month {2} of year {3}".format(options.stocatree.select_trunk, simulation.date.day, simulation.date.month, simulation.date.year))
-      track_month = simulation.date.month
-    #print simulation.date.month, simulation.date.day
-    #Added by Han on 06-12-2011
-    #to allow the scene can be directly saved in EndEach()
+
     frameDisplay(True)
-
-    #Added by Han on 23-05-2011
-    # to prevent one processor from using wrong information that should belong to another processor
-
 
     global itr_stp
 
@@ -330,56 +213,39 @@ def StartEach():
         markov.hsm_medium = markov.hsm_98_medium
         markov.hsm_long   = markov.hsm_98_long
 
-    if Interception_Day():
-      if itr_stp > interception_step:
-        itr_stp = 0
-    else:
-      itr_stp = 0
-
-    #Added by Han in December 2010
     global bud_date
     global bud_break
-    if options.stocatree.light_interception:
-       if Interception_Day():
-         if itr_stp == interception_step:
-           frameDisplay(True)
-         #else:
-           #frameDisplay(False)
-       else:
-         frameDisplay(True)
 
-    #Added by Han on 16-05-2012, as a flag for annual pause/stop of growth
     global growth_pause
-
-    #Added by Han on 29-05-2012, to allow the sylleptic growth at the first year
     global sylleptic_year
 
-    #Added by Han in May 2011
     if options.temperature.temperature_effect == True:
-      #This is used to calculate, at the beginning of each year, the date for bud break in this year
-      #Note that the year for onset of chilling effect should be one year earlier than options.starting_year
-      if simulation.date.month == 1 and simulation.date.day == 1:
-        tp_dt = TpDate(onset_year = simulation.date.year,
-                          optimal_temperature = options.temperature.optimal_temperature,
-                          chilling_effect_interval = options.temperature.chilling_effect_interval,
-                          chilling_effect_onset_month = options.temperature.chilling_effect_onset_month,
-                          chilling_effect_onset_day = options.temperature.chilling_effect_onset_day,
-                          chilling_quantity_required = options.temperature.chilling_quantity_required,
-                          characteristic_temperature = options.temperature.characteristic_temperature,
-                          heat_sigmoidal = options.temperature.heat_sigmoidal,
-                          sigmoidal_slope = options.temperature.sigmoidal_slope,
-                          heat_quantity_required = options.temperature.heat_quantity_required)
-        bud_date = datetime(*tp_dt.bud_break())
-      #if simulation.date.year == bud_date.year and simulation.date.month == bud_date.month and simulation.date.day == bud_date.day:
-      if simulation.date >= bud_date and simulation.date <= bud_date + timedelta(1):
-        bud_break = True
-      else:
-        bud_break = False
-    #If the temperature effect is off, the previous method developed by Cokelaer will be used for calculating bud break date
+        # This is used to calculate, at the beginning of each year, the date for bud break
+        # in this year. Note that the year for onset of chilling effect should be one year
+        # earlier than options.starting_year
+        if simulation.date.month == 1 and simulation.date.day == 1:
+            tp_dt = TemperatureDate(
+                onset_year=simulation.date.year,
+                optimal_temperature=options.temperature.optimal_temperature,
+                chilling_effect_interval=options.temperature.chilling_effect_interval,
+                chilling_effect_onset_month=options.temperature.chilling_effect_onset_month,
+                chilling_effect_onset_day=options.temperature.chilling_effect_onset_day,
+                chilling_quantity_required=options.temperature.chilling_quantity_required,
+                characteristic_temperature=options.temperature.characteristic_temperature,
+                heat_sigmoidal=options.temperature.heat_sigmoidal,
+                sigmoidal_slope=options.temperature.sigmoidal_slope,
+                heat_quantity_required=options.temperature.heat_quantity_required
+            )
+            bud_date = datetime(*tp_dt.bud_break())
+        if simulation.date >= bud_date and simulation.date <= bud_date + timedelta(1):
+            bud_break = True
+        else:
+            bud_break = False
     else:
-      bud_break = simulation.events.bud_break.active
+        # If the temperature effect is off, the previous method developed by Cokelaer will be
+        # used for calculating bud break date
+        bud_break = simulation.events.bud_break.active
 
-    #Added by Han on 16-05-2012
     if simulation.date.month >= options.general.pause_month:
         if simulation.date.day >= options.general.pause_day:
             growth_pause = True
@@ -389,158 +255,40 @@ def StartEach():
         growth_pause = False
 
     growth_days = 0
-    #Added by Han on 29-05-2012
     if simulation.date.year == 1994:
         sylleptic_year = True
-        #Added by Han on 06-07-2012, to update the plastochron if necessary
-        growth_duration = date(1994, int(options.general.pause_month), int(options.general.pause_day)) - date(bud_date.year, bud_date.month, bud_date.day)
+        growth_duration = date(1994, int(options.general.pause_month), int(options.general.pause_day)) \
+            - date(bud_date.year, bud_date.month, bud_date.day)
         growth_days = growth_duration.days
-        new_plastochron = 0 if trunk_len == 0 else int(math.floor(growth_days/trunk_len))
-
-        #if new_plastochron < options.internode.plastochron:
+        new_plastochron = 0 if trunk_len == 0 else int(math.floor(growth_days / trunk_len))
         if new_plastochron < default_plastochron:
             options.internode.plastochron = new_plastochron
             internode = Internode(**options.internode)
     else:
-        #Added by Han on 06-07-2012, to set plastochron with its default value
-        #if the year is not the sylleptic year
+        # set plastochron with its default value if the year is not the sylleptic year
         options.internode.plastochron = default_plastochron
         internode = Internode(**options.internode)
         sylleptic_year = False
 
-
-
-
 def EndEach(lstring,scene):
 
-
     global stp
-    stp +=1
-    global time1
     global itr_stp
     global current_experiment
 
+    stp +=1
 
-    # -------------------- light interception ---------------------------------------------
-    if Interception_Day():
-        if itr_stp == interception_step:
-            if options.stocatree.light_interception:
-                #!! first you need to display the scene
-                if scene is None:
-                    return
-                Viewer.display(scene)
-                res = diffuseInterception(scene)
-                leaves = {}
-
-                system_time = datetime.utcnow()
-                system_year = system_time.year
-                system_month = system_time.month
-                system_day = system_time.day
-                system_hour = system_time.hour
-                system_minute = system_time.minute
-                system_second = system_time.second
-
-                #Added by Han on 26-04-2011
-                print("######")
-                print(simulation.date.year)
-                print("######")
-
-                # Added by Han on 26-04-2011
-                #To interact with the light environment using plantGL:
-                # star = STAR(lstring, scene)
-                # star.collect(lstring, scene)
-                # star.process_shoot(lstring, scene)
-
-                # Added by Han on 03-05-2011
-                current_time = datetime.utcnow()
-                experiment_date = str(current_time.hour) + ":" + str(current_time.minute) + " " + str(current_time.day) + "/" + str(current_time.month) + "/" + str(current_time.year)
-                simulation_date = str(simulation.date.day)  + "/" + str(simulation.date.month)  + "/" + str(simulation.date.year)
-                stat = Statistics(lstring, ["parent_observation", 'length', 'leaf_area', 'ta_pgl', 'sa_pgl', 'star_pgl'],
-                    shoot_level = True, branch_level = True, tree_level = True,
-                    exp_id = current_experiment, growth_date = simulation_date, exp_date = experiment_date,
-                    dir = output_directory)
-
-            ######Outputs (modified and relocated by Han on 19-04-2011)######
-            #Output of MTG
-            if options.output.mtg is True:
-                #Modified by Han on 12-12-2011 with "pararun" option considered
-                if options.general.pararun == True:
-                    sub_dir = output_directory + "{0}_{1}_{2}/".format(simulation.date.year, simulation.date.month, simulation.date.day)
-                    ensureLocalDir(sub_dir)
-                    data.mtg.build_filename(sub_dir + "{0}".format(int(current_experiment)))
-                else:
-                    if options.general.batchmode == True:
-                        data.mtg.build_filename("Batch_Exp%d_%4.0f_%02d_%02d" \
-                        % (int(current_experiment), simulation.date.year, simulation.date.month, simulation.date.day))
-                    else:
-                        data.mtg.build_filename("Single_Exp%d_%4.0f_%02d_%02d" \
-                        % (int(current_experiment), simulation.date.year, simulation.date.month, simulation.date.day))
-                data.mtg.init()
-                print("DataMTG", data.mtg.filename)
-                data.mtg.save(lstring, simulation.date, tree.trunk_radius)
-
-            # save the lstring
-            if options.output.l_string is True:
-                #Modified by Han on 12-12-2011 with "pararun" option considered
-                if options.general.pararun == True:
-                    data.l_string.build_filename(output_directory + "{0}_lstring".format(int(current_experiment)))
-                    #Added by Han on 01-03-2012
-                    #Pickle the lstring data structure with information
-                    sub_dir = output_directory + "{0}_{1}_{2}/".format(simulation.date.year, simulation.date.month, simulation.date.day)
-                    ensureLocalDir(sub_dir)
-                    cpl = Cp_Lstring(lstring)
-                    cpl.copy()
-                    pseudo_lstring = cpl.pseudo_lstring
-                    #for i in range(len(pseudo_lstring)):
-                    #    try:
-                    #        print i, pseudo_lstring[i][0].leaf_area, self.lstring[i][0].leaf_area
-                    #    except:
-                    #        print i, pseudo_lstring[i][0].leaf_area
-                    lpk = open(sub_dir+str(current_experiment)+".lpk", "w")
-                    cPickle.dump(pseudo_lstring, lpk, 0)
-                    lpk.close()
-                    print(sub_dir)
-                data.l_string.init()
-                data.l_string.save(lstring, simulation.date)
-            if options.output.counts:
-                save = data.counts.advance(simulation.dt)
-                if save:
-                    data.counts.save(simulation.date)
-                if simulation.date.day == 0:
-                    data.counts.reset()
-
-            # save the scene
-            if options.stocatree.savescene is True:
-              #Modified by Han on 06-12-2011 to save scenes directly rather than using "Viewer.getCurrentScene()"
-              #s = Viewer.getCurrentScene()
-              s = scene
-              #Modified by Han on 12-12-2011 with "pararun" option considered
-              if options.general.pararun == True:
-                  sub_dir = output_directory + "{0}_{1}_{2}/".format(simulation.date.year, simulation.date.month, simulation.date.day)
-                  ensureLocalDir(sub_dir)
-                  fn = "{0}.bgeom".format(int(current_experiment))
-                  s.save(sub_dir + fn)
-              else:
-                  if options.general.batchmode == True:
-                      s.save(output_directory + "scene_Batch_Exp%d_%4.0f_%02d_%02d.bgeom" \
-                      % (int(current_experiment), simulation.date.year, simulation.date.month, simulation.date.day))
-                  else:
-                      s.save(output_directory + "scene_Single_Exp%d_%4.0f_%02d_%02d.bgeom" \
-                      % (int(current_experiment), simulation.date.year, simulation.date.month, simulation.date.day))
-            ################################################################
-
-    if Interception_Day():
-        itr_stp += 1
-
-    #if simulation.date > simulation.ending_date:
     if simulation.date > datetime.strptime(options.general.end_year, "%Y-%m-%d"):
-        #pprint( 'The simulation has ended  %s %s\n' %  (options.general.end_year, simulation.date))
         Stop()
         End(lstring,scene)
-    # This switch controls the selection of which group of
-    # productions to apply.  The general sequence is:
-    #  initialisation --> update parameters --> output (L-string or MTG) --> physics --> statistics --> update structure --> update parameters
-    # Rendering happens after 'update parameters'.  'output' is only
+
+    # This switch controls the selection of which group of productions to apply.
+    # The general sequence is:
+    #
+    #   initialisation --> update parameters --> output (L-string or MTG) -->
+    #   physics --> statistics --> update structure --> update parameters
+    #
+    # Rendering happens after 'update parameters'. 'output' is only
     # called conditionally; mostly, the simulation goes straight from
     # 'output parameters' to 'physics'
     if simulation.phase == initialisation:
@@ -553,39 +301,16 @@ def EndEach(lstring,scene):
         if numerical_resolution_counter < simulation.rotation_convergence.steps:
             simulation.dt = 0.0 # days
             frameDisplay(False)
-            #jump to the physics phase
         else:
-            #if options.general.verbose is True:
-                #print '%s (n elts=%s, it=%s)' % (simulation.date, len(lstring), getIterationNb())
-            #if options.stocatree.saveimage is True:
-                #print 'saving stocatree_output%05d.png' % getIterationNb(), 'png'
-                #Viewer.frameGL.saveImage('stocatree_output%05d.png' % getIterationNb(), 'png')
             simulation.dt = simulation.base_dt
             numerical_resolution_counter = 0
-
         newyear = simulation.advance()
-        #TODO#
-
         if simulation.events.harvest.active:
             tree.fruits_harvested = tree.fruits
             tree.fruits = 0
             simulation.harvested = True
-
-        #outputs
-        #The previous codes for outputs were relocated by Han on 19-04-2011 to above to the "Interception_Day()" and the "itr_stp == interception_step" conditions
-
-        # save trunk data
         if options.output.trunk:
             data.trunk.save(simulation.date, tree.trunk_radius,tree.trunk_cross_sectional_area)
-        #Try do physics every 5 days
-        #if simulation.date.day % 10 == 0:
-        #  useGroup(physics)
-        #  simulation.phase = physics
-        #  backward()
-        #else:
-        #  useGroup(statistics)
-        #  simulation.phase = statistics
-        #  forward()
         useGroup(physics)
         simulation.phase = physics
         backward()
@@ -603,40 +328,19 @@ def EndEach(lstring,scene):
         simulation.phase = update_parameters
         frameDisplay(False)
     else:
-        ValueError('must not enter here')
-
-
+        raise ValueError(f'Simulation phase {simulation.phase} unkown.')
 
 def End(lstring,scene):
 
     global data
     data.close_all()
     data.save()
-    global time1
 
-    # The codes for scene saving was moved upwards to the "outputs" section, by Han on 19-04-2011
-    #if options.stocatree.savescene is True:
-        #s = Viewer.getCurrentScene()
-        #s.save('stocatree.bgeom')
-        #s.save('stocatree.pov')
-
-    time2 = time.time()
-
-    # if options.stocatree.movie is True:
-    #     from openalea.plantik.tools.movies import create_movie
-    #     create_movie(input_glob='stocatree*png', output_filename='stocatree')
-
-    if options.general.pararun == False:
-        if options.general.batchmode == False:
-          exp_rec = open(output_directory + 'exp_recorder.h', 'w')
-          exp_rec.write('%u' % current_experiment)
-          exp_rec.close()
-
-        #Added by Han on 23-05-2011
-        # to prevent one processor from using wrong information that should belong to another processor
-    ###    r.clear()
-
-        #Record the id of the experiment that has been successfully finished
+    if not options.general.pararun:
+        if not options.general.batchmode == False:
+            exp_rec = open(output_directory + 'exp_recorder.h', 'w')
+            exp_rec.write('%u' % current_experiment)
+            exp_rec.close()
         sc = Recorder(output_directory + "exp_successful.h")
         sc.write(str(current_experiment))
 
@@ -649,30 +353,24 @@ ignore: growth_unit
 
 production:
 
-# The L-system starts with this group.  If there were any errors
-# in the initialisations in Start, pruduce an error message;
-# otherwise, start the simulation.
+# The L-system starts with this group.  If there were any errors in the
+# initialisations in Start, produce an error message, otherwise, start the simulation.
 group 0:
 
 axiom():
-    ##The following four lines were added by Han on 01-03-2012, to make sure
-    ##the apex parameters can be updated through "options" that is refreshed
-    ##outside lpy (in parasuper_pc.py) for sensitivity analysis.
-    temp = {}
-    temp.update(options.apex)
-    temp.update(options.markov)
-    apex_parameters = temp
-    a = ApexData(tree.initial_hlu, 'trunk', **apex_parameters)
-    # produce  root() apex(a)
-    produce apex(a)
+    apex_parameters = {
+        **options.apex,
+        **options.markov
+    }
+    produce apex(ApexData(tree.initial_hlu, 'trunk', **apex_parameters))
 
 
-# Update the parameters of each metamer (age, reaction wood,
-# organs, length, rigidity & shape memory) and perform the
-# geometric reconstruction (rotation and placement of each metamer)
+# Update the parameters of each metamer (age, reaction wood, organs, length,
+# rigidity & shape memory) and perform the geometric reconstruction
+# (rotation and placement of each metamer)
 group 1:
 
-metamer(ml) branch() << metamer(m) :
+metamer(ml) branch() << metamer(m):
     m.update_metamer_parameters(simulation)
     m.organ_activity(simulation)
     if options.stocatree.mechanics:
@@ -694,14 +392,11 @@ metamer(m):
     m.organ_activity(simulation)
     m.update_position()
     produce metamer(m)
-#X:
-#  produce Cut()
 
 
 # Calculate the width (by the pipe model), cumulated mass, cumulated torque and
 # rotation velocity of each metamer
-#group physics
-group 2:
+group 2: #  physics
 
 root() >> metamer(m):
     tree.trunk_radius = m.radius
@@ -713,15 +408,17 @@ metamer(m) >> SB() branch() metamer(mb) EB() metamer(mr):
     if m.leaf.state=='growing':
         radius = optimisation.get_new_radius(radius, m.leaf.petiole_radius)
     m.radius = optimisation.max(radius, m.radius);
-    #update last layer thickness
+    # update last layer thickness
     m.layers[-1].thickness = m.radius - m.layers[-1].radius
     m.compute_mass(mr, mb)
-    #cumulated torque cumulate mass must be in kg
+    # cumulated torque cumulate mass must be in kg
     if options.stocatree.mechanics:
-        m.cumulated_torque =  mb.cumulated_torque + mr.cumulated_torque + \
-           cross((mb.hlu.heading * mb.length), (gravity * mb.cumulated_mass)) \
-           + cross((mr.hlu.heading * mr.length), (gravity * mr.cumulated_mass))\
-           + cross((m.hlu.heading * m.length) , tree.tropism)
+        m.cumulated_torque = (
+            mb.cumulated_torque + mr.cumulated_torque \
+            + cross((mb.hlu.heading * mb.length), (gravity * mb.cumulated_mass)) \
+            + cross((mr.hlu.heading * mr.length), (gravity * mr.cumulated_mass))\
+            + cross((m.hlu.heading * m.length) , tree.tropism)
+        )
         m.calculate_rotation_velocity(simulation, options.stocatree.stake)
     produce metamer(m)
 
@@ -733,15 +430,16 @@ metamer(m) >> metamer(mr):
     m.layers[-1].thickness = m.radius - m.layers[-1].radius
     m.compute_mass(mr)
     if options.stocatree.mechanics:
-        m.cumulated_torque \
-            = cross((mr.hlu.heading * mr.length), (gravity * mr.cumulated_mass))\
+        m.cumulated_torque = (
+            cross((mr.hlu.heading * mr.length), (gravity * mr.cumulated_mass)) \
             + mr.cumulated_torque \
             + cross((m.hlu.heading * m.length) , tree.tropism)
+        )
         m.calculate_rotation_velocity(simulation, options.stocatree.stake)
     produce metamer(m)
 
 metamer(m) >> apex(a):
-    # wood.density, m.fruit_mass  aer units objects
+    # wood.density, m.fruit_mass are units objects
     radius = a.radius
     if m.leaf.state=='growing':
         radius = optimisation.get_new_radius(a.radius, m.leaf.petiole_radius)
@@ -754,146 +452,105 @@ metamer(m) >> apex(a):
     produce metamer(m)
 
 apex(a):
-    if (a.sequence_position == 0 and a.radius < a.target_radius):
+    if a.sequence_position == 0 and a.radius < a.target_radius:
         a.terminal_expansion(simulation.dt.days)
     produce apex(a)
-#X:
-#  produce Cut()
 
-#// Generate new sequences
-#group statistics
-group 3:
+
+# Generate new sequences
+group 3: # group statistics
 
 apex(a):
-    #tp = True or (a.get_observation() == 'sylleptic_short' or a.get_observation() == 'sylleptic_medium' or a.get_observation() == 'sylleptic_large')
-    #print tp
-    #if (a.sequence_position == 0 and a.get_observation()!='dormant' and
-      #(a.parent_observation == 'floral' or simulation.events.bud_break.active)):
-    #This condition was modified by Han in May 2011 to enable the temperature effect on bud break
-    #if (a.sequence_position == 0 and a.get_observation()!='dormant' and (a.parent_observation == 'floral' or bud_break)) or (a.get_observation() == ('sylleptic_short' or 'sylleptic_medium' or 'sylleptic_large')):
-    #if (a.sequence_position == 0 and a.get_observation()!='dormant' and (a.parent_observation == 'floral' or bud_break)) or (a.get_observation() == 'sylleptic_short' or a.get_observation() == 'sylleptic_medium' or a.get_observation() == 'sylleptic_large'):
-    #if (a.sequence_position == 0 and a.get_observation()!='dormant' and (a.parent_observation == 'floral' or bud_break)) or (a.get_observation() == 'small' or a.get_observation() == 'medium' or a.get_observation() == 'large'):
-    #if (a.sequence_position == 0 and a.get_observation()!='dormant' and (a.parent_observation == 'floral' or bud_break)):
-    #if (a.sequence_position == 0 and a.get_observation()!='dormant' and (a.parent_observation == 'floral' or bud_break or ((a.get_observation() == 'small' or a.get_observation() == 'medium' or a.get_observation() == 'large') and a.parent_observation == "trunk"))):
-    #if (a.sequence_position == 0 and a.get_observation()!='dormant' and (a.parent_observation == 'floral' or bud_break or (sylleptic_year and a.year < simulation.date.year and (a.get_observation() == 'small' or a.get_observation() == 'medium' or a.get_observation() == 'large')))):
-    if(a.sequence_position == 0 and a.get_observation()!='dormant' and (a.parent_observation == 'floral' or bud_break or (sylleptic_year and a.year < simulation.date.year and (a.get_observation() == 'small' or a.get_observation() == 'medium' or a.get_observation() == 'large')))):
-      old_observation = a.get_observation()
-      a.parent_observation = old_observation
-      #Added by Han on 15-05-2012
-      if a.parent_observation == 'sylleptic_short':
-          a.parent_observation = 'small'
-          a.set_observation('small')
-      elif a.parent_observation == 'sylleptic_medium':
-          a.parent_observation = 'medium'
-          a.set_observation('medium')
-      elif a.parent_observation == 'sylleptic_large':
-          a.parent_observation = 'large'
-          a.set_observation('large')
-      #a.sequence  = generate_sequence(a.get_observation(),\
-      #    markov, simulation.date.year, options.stocatree.second_year_draws,
-      #    select_trunk=[int(options.stocatree.select_trunk)])
-      #The statement above for "a.sequence" was changed to the following, on 26-04-2012, by Han
-      #where      select_trunk=[int(options.stocatree.select_trunk)]
-      #was changed to
-         #           select_trunk=[int(current_experiment)]
-      #print "###################################################"
-      #print options.stocatree.select_trunk
-      #print "###################################################"
-      a.sequence  = generate_sequence(a.get_observation(),\
-          markov, simulation.date.year, options.stocatree.second_year_draws,
-          select_trunk=[int(options.stocatree.select_trunk)])
-      a.sequence_position = len(a.sequence)
-      if (a.get_observation()=='trunk'):
-          a.set_observation('large')
-      elif (a.get_observation()=='small' and boolean_event(tree.spur_death_probability)):
-          a.set_observation('dormant')
-      elif (a.get_observation()=='floral'):
-          a.set_observation('dormant')
-      else:
-          a.set_observation(terminal_fate(simulation.date.year,a.get_observation()))
-      #a.radius = 0
-      #Modified by Han on 05-03-2012, according to the discussion with
-      #Evelyne on 27-02-2012
-      #a.radius = a.maximum_size
-      #a.max_terminal_radius_target()
-      #Changed back to original by Han on 21-03-2012
-      a.radius = 0
-      a.max_terminal_radius_target()
-      #CHANGES tree.growth_units
-      tree.growth_units += 1
-      #record the unit id that this apex belongs to (the id values start from 0)
-      a.parent_unit_id = tree.growth_units-1
-      #update counts
-      if options.output.counts:
-          if a.parent_observation=='floral':
-              data.counts.florals+=1
-          elif a.parent_observation == 'small':
-              data.counts.shorts+=1
-          elif a.parent_observation == 'medium':
-              data.counts.mediums+=1
-          elif a.parent_observation == 'large':
-              data.counts.longs += 1
-              if (a.sequence_position < 26):
-                  data.counts.len_16_to_25 +=1
-              elif (a.sequence_position < 41):
-                  data.counts.len_26_to_40+=1
-              else:
-                  data.counts.len_over_40+=1
-      # save sequences into output data
-      #if (options.output.sequences and simulation.date.year < 1999 and (a.parent_observation in ['large','medium','small'])):
-      #    data.sequences.save(a.sequence, a.sequence_position)
-      if (options.output.sequences and simulation.date.year < 1999 and (a.parent_observation in ['large', 'medium', 'small'])):
-          data.sequences.save(a.sequence, a.sequence_position)
-      #Added by Han on 29-05-2012
-      #Note that a.year was initially smaller than simulation.date.year
-      #Once a growth unit is finished, a.year will be set as the same
-      #This is to avoid the production of two growth units at the same axis
-      #at the same year
-      a.year = simulation.date.year
-      nproduce growth_unit(GrowthUnitData(tree.growth_units, simulation.date.year, a.parent_observation == 'floral')) apex(a)
+    if a.sequence_position == 0 and a.get_observation()!='dormant' and (a.parent_observation == 'floral' or bud_break or (sylleptic_year and a.year < simulation.date.year and (a.get_observation() == 'small' or a.get_observation() == 'medium' or a.get_observation() == 'large'))):
+        old_observation = a.get_observation()
+        a.parent_observation = old_observation
+        if a.parent_observation == 'sylleptic_short':
+            a.parent_observation = 'small'
+            a.set_observation('small')
+        elif a.parent_observation == 'sylleptic_medium':
+            a.parent_observation = 'medium'
+            a.set_observation('medium')
+        elif a.parent_observation == 'sylleptic_large':
+            a.parent_observation = 'large'
+            a.set_observation('large')
+        a.sequence  = generate_sequence(
+            a.get_observation(),
+            markov, simulation.date.year, options.stocatree.second_year_draws,
+            select_trunk=[int(options.stocatree.select_trunk)]
+        )
+        a.sequence_position = len(a.sequence)
+        if a.get_observation() == 'trunk':
+            a.set_observation('large')
+        elif a.get_observation() =='small' and boolean_event(tree.spur_death_probability):
+            a.set_observation('dormant')
+        elif a.get_observation()=='floral':
+            a.set_observation('dormant')
+        else:
+            a.set_observation(terminal_fate(simulation.date.year,a.get_observation()))
+        a.radius = 0
+        a.max_terminal_radius_target()
+        tree.growth_units += 1
+        # record the unit id that this apex belongs to (the id values start from 0)
+        a.parent_unit_id = tree.growth_units-1
+        # update counts
+        if options.output.counts:
+            if a.parent_observation=='floral':
+                data.counts.florals += 1
+            elif a.parent_observation == 'small':
+                data.counts.shorts += 1
+            elif a.parent_observation == 'medium':
+                data.counts.mediums += 1
+            elif a.parent_observation == 'large':
+                data.counts.longs += 1
+                if a.sequence_position < 26:
+                    data.counts.len_16_to_25 += 1
+                elif a.sequence_position < 41:
+                    data.counts.len_26_to_40+=1
+                else:
+                    data.counts.len_over_40+=1
+        # save sequences into output data
+        if options.output.sequences and simulation.date.year < 1999 and (a.parent_observation in ['large', 'medium', 'small']):
+            data.sequences.save(a.sequence, a.sequence_position)
+        # Note that a.year was initially smaller than simulation.date.year
+        # Once a growth unit is finished, a.year will be set as the same
+        # This is to avoid the production of two growth units at the same axis
+        # at the same year
+        a.year = simulation.date.year
+        nproduce growth_unit(GrowthUnitData(tree.growth_units, simulation.date.year, a.parent_observation == 'floral')) apex(a)
     else:
         produce apex(a)
-#X:
-#  produce Cut()
 
-
-#// Add new apices (terminal and lateral) and metamers
-#// to the structure
-#group update_structure
-group 4:
-
+# Add new apices (terminal and lateral) and metamers to the structure
+group 4: # group update_structure
 
 metamer(m) < apex(a):
-    # print('metamer(m) < apex(a)', a.hlu)
-    # if plastochron is reached, we produce a new metamer
-    #if (a.sequence_position > 0 and m.age >= m.internode._plastochron):
-    #Modified by Han on 12-07-2012 (Since the internode._plastochron is never changed in the internode module, the "options.internode.plastochron" could be used directly here)
-    if (a.sequence_position > 0 and m.age >= options.internode.plastochron):
-        a.sequence_position-=1
-        flower = (a.sequence_position == 0 and a.parent_observation=='floral')
+    if a.sequence_position > 0 and m.age >= options.internode.plastochron:
+        a.sequence_position -= 1
+        flower = a.sequence_position == 0 and a.parent_observation=='floral'
         if m.year == simulation.date.year:
             number = m.number + 1
         else:
             number = 1
-        #print fruit_parameters
-        ##The following lines were added by Han on 01-03-2012, to allow the leaf
-        ##and fruit parameters to be updated according to the re-definition outside lpy
-        ##(in parasuper_pc.py) instead of using the ini file.
         leaf_parameters = options.leaf
         fruit_parameters = options.fruit
-        mn = MetamerData(floral=flower, number=number, hlu=a.hlu,
-          zone=a.sequence[a.sequence_position][0], observation=a.get_observation_from_sequence(),
-                      parent_observation=a.parent_observation, parent_unit_id=a.parent_unit_id, parent_fbr_id=a.parent_fbr_id, parent_tree_id=a.parent_tree_id,
-                      p_angle=(m.phyllotactic_angle + tree.phyllotactic_angle),
-                      b_angle=tree.branching_angle, wood=wood, internode=internode,
-                      fruit=AppleFruit(**fruit_parameters), leaf=AppleLeaf(**leaf_parameters))
+        mn = MetamerData(
+            floral=flower,
+            number=number,
+            hlu=a.hlu,
+            zone=a.sequence[a.sequence_position][0],
+            observation=a.get_observation_from_sequence(),
+            parent_observation=a.parent_observation,
+            parent_unit_id=a.parent_unit_id,
+            parent_fbr_id=a.parent_fbr_id,
+            parent_tree_id=a.parent_tree_id,
+            p_angle=m.phyllotactic_angle + tree.phyllotactic_angle,
+            b_angle=tree.branching_angle, wood=wood, internode=internode,
+            fruit=AppleFruit(**fruit_parameters),
+            leaf=AppleLeaf(**leaf_parameters)
+        )
         mn.trunk = a.trunk
         mn.year = simulation.date.year
-        #Added by Han on 11-07-2012
         mn.sylleptic = a.sylleptic
-        #print a.sequence_position, a.sequence[a.sequence_position][0], a.sequence[a.sequence_position][1]
-        #produce metamer(mn) apex(a)
-        #Modified by Han on 16-05-2012
         if not growth_pause:
             produce metamer(mn) apex(a)
         else:
@@ -904,30 +561,32 @@ metamer(m) < apex(a):
 
 
 apex(a):
-    # print('apex(a)', a.hlu)
-    #if Debug:print 'APEX seq pos=',a.sequence_position
-    #if (a.sequence_position > 0):
-    if (a.sequence_position > 0):
+    if a.sequence_position > 0:
         a.sequence_position -= 1
         branching_angle = tree.branching_angle;
-        flower = (a.sequence_position == 0 and a.parent_observation=='floral')
-        #TODO check first and second index of a.sequence versus lsystem.l code
-        ##The following lines were added by Han on 01-03-2012, to allow the leaf
-        ##and fruit parameters to be updated according to the re-definition outside lpy
-        ##(in parasuper_pc.py) instead of using the ini file.
+        flower = a.sequence_position == 0 and a.parent_observation=='floral'
         leaf_parameters = options.leaf
         fruit_parameters = options.fruit
-        m = MetamerData(floral=flower, number=1, hlu=a.hlu, zone=a.sequence[a.sequence_position][0], observation=a.get_observation_from_sequence(),
-                              parent_observation= a.parent_observation, parent_unit_id=a.parent_unit_id, parent_fbr_id=a.parent_fbr_id, parent_tree_id=a.parent_tree_id,
-                              p_angle=(tree.phyllotactic_angle), b_angle=branching_angle, wood=wood, internode=internode,
-                              fruit=AppleFruit(**fruit_parameters), leaf=AppleLeaf(**leaf_parameters))
+        m = MetamerData(
+            floral=flower,
+            number=1,
+            hlu=a.hlu,
+            zone=a.sequence[a.sequence_position][0],
+            observation=a.get_observation_from_sequence(),
+            parent_observation= a.parent_observation,
+            parent_unit_id=a.parent_unit_id,
+            parent_fbr_id=a.parent_fbr_id,
+            parent_tree_id=a.parent_tree_id,
+            p_angle=tree.phyllotactic_angle,
+            b_angle=branching_angle,
+            wood=wood,
+            internode=internode,
+            fruit=AppleFruit(**fruit_parameters),
+            leaf=AppleLeaf(**leaf_parameters)
+        )
         m.trunk = a.trunk
         m.year = simulation.date.year
-        #Added by Han on 11-07-2012
         m.sylleptic = a.sylleptic
-        #print a.sequence_position, a.sequence[a.sequence_position][0], a.sequence[a.sequence_position][1]
-        #produce metamer(m) apex(a)
-        #Modified by Han on 16-05-2012
         if not growth_pause:
             produce metamer(m) apex(a)
         else:
@@ -937,61 +596,46 @@ apex(a):
         produce apex(a)
 
 metamer(m) > metamer(mr) apex(a):
-    # case of a floral immediate lateral axis: should be treated as
-    # laterals and not as terminals
-    if (not m.developped and a.parent_observation == 'floral' and a.sequence_position == 0):
+    # case of a floral immediate lateral axis: should be treated as laterals and not as terminals
+    if not m.developped and a.parent_observation == 'floral' and a.sequence_position == 0:
         m.developped = True
-        #if (boolean_event(tree.inflorescence_death_probability)) or (m.observation == 'sylleptic_short' or m.observation == 'sylleptic_medium' or m.observation == 'sylleptic_large'):
-        #if (boolean_event(tree.inflorescence_death_probability)) or (m.observation == 'small' or m.observation == 'medium' or m.observation == 'large'):
-        if (boolean_event(tree.inflorescence_death_probability)):
+        if boolean_event(tree.inflorescence_death_probability):
             produce metamer(m)
         m.branching_angle = tree.floral_branching_angle
         hlu = rotate_frame_at_branch(m.hlu, m.branching_angle, m.phyllotactic_angle);
-        ##The following four lines were added by Han on 01-03-2012, to make sure
-        ##the apex parameters can be updated through "options" that is refreshed
-        ##outside lpy (in parasuper_pc.py) for sensitivity analysis.
-        temp = {}
-        temp.update(options.apex)
-        temp.update(options.markov)
-        apex_parameters = temp
+        apex_parameters = {
+            **options.apex,
+            **options.markov
+        }
         sylleptic_apex = ApexData(hlu, terminal_fate(simulation.date.year, 'floral'), **apex_parameters)
         sylleptic_apex.parent_observation = 'floral'
         if m.parent_fbr_id == 0:
-            tree.first_branches +=1
-            #The parent_fbr_id ranges from 0 to tree.first_branches (rather than to tree.frist-branches-1)
-            #This is because, the trunk is regarded by branch 0 as default
-            #Thus the id of the first real branch should be 1
+            tree.first_branches += 1
+            # The parent_fbr_id ranges from 0 to tree.first_branches (rather than to tree.frist-branches-1)
+            # This is because, the trunk is regarded by branch 0 as default
+            # Thus the id of the first real branch should be 1
             sylleptic_apex.parent_fbr_id = tree.first_branches
         else:
             sylleptic_apex.parent_fbr_id = m.parent_fbr_id
         produce metamer(m) SB() branch() apex(sylleptic_apex) EB()
 
 metamer(m):
-    if (options.stocatree.ruptures and rupture(m.cumulated_torque, m.radius, wood._modulus_of_rupture)):
+    if options.stocatree.ruptures and rupture(m.cumulated_torque, m.radius, wood._modulus_of_rupture):
         print('EXTRAORDINARY EVENT: There was a rupture in the system.\n')
         produce Label('Cut') Cut()
-    #if (m.observation!= 'dormant' and  not m.developped and simulation.events.bud_break.active):
-    #This condition was modified by Han in May 2011 to enable the temperature effect on bud break
-    #if (m.observation!= 'dormant' and  not m.developped) and (bud_break or (m.observation == 'sylleptic_short' or m.observation == 'sylleptic_medium' or m.observation == 'sylleptic_large')):
-    #if (m.observation!= 'dormant' and  not m.developped and bud_break) or (m.observation == 'small' or m.observation == 'medium' or m.observation == 'large'):
-    #if (m.observation!= 'dormant' and  not m.developped and bud_break):
-    #if (m.observation!= 'dormant' and  not m.developped and (bud_break or ((m.observation == 'small' or m.observation == 'medium' or m.observation == 'large') and m.parent_observation == "trunk"))):
-    if (m.observation!= 'dormant' and  not m.developped and (bud_break or ((m.observation == 'small' or m.observation == 'medium' or m.observation == 'large') and m.parent_observation == "trunk" and m.sylleptic == True))):
+    if m.observation!= 'dormant' and  not m.developped and (bud_break or ((m.observation == 'small' or m.observation == 'medium' or m.observation == 'large') and m.parent_observation == "trunk" and m.sylleptic == True)):
         m.developped = True
         hlu = rotate_frame_at_branch(m.hlu, m.branching_angle, m.phyllotactic_angle)
-        ##The following four lines were added by Han on 01-03-2012, to make sure
-        ##the apex parameters can be updated through "options" that is refreshed
-        ##outside lpy (in parasuper_pc.py) for sensitivity analysis.
-        temp = {}
-        temp.update(options.apex)
-        temp.update(options.markov)
-        apex_parameters = temp
+        apex_parameters = {
+            **options.apex,
+            **options.markov
+        }
         a = ApexData(hlu, m.observation, **apex_parameters)
         if m.parent_fbr_id == 0:
             tree.first_branches +=1
-            #The parent_fbr_id ranges from 0 to tree.first_branches (rather than to tree.frist-branches-1)
-            #This is because, the trunk is regarded by branch 0 as default
-            #Thus the id of the first real branch should be 1
+            # The parent_fbr_id ranges from 0 to tree.first_branches (rather than to tree.frist-branches-1)
+            # This is because, the trunk is regarded by branch 0 as default
+            # Thus the id of the first real branch should be 1
             a.parent_fbr_id = tree.first_branches
         else:
             a.parent_fbr_id = m.parent_fbr_id
@@ -1000,11 +644,8 @@ metamer(m):
         produce metamer(m)
 
 
-#X:
-#  produce Cut()
-
+# Graphical rendering of the tree
 group 0:
-#// Graphical rendering of the tree
 interpretation:
 
 root():
@@ -1012,7 +653,6 @@ root():
     produce SB() f(-3) SetColor(colors.background) Label(dateLabel) f(3) SetColor(colors.ground) PglShape(ground_surface, 10.0) EB();
 
 metamer(m):
-    #print 'interpretation called', getIterationNb()
     shoot_colour = colors.error
     if options.stocatree.render_mode == 'bark':
         shoot_colour = colors.bark
@@ -1025,17 +665,14 @@ metamer(m):
     elif options.stocatree.render_mode == 'year':
         shoot_colour = colors.year.get_color(m.year, options.general.starting_year)
     nproduce SetHead(m.hlu.heading.x, m.hlu.heading.y, m.hlu.heading.z, m.hlu.up.x, m.hlu.up.y, m.hlu.up.z)
-    #nproduce SetWidth(m.radius*12.) SetColor(shoot_colour) F(m.length*10)
-    #Modified by Han on 06-03-2012
     nproduce SetWidth(m.radius*10) SetColor(shoot_colour) F(m.length*10)
     d2r = 180.0 / constants.pi
     if (m.fruit.state == 'flower'):
-        #TODO the five flowers are at the same place !!
         scale = 5.
         nproduce SB() RollL(m.phyllotactic_angle * d2r)
         nproduce Up(45)
         nproduce SetColor(colors.stamen)
-        nproduce SetWidth(0.0025*scale)
+        nproduce SetWidth(0.0025 * scale)
         nproduce SB()
         nproduce SB() Up(15) F(0.0125) EB() RollL(72.0)
         nproduce SB() Up(15) F(0.0125) EB() RollL(72.0)
@@ -1049,64 +686,36 @@ metamer(m):
         nproduce SB() Up(15) F(0.0125) EB()
         nproduce EB()
         nproduce SetColor(colors.petal)
-        nproduce PglShape(petal_surface, 0.02*scale) RollL(144.0)
-        nproduce PglShape(petal_surface, 0.02*scale) RollL(144.0)
-        nproduce PglShape(petal_surface, 0.02*scale) RollL(144.0)
-        nproduce PglShape(petal_surface, 0.02*scale) RollL(144.0)
-        nproduce PglShape(petal_surface, 0.02*scale)
+        nproduce PglShape(petal_surface, 0.02 * scale) RollL(144.0)
+        nproduce PglShape(petal_surface, 0.02 * scale) RollL(144.0)
+        nproduce PglShape(petal_surface, 0.02 * scale) RollL(144.0)
+        nproduce PglShape(petal_surface, 0.02 * scale) RollL(144.0)
+        nproduce PglShape(petal_surface, 0.02 * scale)
         nproduce EB()
-        #
     elif (m.fruit.state == 'fruit'):
         r = m.fruit.mass * fruit_radius_per_kilo
         if r != 0:
             nproduce SB() RollL(float(m.phyllotactic_angle * d2r))
             nproduce Down(90.0) f(r) SetColor(colors.fruit) Sphere(r) EB()
-    #f
-    if m.leaf.state=='growing':
-        r = m.leaf.mass *1000.
+    if m.leaf.state == 'growing':
+        r = m.leaf.mass * 1000.
         if r==0:
             r=0.1
         norm = 0.3
         colors.leaf = 15
-        if options.stocatree.light_interception is True:
-          if m.leaf.lg > norm:
-            norm = m.leaf.lg
-            #print 'NORM mst be change to %s' % m.leaf.lg
-            #print (m.leaf.area/Leaf.area_max),  m.leaf.lg/norm
-          colors.leaf = int(leaf_color_min + (leaf_color_max - leaf_color_min) * m.leaf.lg / norm)
-          #colors.leaf = int(leaf_color_max - (leaf_color_max - leaf_color_min) * m.leaf.lg/norm)
-          #print *********************
-          #print '%s' % colors.leaf
-          #print 'llllgggg', m.leaf.lg, m.leaf.size, m.leaf.size/m.leaf.leaf_max_area, color
-          #if colors.leaf<=35 : print 'color', color
-          #if colors.leaf>=54 : print 'color', color
-          #if m.leaf.lg > norm:
-              #print 'light interception', color, m.leaf.lg
-        else:
-          colors.leaf = 15
+        colors.leaf = 15
         if m.leaf.lg == 0:
-          colors.leaf =15
-        #check max total mass should be less than 0.66 grams
+            colors.leaf =15
+        # check max total mass should be less than 0.66 grams
         if simulation.events.autumn.active is False:
             nproduce SB() SetColor(colors.leaf)
         else:
             nproduce SB() SetColor(colors.autumn_leaf)
-        #Don't touch this!!! change the r value only
-        # at least don't change the factors between F and PglShape (keep the 0.1 factor).
-        #TODO take m radisu into account
-        #nproduce (RollL(m.phyllotactic_angle * d2r) Up(90.0) SetWidth(0.002) F(r *0.1) RollToVert() PglShape(leaf_surface, r) EB())
-        #r = math.sqrt(m.leaf_area*1000)
-        #The calculation of r was re-designed by Han on 13-05-2011. The value 0.006154 is the leaf surface returned from plantGL when r is set as 1.
-        r = math.sqrt(m.leaf_area/0.006154)
-        #The following n-production was modified by Han on 16-05-2011.
-        #If r is 0 or lower, it is not necessary to set it as 0.1 or 0.000001 to represent a surface for leaf, as there is no such a leaf at all.
-        #if r == 0:
-          #r = 0.000001
+        r = math.sqrt(m.leaf_area / 0.006154)
         if r > 0:
-          nproduce (RollL(m.phyllotactic_angle * d2r)  +(90) SetWidth(0.002) F(r *0.1)   PglShape(leaf_surface, r) +(-90) EB())
+            nproduce (RollL(m.phyllotactic_angle * d2r)  +(90) SetWidth(0.002) F(r * 0.1)   PglShape(leaf_surface, r) +(-90) EB())
         else:
-          nproduce EB()
-        #nproduce (RollL(m.phyllotactic_angle * d2r) Up(90.0) SetWidth(0.002) F(r *0.1) ~l(r) EB())
+            nproduce EB()
     produce
 
 endgroup

@@ -19,7 +19,7 @@ import calendar
 from vmapplet import get_shared_data
 
 
-class TpDate:
+class TemperatureDate:
     def __init__(
         self,
         onset_year=1994,
@@ -120,7 +120,7 @@ class Test:
 
         t = open("dates_test.csv", "a")
         for y in range(first_year, last_year + 1):
-            tp_date = TpDate(onset_year=y)
+            tp_date = TemperatureDate(onset_year=y)
             t.write(str(y) + ",")
             t.write(str(tp_date.dormancy_break_date[2]) + "/" + str(tp_date.dormancy_break_date[1]) + ",")
             t.write(str(tp_date.bud_break_date[2]) + "/" + str(tp_date.bud_break_date[1]) + "\n")

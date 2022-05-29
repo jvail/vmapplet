@@ -29,5 +29,3 @@ pip install -e .
 ```sh
 jupyter lab --notebook-dir=notebooks
 ```
-
-Then click `Build` if jupyter lab asks for building the pgljupyter plugin ... then wait untill jupyter lab is done.

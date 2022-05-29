@@ -19,6 +19,7 @@ output_dir = 'WWdev'
 # by which the tree stops growth until the next spring
 pause_month = 10
 pause_day = 1
+lpy_parameters = 'lpy.json'
 
 [stocatree]
 saveimage = false
@@ -40,8 +41,6 @@ mechanics = true
 render_mode = 'bark'
 # should be an integer. This is the number of elements of the shapes (e.g., leaf)
 stride_number = 5
-# Set to true to enalbe light interception# otherwise false (added by Liqi Han, 01-12-2010)
-light_interception = false
 # Set to true to enalbe pruning# otherwise false (added by Liqi Han, 11-10-2011)
 pruning = false
 
