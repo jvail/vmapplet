@@ -20,5 +20,5 @@ dependencies:
   - flake8
   - pip
   - pip:
-    - pgljupyter==2.0.0b1
+    - pgljupyter==2.0.0b2
     - -e ..
