@@ -3,7 +3,7 @@ batchmode = false
 parabatch = false
 pararun = true
 verbose = false
-max_iterations  = 3600000
+max_iterations = 25000
 filename = 'stocatree.lpy'
 # starting year must be integer
 starting_year = 1994
