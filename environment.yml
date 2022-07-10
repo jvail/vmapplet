@@ -1,4 +1,4 @@
-name: vmapplet-test
+name: vmapplet
 channels:
   - fredboudon
   - conda-forge
