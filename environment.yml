@@ -7,6 +7,7 @@ dependencies:
   - jupyterlab
   - jupyterlab_widgets
   - ipywidgets
+  - xarray-simlab
   - toml
   - matplotlib
   - scipy
@@ -21,4 +22,4 @@ dependencies:
   - flake8
   - pip
   - pip:
-    - pgljupyter==2.0.0b3
+    - pgljupyter
