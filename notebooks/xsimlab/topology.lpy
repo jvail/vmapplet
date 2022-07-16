@@ -1,0 +1,27 @@
+from openalea.lpy import *
+
+module Apex()
+module Metamer(metamer_data)
+
+Axiom:
+    nproduce @Tp(0, 0, 1) @Ts(0.02)
+    nproduce SectionResolution(8)
+    nproduce @Gc
+    for metamer in process:
+        nproduce Metamer(metamer)
+    produce Apex()
+
+derivation length: derivation_length
+
+production:
+
+Metamer(metamer_data):
+    produce Metamer(metamer_data)
+    
+Apex():
+    produce Metamer(process.new_metamer()) Apex()
+    
+    
+    
+    
+endlsystem
