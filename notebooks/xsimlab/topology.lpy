@@ -16,6 +16,7 @@ derivation length: derivation_length
 production:
 
 Metamer(metamer_data):
+    metamer_data.radius += 0.05
     produce Metamer(metamer_data)
     
 Apex():
