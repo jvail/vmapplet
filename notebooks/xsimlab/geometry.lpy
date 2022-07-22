@@ -11,7 +11,7 @@ maximum depth: 10
 Metamer(metamer_data):
     nproduce SetColor(1 if metamer_data.index % 2 else 2)
     nproduce F(0.1, metamer_data.radius.item())
-    
+
 Apex():
     produce SetColor(3)@O(0.15)
 

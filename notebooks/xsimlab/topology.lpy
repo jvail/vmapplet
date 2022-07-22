@@ -18,11 +18,11 @@ production:
 Metamer(metamer_data):
     metamer_data.radius += 0.05
     produce Metamer(metamer_data)
-    
+
 Apex():
     produce Metamer(process.new_metamer()) Apex()
-    
-    
-    
-    
+
+
+
+
 endlsystem
