@@ -1,5 +1,7 @@
-# lpy / plantgl
+# lpy / plantgl / notebooks
 *.bgeom
+notebooks/tests
+notebooks/xsimlab
 
 
 # ignore cmake stuff
