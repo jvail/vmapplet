@@ -41,7 +41,7 @@ class Markov():
     see generate_sequence for an explantion of the arguments
 
     """
-    def __init__(self, maximum_length=70, minimum_length=4):
+    def __init__(self, maximum_length=70, minimum_length=4, **kwargs):
         """
         :param max_sequence_length: the maximum length of markov sequence (default is 100)
         :param max_length: the maximum length (default is 70)
@@ -79,7 +79,7 @@ class Markov():
         self.hsm_long4 = None
 
 
-class DataTerminalFate(object):
+class DataTerminalFate:
     """Class to deal with terminal fate probabilities
 
     :Example:
@@ -144,7 +144,7 @@ class DataTerminalFate(object):
         (6, 'floral'): [0.000, 0.200, 0.800, 0.000]
     }
 
-    def __init__(self):
+    def __init__(self, data=None):
         """Constructor description
 
         There is one constructor without arguments that simply setup
@@ -155,9 +155,13 @@ class DataTerminalFate(object):
           4. 'floral'
 
         """
+
+        if data is not None:
+            self.data = data
+
         self.codes = {'large': 0, 'medium': 1, 'small': 2, 'floral': 3}
 
-    def get_data_terminal_fate(self, year, code):
+    def get_data_terminal_fate(self, year_no, code):
         """Returns the probabilities corresponding to a shoot code and a year
 
         It uses hardcoded list of probabilities such as::
@@ -172,13 +176,13 @@ class DataTerminalFate(object):
             small or floral sequence.
         """
         # Terminal fate for year 0 and 1 are the same
-        if year == 0:
-            year = 1
-        elif year < 0 or year > 6:
-            year = 6
+        if year_no == 0:
+            year_no = 1
+        elif year_no < 0 or year_no > 6:
+            year_no = 6
 
         if code in self.codes.keys():
-            return self.data[(year, code)]
+            return self.data[(year_no, code)]
         else:
             raise ValueError('code must be in %s. %s provided' % (self.codes.keys(), code))
 
@@ -196,23 +200,20 @@ class DataTerminalFate(object):
             assert sum(data) == 1
 
 
-def terminal_fate(year, observation):
+def terminal_fate(year_no, observation, data_terminal_fate=None):
     """This function returns a type of metamer (large, short, ...)
 
 
     It uses :class:`~openalea.stocatree.sequences.DataTerminalFate` class.
 
-    :param year: is an int
+    :param year_no: is an int starting from 0 for the 1st year of the simulation
     :param observation: is a string. ['large', 'medium','small', 'floral'].
         See :class:`DataTerminalFate` class documentation for details.
 
-    :Example:
-
-        >>> index=terminal_fate(1994, 'large')
-
     """
-    d = DataTerminalFate()
-    data = d.get_data_terminal_fate(year, observation)
+
+    d = DataTerminalFate(data_terminal_fate)
+    data = d.get_data_terminal_fate(year_no, observation)
     index = _non_parametric_distribution(data)
 
     if index == 1:
@@ -409,7 +410,7 @@ def _generate_random_draw_sequence():
     return sequence
 
 
-def generate_sequence(obs, markov=None, year=0, second_year_draws=False,
+def generate_sequence(obs, markov=None, year_no=0, second_year_draws=False,
                       trunk_seq='sequences.seq', select_trunk=0):
     """Generation of sequences from Markov chains, based directly on the work
     of Michael Renton
@@ -442,17 +443,17 @@ def generate_sequence(obs, markov=None, year=0, second_year_draws=False,
     # The "sylleptic"s to the conditions as following were added by Han on 30-04-2012
     if obs == 'trunk':
         return generate_trunk(trunk_seq=trunk_seq, select=select_trunk)
-    elif obs == 'small' or obs == 'sylleptic_short':
+    elif obs == 'small' or obs == 'sylleptic_small':
         return generate_short_sequence()
     elif obs == 'floral':
         return generate_floral_sequence()
     elif obs == 'medium' or obs == 'sylleptic_medium':
         return generate_bounded_hsm_sequence(markov.hsm_medium, 5, 15)
     elif obs == 'large' or obs == 'sylleptic_large':
-        if (second_year_draws and year == 1):
+        if (second_year_draws and year_no == 1):
             return _generate_random_draw_sequence()
         else:
-            res = length_pool(year)
+            res = length_pool(year_no)
             assert res in [1, 2, 3], 'Error Bad Length pool category'
             if res == 1:
                 return generate_bounded_hsm_sequence(markov.hsm_long, 15, 26)
@@ -461,7 +462,7 @@ def generate_sequence(obs, markov=None, year=0, second_year_draws=False,
             elif res == 3:
                 return generate_bounded_hsm_sequence(markov.hsm_long, 41, markov.maximum_length)
     else:
-        raise("ERROR: A bad sequence observation (%s) was passed to generate_sequence().\n" % obs)
+        raise ValueError("ERROR: A bad sequence observation (%s) was passed to generate_sequence().\n" % obs)
 
 
 def generate_pruned_sequence(obs, react_pos, rank, closest_apex, farthest_apex, sons_nb, markov=None, year=0):
@@ -523,7 +524,7 @@ def generate_pruned_sequence(obs, react_pos, rank, closest_apex, farthest_apex, 
         else:
             return generate_bounded_hsm_sequence(hsm_react_medium, 5, 15)
 
-    elif new_obs == 'small' or new_obs == 'sylleptic_short':
+    elif new_obs == 'small' or new_obs == 'sylleptic_small':
         return generate_short_sequence()
 
     elif new_obs == 'floral':

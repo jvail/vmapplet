@@ -1,8 +1,3 @@
-internode_options = {
-    'min_length': 0.0001,
-    'elongation_period': 10.,
-    'plastochron': 3.
-}
 
 
 class Internode:

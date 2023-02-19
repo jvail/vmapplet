@@ -1,16 +1,6 @@
 from math import log, exp
 
 
-config_options = {
-    'flower_duration': 10.,
-    'max_relative_growth_rate': 0.167,
-    'lost_time': 28,
-    'max_age': 147,
-    'probability': 0.3,
-    'max_absolute_growth_rate': 0.0018
-}
-
-
 class Fruit:
     """a base class interface for fruits
 

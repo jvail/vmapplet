@@ -1,4 +1,5 @@
 import datetime
+import dataclasses as dc
 
 from .read_function import ReadFunction
 
@@ -34,7 +35,7 @@ class Calendar(object):
         True
 
     """
-    def __init__(self,  year=-1, month=1, day=1, delta_in_days=1):
+    def __init__(self, year=-1, month=1, day=1, delta_in_days=1):
         """**Constructor**
 
         :param year: valid year
@@ -53,55 +54,58 @@ class Calendar(object):
 
         """
 
-        assert year != -1 , "you must provide a valid year"
+        assert year != -1, "you must provide a valid year"
         self._date = datetime.datetime(year=year, month=month, day=day)
         self._dt = datetime.timedelta(days=delta_in_days)
         self._year = year
 
     def _get_date(self):
         return self._date
+
     def _set_date(self, date):
         self._date = date
-    date = property(fget=_get_date, fset=_set_date,
-                    doc="Set date given a valid datetime.datetime() instance")
+
+    date = property(fget=_get_date, fset=_set_date, doc="Set date given a valid datetime.datetime() instance")
 
     def _get_month(self):
         return self._date.month
+
     def _set_month(self, month):
         self._date = datetime.datetime(self.year, month, self.day)
-    month = property(fget=_get_month, fset=_set_month,
-                    doc="Set month given a valid month (between 1 and 12)")
+
+    month = property(fget=_get_month, fset=_set_month, doc="Set month given a valid month (between 1 and 12)")
 
     def _get_day(self):
         return self._date.day
+
     def _set_day(self, day):
         self._date = datetime.datetime(self.year, self.month, day)
-    day = property(fget=_get_day, fset=_set_day,
-                    doc="Set day given a valid day (between 1 and 31)")
+
+    day = property(fget=_get_day, fset=_set_day, doc="Set day given a valid day (between 1 and 31)")
 
     def _get_year(self):
         return self._date.year
+
     def _set_year(self, year):
-        self._date = datetime.datetime(year, self._date.month, self._date.day,
-                                       self._date.hour, self.date.minute,
-                                       self._date.second,
-                                       self._date.microsecond)
+        self._date = datetime.datetime(
+            year, self._date.month, self._date.day, self._date.hour, self.date.minute, self._date.second, self._date.microsecond
+        )
         self._year = year
-    year = property(fget=_get_year, fset=_set_year , doc="set current year.")
+
+    year = property(fget=_get_year, fset=_set_year, doc="set current year.")
 
     def _get_dt(self):
         return self._dt
+
     def _set_dt(self, dt):
         self._dt = datetime.timedelta(days=dt)
-    dt = property(fget=_get_dt, fset=_set_dt,
-             doc="Set the delta time increment in days (may be non integer)")
 
+    dt = property(fget=_get_dt, fset=_set_dt, doc="Set the delta time increment in days (may be non integer)")
 
     def __str__(self):
         res = 'current date and time= %s\n' % str(self._date)
         res += 'current increment= %s\n' % str(self._dt)
         return res
-
 
     def advance(self):
         """advance the **current_time** by the **increment**
@@ -115,7 +119,6 @@ class Calendar(object):
             return True
         else:
             return False
-
 
 
 class Event(object):
@@ -137,8 +140,7 @@ class Event(object):
 
     """
 
-    def __init__(self, name, starting_date, duration=datetime.timedelta(1),
-                 periodic = True):
+    def __init__(self, name, starting_date, duration=datetime.timedelta(1), periodic=True):
         """
 
         :param name: set a label to an event
@@ -166,7 +168,6 @@ class Event(object):
         assert periodic in [True, False], 'duration must be of type boolean'
         assert duration.days < 365, \
             'Duration of an event must be less than a year'
-
 
         self._name = name
         self._starting_date = starting_date
@@ -218,10 +219,10 @@ class Event(object):
             try:
                 newdate = datetime.datetime(self.starting_date.year,
                                             date.month, date.day)
-            except:
+            except Exception:
                 if date.month == 2 and date.day == 29:
                     newdate = datetime.datetime(self.starting_date.year,
-                                                date.month, date.day-1)
+                                                date.month, date.day - 1)
 
             if self.ending_date >= newdate and self.starting_date <= newdate:
                 self._active = True
@@ -231,9 +232,10 @@ class Event(object):
 
     def _set_duration(self, duration):
         self._duration = datetime.timedelta(days=duration)
+
     def _get_duration(self):
         return self._duration
-    duration = property(fget=_get_duration,fset=_set_duration,
+    duration = property(fget=_get_duration, fset=_set_duration,
                         doc="getter/setter for duration. duration is in days.")
 
     def _get_periodic(self):
@@ -308,7 +310,7 @@ class Events(object):
     def __str__(self):
         res = ""
         for event in self.events:
-            res +=  event.__str__() + '\n'
+            res += event.__str__() + '\n'
         return res
 
     def __len__(self):
@@ -346,18 +348,14 @@ class Events(object):
                 break
         del self.events[index]
 
-
     def _get_names(self):
         return [x.name for x in self.events]
     names = property(fget=_get_names,
                      doc="return list of event names stored in :attr:`events`.")
 
-
     def _get_events(self):
         return self._events
     events = property(fget=_get_events, doc="returns the list of events")
-
-
 
 
 class SimulationInterface(object):
@@ -400,6 +398,7 @@ class SimulationInterface(object):
         datetime.timedelta(10)
 
     """
+
     def __init__(self, dt=1., starting_date=2000., ending_date=2010):
 
         self._ending_date = self.convert_input_date(ending_date)
@@ -407,9 +406,7 @@ class SimulationInterface(object):
         # set up the calendar, must convert the floating year to a date before
         date = self.convert_input_date(starting_date)
         self._starting_date = date
-        self.calendar = Calendar(year=date.year, month=date.month, day=date.day,
-                                delta_in_days=dt)
-
+        self.calendar = Calendar(year=date.year, month=date.month, day=date.day, delta_in_days=dt)
 
         # setup a event list with an example, the starting date
         self.events = Events()
@@ -419,8 +416,10 @@ class SimulationInterface(object):
         #: read-only attribute (in days using datetime.timedelta)
         self._time_elapsed = datetime.timedelta(0.)
 
+        self._year_no = 0
+
         #: read-only attribute, alias to calendar.date
-        #self._date = self.calendar.date
+        # self._date = self.calendar.date
 
     def convert_input_date(self, date):
         if type(date) in [float, int]:
@@ -428,12 +427,11 @@ class SimulationInterface(object):
         elif type(date) == str:
             try:
                 date = datetime.datetime.strptime(date, "%Y-%m-%d")
-            except:
+            except Exception:
                 raise ValueError("input date does not seem to be in the format year-month-day e.g., 2000-12-30")
             return date
         else:
             raise TypeError("date must be int, float (fractional year) or string format such as 2000-12-30")
-
 
     @staticmethod
     def convert_fractional_year_to_date(year):
@@ -447,9 +445,9 @@ class SimulationInterface(object):
             datetime.datetime(2000, 7, 1, 12, 0)
 
         """
-        assert year>=1, "year cannot be less than 1"
+        assert year >= 1, "year cannot be less than 1"
         date = datetime.datetime(int(year), 1, 1)
-        fraction = (year % 1) *365
+        fraction = (year % 1) * 365
         date += datetime.timedelta(fraction)
         return date
 
@@ -476,11 +474,16 @@ class SimulationInterface(object):
 
     def _get_dt(self):
         return self.calendar.dt
+
     def _set_dt(self, dt):
         self.calendar.dt = dt
-    dt = property(fget=_get_dt, fset=_set_dt,
-                            doc="returns time step datetime format ")
 
+    dt = property(fget=_get_dt, fset=_set_dt, doc="returns time step datetime format ")
+
+    @property
+    def year_no(self):
+        """year no from 0 to n"""
+        return self._year_no
 
     def advance(self):
         """increment the calendar time by `dt` and check for events activation
@@ -495,88 +498,99 @@ class SimulationInterface(object):
         new_year = self.calendar.advance()
         self._time_elapsed += self.dt
 
+        if new_year:
+            self._year_no += 1
+
         for event in self.events.events:
             event.isactive(self.date)
 
         return new_year
 
 
-class Simulation(SimulationInterface):
-    """ a simple simulation protocol.
+@dc.dataclass(frozen=True)
+class RotationConvergence:
+    steps: int = 2  # Runge-Kutta order 2
 
-    Simulation is a specialised form of :class:`SimulationInterface`. See
-    :class:`SimulationInterface` for the basic usage.
-
-    Constructor is the same constructor as :class:`~vplants.plantik.simulation.simulation.SimulationInterface` for the time being.
-    """
-    def __init__(self, dt=1, starting_date=2000., ending_date=2010):
-        SimulationInterface.__init__(self, dt=dt, starting_date=starting_date,
-            ending_date=ending_date)
+    @property
+    def step(self) -> float:
+        return 1.0 / self.steps
 
 
-
-class RotationConvergence():
-    steps = 2  # // Runge-Kutta order 2
-    step  = 1.0 / steps
-
-
-
+# deprecated
 class SimulationStocatree(SimulationInterface):
-    def __init__(self, dt=1, starting_date=2000, ending_date=2010,seed=1163078257):
-        SimulationInterface.__init__(self, dt=dt, starting_date=starting_date, ending_date=ending_date)
 
+    def __init__(self, date_start: str, date_end: str, seed: int = 1163078257, dt: int = 1):
+
+        year_start = datetime.datetime.fromisoformat(date_start).year
+        year_end = datetime.datetime.fromisoformat(date_end).year
+
+        super().__init__(dt=dt, starting_date=year_start, ending_date=year_end)
 
         mydt = datetime.timedelta(dt)
-        self.events.add_event('bud_break',
-                              datetime.datetime(starting_date, 4, 15),
-                              duration=datetime.timedelta(0))
-        self.events.add_event('new_cambial_layer',
-                              datetime.datetime(starting_date, 5, 15),
-                              duration=mydt)
-        self.events.add_event('pre_harvest',
-                              datetime.datetime(starting_date, 10, 29),
-                              duration=mydt)
-        self.events.add_event('harvest',
-                              datetime.datetime(starting_date, 10, 30),
-                              duration=mydt)
-        self.events.add_event('autumn',
-                              datetime.datetime(starting_date, 11, 1),
-                              duration=datetime.timedelta(45))
-        self.events.add_event('leaf_fall',
-                              datetime.datetime(starting_date, 11, 15),
-                              duration=datetime.timedelta(45))
-        #to make sure there are no remaining leaves for next year
-        self.events.add_event('leaf_out',
-                              datetime.datetime(starting_date, 12, 25),
-                              duration=mydt)
-        self.phase            = 0 #initialisation
-        self.error            = False # purpose of that attribut is not clear, seems not used
-        self.seed             = seed
-        self.base_dt          = dt
-        self.number           = 0
+
+        self.events.add_event(
+            'bud_break',
+            datetime.datetime(year_start, 5, 15),
+            duration=datetime.timedelta(0)
+        )
+        self.events.add_event(
+            'new_cambial_layer',
+            datetime.datetime(year_start, 5, 15),
+            duration=mydt
+        )
+        self.events.add_event(
+            'pre_harvest',
+            datetime.datetime(year_start, 10, 29),
+            duration=mydt
+        )
+        self.events.add_event(
+            'harvest',
+            datetime.datetime(year_start, 10, 30),
+            duration=mydt
+        )
+        self.events.add_event(
+            'autumn',
+            datetime.datetime(year_start, 11, 1),
+            duration=datetime.timedelta(45)
+        )
+        self.events.add_event(
+            'leaf_fall',
+            datetime.datetime(year_start, 11, 15),
+            duration=datetime.timedelta(45)
+        )
+        # to make sure there are no remaining leaves for next year
+        self.events.add_event(
+            'leaf_out',
+            datetime.datetime(year_start, 12, 25),
+            duration=mydt
+        )
+        self.phase = 0  # initialisation
+        self.error = False  # purpose of that attribut is not clear, seems not used
+        self.seed = seed
+        self.base_dt = dt
+        self.number = 0
         self.rotation_convergence = RotationConvergence()
         self.harvested = False    # purpose of that attribut is not clear, seems not used
 
-        #---------------------------------------------------------------------#
+        # --------------------------------------------------------------------#
         # Here comes element that should be saved in order to be able to      #
         # restart the simulation from a saved point                           #
-        #---------------------------------------------------------------------#
+        # --------------------------------------------------------------------#
 
         # the tree representation as a lstring should be set just before saving to avoid duplication
         # and be deleted after loading to continue simulation
-        self.lstring          = None
+        self.lstring = None
 
         # Data structure that store output
         # should probably replaced and/or cleaned
-        self.data             = None
+        self.data = None
 
         # Tree is the unique instance that represent the tree and store tree status
-        self.tree             = None
+        self.tree = None
 
         # Budbreak date is also saved in case the simulation is saved and reloaded
         # between 01/01 when budbreak date is calculated and the calculated date
-        self.bud_break        = None
-
+        self.bud_break = None
 
     def load_save(self, lstr, dat, tr, bbreak):
         """
@@ -592,11 +606,13 @@ class SimulationStocatree(SimulationInterface):
         """
         Free some memory by setting some attributs back to None
         """
-        self.lstring          = None
-        self.data             = None
-        self.tree             = None
-
+        self.lstring = None
+        self.data = None
+        self.tree = None
 
     def func_leaf_area_init(self, filename='functions.fset', func_name='leaf_area'):
         """read the functions.fset once for all the metamers"""
         self.func_leaf_area = ReadFunction(filename, func_name)
+
+    def active_events(self):
+        return tuple([event.name for event in self.events if event.active])

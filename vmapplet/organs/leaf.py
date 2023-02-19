@@ -10,16 +10,6 @@ sigmoid = numpy.array([
 
 days = numpy.arange(0, 13)
 
-leaf_options = {
-    'fall_probability': 0.1,
-    'maturation': 12,
-    'mass_per_area': 0.220,
-    'max_area': 0.0030,
-    'min_final_area': 0.0020,
-    'petiole_radius': 0.0006,
-    'preformed_leaves': 8
-}
-
 
 class Leaf:
     """a base class interface for leaves

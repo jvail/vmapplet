@@ -1,4 +1,4 @@
-# VMAppleT - Test
+# VMAppleT
 
 MAppleT sources and openalea dependencies copied and modified are from openalea/incubator.
 
@@ -12,20 +12,26 @@ Only tested on debian 10.
 
 ```sh
 conda install mamba -n base -c conda-forge
-mamba env create -f environment.yml
-conda activate vmapplet
+mamba env create -f binder/environment.yml
 ```
 
-#### Install VMAppleT
+#### Install
 
-Only a local dev install will work.
+Install mamba
 
 ```sh
-pip install -e .
+conda install mamba -n base -c conda-forge
+```
+
+Create environment (with a local install of VMappleT)
+
+```sh
+mamba env create -f binder/environment.yml
 ```
 
 ## Run Jupyter
 
 ```sh
+activate vmapplet
 jupyter lab --notebook-dir=notebooks
 ```

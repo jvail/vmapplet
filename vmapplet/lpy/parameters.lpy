@@ -1,0 +1,20 @@
+from vmapplet import optimisation
+from vmapplet.physics import rotate_frame_at_branch
+
+module apex(apex_data): scale=2
+module branch(): scale=1
+module growth_unit(growth_unit_data): scale=1
+module axiom()
+module metamer(metamer_data): scale=2
+module root(): scale=1
+
+ignore: growth_unit
+
+production:
+
+metamer(m):
+    m.update_metamer_parameters(simulation)
+    m.organ_activity(simulation)
+    produce metamer(m)
+
+endlsystem

@@ -1,0 +1,17 @@
+from vmapplet.organs import ApexData
+
+
+module apex(apex_data): scale=2
+module root(): scale=1
+
+axiom:
+    parameters = {
+        **options.apex,
+        **options.markov
+    }
+    produce apex(ApexData(hlu=tree.initial_hlu, observation='trunk', **parameters))
+
+production:
+
+
+endlsystem

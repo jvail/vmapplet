@@ -1,10 +1,3 @@
-wood_options = {
-    'wood_density': 1000,
-    'reaction_wood_rate': 0.5,
-    'reaction_wood_inertia_coefficient': 0.1,
-    'youngs_modulus': 1.1,
-    'modulus_of_rupture': 50e6
-}
 
 
 class Wood:

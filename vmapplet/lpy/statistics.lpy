@@ -1,0 +1,95 @@
+import random
+
+from vmapplet.sequences import (
+    generate_sequence,
+    terminal_fate
+)
+from vmapplet.srandom import boolean_event
+from vmapplet.organs.growth_unit import GrowthUnitData
+
+# TODO: implement
+sylleptic_year = False
+
+module apex(apex_data): scale=2
+module branch(): scale=1
+module growth_unit(growth_unit_data): scale=1
+module axiom()
+module metamer(metamer_data): scale=2
+module root(): scale=1
+
+ignore: growth_unit
+
+production:
+
+apex(a):
+    if (
+        a.sequence_position == 0 and
+        a.get_observation() != 'dormant' and (
+            a.parent_observation == 'floral' or
+            simulation.events.bud_break.active or (
+                sylleptic_year and
+                a.year < simulation.date.year and
+                a.get_observation() in ('small', 'medium', 'large')
+            )
+        )
+    ):
+        old_observation = a.get_observation()
+        a.parent_observation = old_observation
+        if a.parent_observation == 'sylleptic_small':
+            a.parent_observation = 'small'
+            a.set_observation('small')
+        elif a.parent_observation == 'sylleptic_medium':
+            a.parent_observation = 'medium'
+            a.set_observation('medium')
+        elif a.parent_observation == 'sylleptic_large':
+            a.parent_observation = 'large'
+            a.set_observation('large')
+        a.sequence  = generate_sequence(
+            a.get_observation(),
+            markov, simulation.year_no,
+            options.general.second_year_draws,
+            select_trunk=[int(options.general.select_trunk)]
+        )
+        a.sequence_position = len(a.sequence)
+        if a.get_observation() == 'trunk':
+            a.set_observation('large')
+        elif a.get_observation() =='small' and boolean_event(tree.spur_death_probability):
+            a.set_observation('dormant')
+        elif a.get_observation() == 'floral':
+            a.set_observation('dormant')
+        else:
+            a.set_observation(terminal_fate(simulation.year_no, a.get_observation(), options.markov.terminal_fate))
+        a.radius = 0
+        a.max_terminal_radius_target()
+        tree.growth_units += 1
+        # record the unit id that this apex belongs to (the id values start from 0)
+        a.parent_unit_id = tree.growth_units-1
+        # update counts
+        if options.output.counts:
+            if a.parent_observation == 'floral':
+                data.counts.florals += 1
+            elif a.parent_observation == 'small':
+                data.counts.shorts += 1
+            elif a.parent_observation == 'medium':
+                data.counts.mediums += 1
+            elif a.parent_observation == 'large':
+                data.counts.longs += 1
+                if a.sequence_position < 26:
+                    data.counts.len_16_to_25 += 1
+                elif a.sequence_position < 41:
+                    data.counts.len_26_to_40+=1
+                else:
+                    data.counts.len_over_40+=1
+        # # save sequences into output data
+        # if options.output.sequences and simulation.date.year < 1999 and (a.parent_observation in ['large', 'medium', 'small']):
+        #     data.sequences.save(a.sequence, a.sequence_position)
+        # # Note that a.year was initially smaller than simulation.date.year
+        # # Once a growth unit is finished, a.year will be set as the same
+        # # This is to avoid the production of two growth units at the same axis
+        # # at the same year
+        a.year = simulation.date.year
+        nproduce growth_unit(GrowthUnitData(tree.growth_units, simulation.date.year, a.parent_observation == 'floral')) apex(a)
+    else:
+        produce apex(a)
+
+endlsystem

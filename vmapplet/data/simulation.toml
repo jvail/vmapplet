@@ -1,0 +1,125 @@
+[general]
+date_start = 1994-01-01
+date_end = 2010-06-30
+seed = 1163078255
+second_year_draws = true
+ruptures = false
+stake = true
+select_trunk = 0
+mechanics = true
+render_mode = 'bark'
+stride_number = 5
+pruning = false
+convergence_steps = 2
+
+[input.lpy_files]
+axiom = 'axiom.lpy'
+parameters = 'parameters.lpy'
+mechanics = { forward = 'mechanics_forward.lpy', backward = 'mechanics_backward.lpy' }
+statistics = 'statistics.lpy'
+structure = 'structure.lpy'
+interpretation = 'interpretation.lpy'
+
+[output]
+sequences = false
+l_string = false
+light_interception = false
+counts = false
+trunk = false
+leaves = true
+mtg = false
+shoots = false
+
+[events]
+bud_break = { day = 15, month = 5, duration = 0 }
+new_cambial_layer = { day = 15, month = 5, duration = 1 }
+pre_harvest = { day = 29, month = 10, duration = 1 }
+harvest = { day = 30, month = 10, duration = 1 }
+autumn = { day = 1, month = 11, duration = 60 }
+leaf_fall = { day = 15, month = 11, duration = 45 }
+leaf_out = { day = 25, month = 12, duration = 1 }
+
+[tree]
+phyllotactic_angle = -144.0
+branching_angle = 45.0
+floral_angle = -10.0
+tropism = 0.1
+preformed_leaves = 8
+spur_death_probability = 0.3
+inflorescence_death_probability = 0.2
+
+[wood]
+wood_density = 1000
+reaction_wood_rate = 0.5
+reaction_wood_inertia_coefficient = 0.1
+youngs_modulus = 1.1
+modulus_of_rupture = 50000000.0
+
+[internode]
+min_length = 0.0001
+elongation_period = 10.0
+plastochron = 3.0
+max_length = 0.03
+
+[apex]
+terminal_expansion_rate = 2e-5
+minimum_size = 0.00075
+maximum_size = 0.003
+
+[markov]
+maximum_length = 70
+minimum_length = 4
+
+# order matters: index = year_no - 1
+[[markov.terminal_fate]]
+large = [0.500, 0.167, 0.000, 0.333]
+medium = [0.000, 0.000, 0.000, 1.000]
+small = [0.100, 0.100, 0.300, 0.500]
+floral = [0.100, 0.300, 0.600, 0.000]
+
+[[markov.terminal_fate]]
+large = [0.246, 0.185, 0.000, 0.569]
+medium = [0.016, 0.238, 0.032, 0.714]
+small = [0.066, 0.067, 0.317, 0.550]
+floral = [0.317, 0.250, 0.433, 0.000]
+
+[[markov.terminal_fate]]
+large = [0.351, 0.106, 0.010, 0.533]
+medium = [0.123, 0.148, 0.063, 0.666]
+small = [0.015, 0.094, 0.453, 0.438]
+floral = [0.182, 0.249, 0.569, 0.000]
+
+[[markov.terminal_fate]]
+large = [0.213, 0.082, 0.000, 0.705]
+medium = [0.027, 0.046, 0.016, 0.911]
+small = [0.000, 0.024, 0.205, 0.771]
+floral = [0.003, 0.413, 0.584, 0.000]
+
+[[markov.terminal_fate]]
+large = [0.100, 0.050, 0.000, 0.850]
+medium = [0.000, 0.020, 0.130, 0.850]
+small = [0.000, 0.000, 0.375, 0.625]
+floral = [0.008, 0.325, 0.667, 0.000]
+
+[[markov.terminal_fate]]
+large = [0.000, 0.100, 0.000, 0.900]
+medium = [0.000, 0.050, 0.050, 0.900]
+small = [0.000, 0.000, 0.350, 0.650]
+floral = [0.000, 0.200, 0.800, 0.000]
+
+[fruit]
+flower_duration = 10.0
+max_relative_growth_rate = 0.167
+lost_time = 28
+max_age = 147
+probability = 0.3
+max_absolute_growth_rate = 0.0018
+
+[leaf]
+fall_probability = 0.1
+maturation = 12
+mass_per_area = 0.22
+max_area = 0.003
+min_final_area = 0.002
+petiole_radius = 0.0006
+preformed_leaves = 8

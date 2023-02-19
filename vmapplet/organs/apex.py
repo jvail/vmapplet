@@ -1,16 +1,5 @@
 from ..frame import Frame
 
-apex_options = {
-    'terminal_expansion_rate': 0.00002,
-    'minimum_size': 0.00075,
-    'maximum_size': 0.006
-}
-
-markov_options = {
-    'maximum_length': 70,
-    'minimum_length': 4
-}
-
 
 class ApexData:
     """An apex class to be used in stocatree
@@ -67,7 +56,7 @@ class ApexData:
     def __init__(self, hlu=Frame(), observation='trunk',
                  terminal_expansion_rate=0.00002, minimum_size=0.00075,
                  maximum_size=0.006, minimum_length=4, maximum_length=70,
-                 expansion_period=300, target_radius=0.006, sylleptic=False):
+                 expansion_period=300, target_radius=0.006, sylleptic=False, **kwargs):
         """
         The arguments "expansion_period" and "target_radius" were added by Han
         on 14-04-2011.
@@ -119,8 +108,10 @@ class ApexData:
         self.sequence_minimum_length = minimum_length
         self.sequence_maximum_length = maximum_length
         assert self.sequence_maximum_length > self.sequence_minimum_length
-        self.sequence_length_range = float(self.sequence_maximum_length
-                                           - self.sequence_minimum_length)
+        self.sequence_length_range = float(
+            self.sequence_maximum_length -
+            self.sequence_minimum_length
+        )
 
         # expansion rate of the radius
         self.terminal_expansion_rate = terminal_expansion_rate
@@ -187,7 +178,7 @@ class ApexData:
 
     def get_observation_from_sequence(self):
         """return observation corresponding to the current position"""
-        index = self.sequence[self.sequence_position][1]
+        index = self.sequence[self.sequence_position][1] if self.sequence is not None else -1
         if index == 0:
             return 'dormant'
         elif index == 1:
@@ -246,7 +237,7 @@ class ApexData:
 
     # Added by Han on 11-07-2012, to be used as a condition to control the first-year sylleptic growth from trunk
     def trunk_sylleptic(self):
-        index = self.sequence[self.sequence_position][1]
+        index = self.sequence[self.sequence_position][1] if self.sequence is not None else -1
         if index == 0:
             return False
         elif index == 1:

@@ -1,0 +1,82 @@
+import openalea.plantgl.all as pgl
+
+from vmapplet import (
+    constants,
+    optimisation
+)
+
+gravity = pgl.Vector3(0.0, 0.0, -9.81)
+
+module apex(apex_data): scale=2
+module branch(): scale=1
+module growth_unit(growth_unit_data): scale=1
+module axiom()
+module metamer(metamer_data): scale=2
+module root(): scale=1
+
+def StartEach():
+    backward()
+
+ignore: growth_unit
+
+production:
+
+root() >> metamer(m):
+    tree.trunk_radius = m.radius
+    tree.trunk_cross_sectional_area = constants.pi * m.radius * m.radius
+    tree.fruit_load = tree.fruits / tree.trunk_cross_sectional_area
+
+metamer(m) >> SB() branch() metamer(mb) EB() metamer(mr):
+    radius = optimisation.get_new_radius(mb.radius, mr.radius)
+    if m.leaf.state == 'growing':
+        radius = optimisation.get_new_radius(radius, m.leaf.petiole_radius)
+    m.radius = optimisation.max(radius, m.radius)
+    # update last layer thickness
+    m.layers[-1].thickness = m.radius - m.layers[-1].radius
+    m.compute_mass(mr, mb)
+    # cumulated torque cumulate mass must be in kg
+    if options.general.mechanics:
+        m.cumulated_torque = (
+            mb.cumulated_torque + mr.cumulated_torque \
+            + cross((mb.hlu.heading * mb.length), (gravity * mb.cumulated_mass)) \
+            + cross((mr.hlu.heading * mr.length), (gravity * mr.cumulated_mass))\
+            + cross((m.hlu.heading * m.length) , tree.tropism)
+        )
+        m.calculate_rotation_velocity(simulation, options.general.stake)
+    produce metamer(m)
+
+metamer(m) >> metamer(mr):
+    radius = mr.radius
+    if m.leaf.state == 'growing':
+        radius = optimisation.get_new_radius(mr.radius, m.leaf.petiole_radius)
+    m.radius = optimisation.max(radius, m.radius)
+    m.layers[-1].thickness = m.radius - m.layers[-1].radius
+    m.compute_mass(mr)
+    if options.general.mechanics:
+        m.cumulated_torque = (
+            cross((mr.hlu.heading * mr.length), (gravity * mr.cumulated_mass)) \
+            + mr.cumulated_torque \
+            + cross((m.hlu.heading * m.length) , tree.tropism)
+        )
+        m.calculate_rotation_velocity(simulation, options.general.stake)
+    produce metamer(m)
+
+metamer(m) >> apex(a):
+    # wood.density, m.fruit_mass are units objects
+    radius = a.radius
+    if m.leaf.state == 'growing':
+        radius = optimisation.get_new_radius(a.radius, m.leaf.petiole_radius)
+    m.radius = optimisation.max(radius, m.radius);
+    m.layers[-1].thickness = m.radius - m.layers[-1].radius
+    m.compute_mass()
+    m.cumulated_torque = cross( m.hlu.heading * m.length , tree.tropism)
+    if options.general.mechanics:
+        m.calculate_rotation_velocity(simulation, options.general.stake)
+    produce metamer(m)
+
+apex(a):
+    if a.sequence_position == 0 and a.radius < a.target_radius:
+        a.terminal_expansion(simulation.dt.days)
+    produce apex(a)
+
+endlsystem

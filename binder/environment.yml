@@ -3,22 +3,24 @@ channels:
   - fredboudon
   - conda-forge
 dependencies:
-  - jupyterlab
-  - jupyterlab_widgets
-  - ipywidgets
-  - toml
-  - matplotlib
-  - scipy
-  - boost
-  - boost-cpp
-  - cppyy
-  - cmake
-  - cxx-compiler
-  - openalea.lpy>=3.9.2
-  - openalea.mtg
-  - xlrd
+  - python=3.9
+  - jupyterlab=3.6
+  - jupyterlab_widgets=3.0
+  - ipywidgets=8.0
+  - toml=0.10
+  - matplotlib=3.7
+  - scipy=1.10
+  - boost=1.74
+  - boost-cpp=1.74
+  - cppyy=2.4
+  - cmake=3.25
+  - cxx-compiler=1.5
+  - openalea.lpy
+  - openalea.mtg=2.0
+  - xlrd=2.0
+  - pip=23.0
   - flake8
-  - pip
+  - mypy
   - pip:
     - pgljupyter==2.0.0
     - -e ..
