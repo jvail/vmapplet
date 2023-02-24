@@ -9,7 +9,8 @@ from typing import (
 import openalea.lpy as lpy
 import openalea.plantgl.all as pgl
 
-Paths = Dict[str, Union[str, 'Paths']]
+# a (optionaly nested) dict of paths to lsystem files
+LsystemPaths = Dict[str, Union[str, 'LsystemPaths']]
 Lstrings = Dict[str, Union[lpy.Lstring, 'Lstrings']]
 
 
@@ -49,11 +50,15 @@ class Lsystems:
 
     def __init__(
         self,
-        paths: Paths,
+        paths: LsystemPaths,
         context: Dict[str, Any] = {},
         config: Dict[str, Dict[str, Union[int, float, str]]] = {},
         name: str = ''
     ):
+        """
+        The config parameter is somewhat experimental. Currently just 'steps'
+        is used to derive 'mechanics' 'steps' times
+        """
 
         self._lsystems = []
         self._name = name

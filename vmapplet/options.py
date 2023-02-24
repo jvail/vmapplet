@@ -1,9 +1,7 @@
 from collections.abc import Mapping
 from typing import (
-    List,
+    Any,
     Dict,
-    Tuple,
-    Union
 )
 import dataclasses as dc
 import pathlib
@@ -11,7 +9,8 @@ from datetime import datetime
 
 import toml
 
-from .tools.lsystems import Paths
+from .tools.lsystems import LsystemPaths
+from .enums import Observation
 
 
 def _make_dataclass(cls, data_or_cls):
@@ -79,7 +78,7 @@ class OptionsOutput(OptionsBase):
 @dc.dataclass
 class OptionsInput(OptionsBase):
 
-    lpy_files: Paths = dc.field(default_factory=lambda: dict())
+    lpy_files: LsystemPaths = dc.field(default_factory=lambda: dict())
     lpy_path: str = dc.field(default_factory=lambda: str(pathlib.Path(__file__).parent.joinpath('lpy')))
 
 
@@ -139,19 +138,19 @@ class OptionsMarkov(OptionsBase):
 
     maximum_length: int = 70  # < 100
     minimum_length: int = 4
-    terminal_fate: Dict[Tuple[int, str], List[int]] = dc.field(default_factory=lambda: dict())
+    terminal_fate: Dict[Any, Any] = dc.field(default_factory=lambda: dict())
 
     def __post_init__(self):
 
         # create the expected structure/types from toml input
-        fate = None
+        # i.e. a list of dicts with observations as keys
+        terminal_fate = {}
         if self.terminal_fate is not None:
-            fate = {}
             for i, item in enumerate(self.terminal_fate):
-                for key, val in item.items():
+                for observation_str, probabilities in item.items():
                     # start with year_no = 1
-                    fate[(i + 1, key)] = val
-        self.terminal_fate = fate
+                    terminal_fate[(i + 1, Observation(observation_str.upper()))] = probabilities
+        self.terminal_fate = terminal_fate
 
 
 @dc.dataclass

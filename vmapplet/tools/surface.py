@@ -98,7 +98,7 @@ def leafSurface(u_stride=6, v_stride=6):
 
     >>> leaf = leafSurface(6, 12)
     """
-    s = createSurface(get_shared_data('leaf_surface.s'), u_stride, v_stride)
+    s = createSurface(get_shared_data('lpy/leaf_surface.s'), u_stride, v_stride)
     s.name = 'leaf'
     return s
 
@@ -110,7 +110,7 @@ def groundSurface(u_stride=6, v_stride=6):
 
     >>> ground = groundSurface(6, 12)
     """
-    s = createSurface(get_shared_data('ground_surface.s'), u_stride, v_stride)
+    s = createSurface(get_shared_data('lpy/ground_surface.s'), u_stride, v_stride)
     s.name = 'ground'
     return s
 
@@ -123,6 +123,6 @@ def petalSurface(u_stride=6, v_stride=6):
 
     >>> petal = petalSurface(6, 12)
     """
-    s = createSurface(get_shared_data('petal_surface.s'), u_stride, v_stride)
+    s = createSurface(get_shared_data('lpy/petal_surface.s'), u_stride, v_stride)
     s.name = 'petal'
     return s

@@ -1,5 +1,7 @@
 from math import log, exp
 
+from ..enums import FruitState
+
 
 class Fruit:
     """a base class interface for fruits
@@ -13,9 +15,10 @@ class Fruit:
     implement this method.
 
     """
-    states = ['flower', 'no_flower', 'fruit_scar', 'fruit']
 
-    def __init__(self, state='flower'):
+    _state: FruitState
+
+    def __init__(self, state: FruitState = FruitState.FLOWER):
         """
         :param str state: a valid fruit state (default is flower)
 
@@ -29,13 +32,13 @@ class Fruit:
         self._state = state
         self.mass = 0.
 
-    def _set_state(self, state):
-        if state in Fruit.states:
+    def _set_state(self, state: FruitState):
+        if state in list(FruitState):
             self._state = state
         else:
-            raise ValueError("state must be in %s , %s provided" % (Fruit.state, state))
+            raise ValueError("state must be in %s , %s provided" % (FruitState, state))
 
-    def _get_state(self):
+    def _get_state(self) -> FruitState:
         return self._state
 
     state = property(

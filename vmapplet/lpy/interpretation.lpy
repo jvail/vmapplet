@@ -3,6 +3,7 @@ import math
 from openalea.plantgl.all import Sphere
 
 from vmapplet import constants
+from vmapplet.enums import FruitState, LeafState
 from vmapplet.colors import Colors
 from vmapplet.tools.surface import (
     leafSurface,
@@ -44,7 +45,7 @@ metamer(m):
     nproduce SetHead(m.hlu.heading.x, m.hlu.heading.y, m.hlu.heading.z, m.hlu.up.x, m.hlu.up.y, m.hlu.up.z)
     nproduce SetWidth(m.radius*10) SetColor(shoot_colour) F(m.length*10)
     d2r = 180.0 / constants.pi
-    if m.fruit.state == 'flower':
+    if m.fruit.state == FruitState.FLOWER:
         scale = 5.
         nproduce SB() RollL(m.phyllotactic_angle * d2r)
         nproduce Up(45)
@@ -69,12 +70,12 @@ metamer(m):
         nproduce PglShape(petal_surface, 0.02 * scale) RollL(144.0)
         nproduce PglShape(petal_surface, 0.02 * scale)
         nproduce EB()
-    elif m.fruit.state == 'fruit':
+    elif m.fruit.state == FruitState.FRUIT:
         r = m.fruit.mass
         if r != 0:
             nproduce SB() RollL(float(m.phyllotactic_angle * d2r))
             nproduce Down(90.0) f(r) SetColor(colors.fruit) Sphere(r) EB()
-    if m.leaf.state == 'growing':
+    if m.leaf.state == LeafState.GROWING:
         r = m.leaf.mass * 1000.
         if r == 0:
             r = 0.1

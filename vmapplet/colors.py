@@ -1,3 +1,5 @@
+from .enums import Observation
+
 
 class Colors():
     """Define the indices for the colours to be used in the geometrical representation.
@@ -32,7 +34,7 @@ class Colors():
     5
     """
     def __init__(self):
-        self.observation = Observation()
+        self.observation = ObservationColors()
         self.year = Year()
         self.reaction_wood = ReactionWood()
         self.zone = Zone()
@@ -70,14 +72,14 @@ class ColorInterface:
         """
         raise NotImplementedError
 
-    def get_color(self):
+    def get_color(self, key):
         """returns the color index correponding to the key provided.
         It uses the dictionary set with :func:`set_colors`
         """
         raise NotImplementedError
 
 
-class Observation(ColorInterface):
+class ObservationColors(ColorInterface):
     """ Set of color codes for observation rendering
 
     Change the option *rendering* in the config.ini to *observations*
@@ -101,14 +103,14 @@ class Observation(ColorInterface):
 
     def set_colors(self):
         return {
-            'dormant': 2,
-            'large': 3,
-            'medium': 4,
-            'small': 5,
-            'floral': 6
+            Observation.DORMANT: 2,
+            Observation.LARGE: 3,
+            Observation.MEDIUM: 4,
+            Observation.SMALL: 5,
+            Observation.FLORAL: 6
         }
 
-    def get_color(self, observation):
+    def get_color(self, observation: Observation):
         if observation in self.colors.keys():
             color = self.colors[observation]
             return color

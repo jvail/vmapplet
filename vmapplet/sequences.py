@@ -12,11 +12,11 @@
     :Author: Thomas Cokelaer <Thomas.Cokelaer@sophia.inria.fr>
     :Revision: $Id$
 """
-
+from typing import List, Dict, Tuple, Optional, Union, Any
 import random
 import numpy as np
 
-from .structure_analysis import (
+from .tools.structure_analysis import (
     SemiMarkovIterator,
     srand
 )
@@ -24,23 +24,23 @@ from . import (
     get_shared_data,
     srandom
 )
+from .enums import Observation
+
+Sequence = List[Tuple[Union[int, None], int]]
+TerminalFateData = Dict[Tuple[int, Observation], List[float]]
 
 
-class Markov():
-    """class to manage all the markov and hidden semi markov sequences
-
-    This is used within the Lpy script only. It may be used as a private class
-
-    .. code-block:: python
-
-        >>> markov = Markov()
-        >>> markov.hsm_96_medium = HiddenSemiMarkov('../../data/fmodel_fuji_5_15_y3_96.txt')
-        >>> sequence = generate_sequence('small',  markov, 1996, False)
-        [[0, 0], [0, 0], [0, 0], [0, 0]]
-
-    see generate_sequence for an explantion of the arguments
-
+class Markov:
     """
+    Class to manage all the markov and hidden semi markov sequences
+    """
+
+    hsm_medium: Any
+    hsm_long: Any
+    hsm_short: Any
+    maximum_length: int
+    minimum_length: int
+
     def __init__(self, maximum_length=70, minimum_length=4, **kwargs):
         """
         :param max_sequence_length: the maximum length of markov sequence (default is 100)
@@ -79,72 +79,15 @@ class Markov():
         self.hsm_long4 = None
 
 
-class DataTerminalFate:
-    """Class to deal with terminal fate probabilities
-
-    :Example:
-
-        >>> d = DataTerminalFate()
-        >>> d._check_probabilities()
-        >>> data = d.get_data_terminal_fate(1994, 'large')
-
+class TerminalFate:
     """
+    Class to deal with terminal fate probabilities
     """
-    data = {
-        (1995, 'large') : [0.500, 0.167, 0.000, 0.333],
-        (1995, 'medium'): [0.000, 0.000, 0.000, 1.000],
-        (1995, 'small') : [0.500, 0.000, 0.000, 0.500],
-        (1995, 'floral'): [0.400, 0.000, 0.600, 0.000],
-        (1996, 'large') : [0.246, 0.185, 0.000, 0.569],
-        (1996, 'medium'): [0.016, 0.238, 0.032, 0.714],
-        (1996, 'small') : [0.066, 0.067, 0.317, 0.550],
-        (1996, 'floral'): [0.317, 0.250, 0.433, 0.000],
-        (1997, 'large') : [0.351, 0.106, 0.010, 0.533],
-        (1997, 'medium'): [0.123, 0.148, 0.063, 0.666],
-        (1997, 'small') : [0.015, 0.094, 0.453, 0.438],
-        (1997, 'floral'): [0.182, 0.249, 0.569, 0.000],
-        (1998, 'large') : [0.213, 0.082, 0.000, 0.705],
-        (1998, 'medium'): [0.027, 0.046, 0.016, 0.911],
-        (1998, 'small') : [0.000, 0.024, 0.205, 0.771],
-        (1998, 'floral'): [0.003, 0.413, 0.584, 0.000],
-        (1999, 'large') : [0.100, 0.050, 0.000, 0.850],
-        (1999, 'medium'): [0.000, 0.020, 0.130, 0.850],
-        (1999, 'small') : [0.000, 0.000, 0.375, 0.625],
-        (1999, 'floral'): [0.008, 0.325, 0.667, 0.000],
-        (2000, 'large') : [0.000, 0.100, 0.000, 0.900],
-        (2000, 'medium'): [0.000, 0.050, 0.050, 0.900],
-        (2000, 'small') : [0.000, 0.000, 0.350, 0.650],
-        (2000, 'floral'): [0.000, 0.200, 0.800, 0.000],}
-    """
-    # Modified by Costes on 30-05-2012
-    data = {
-        (1, 'large'): [0.500, 0.167, 0.000, 0.333],
-        (1, 'medium'): [0.000, 0.000, 0.000, 1.000],
-        (1, 'small'): [0.100, 0.100, 0.300, 0.500],
-        (1, 'floral'): [0.100, 0.300, 0.600, 0.000],
-        (2, 'large'): [0.246, 0.185, 0.000, 0.569],
-        (2, 'medium'): [0.016, 0.238, 0.032, 0.714],
-        (2, 'small'): [0.066, 0.067, 0.317, 0.550],
-        (2, 'floral'): [0.317, 0.250, 0.433, 0.000],
-        (3, 'large'): [0.351, 0.106, 0.010, 0.533],
-        (3, 'medium'): [0.123, 0.148, 0.063, 0.666],
-        (3, 'small'): [0.015, 0.094, 0.453, 0.438],
-        (3, 'floral'): [0.182, 0.249, 0.569, 0.000],
-        (4, 'large'): [0.213, 0.082, 0.000, 0.705],
-        (4, 'medium'): [0.027, 0.046, 0.016, 0.911],
-        (4, 'small'): [0.000, 0.024, 0.205, 0.771],
-        (4, 'floral'): [0.003, 0.413, 0.584, 0.000],
-        (5, 'large'): [0.100, 0.050, 0.000, 0.850],
-        (5, 'medium'): [0.000, 0.020, 0.130, 0.850],
-        (5, 'small'): [0.000, 0.000, 0.375, 0.625],
-        (5, 'floral'): [0.008, 0.325, 0.667, 0.000],
-        (6, 'large'): [0.000, 0.100, 0.000, 0.900],
-        (6, 'medium'): [0.000, 0.050, 0.050, 0.900],
-        (6, 'small'): [0.000, 0.000, 0.350, 0.650],
-        (6, 'floral'): [0.000, 0.200, 0.800, 0.000]
-    }
 
-    def __init__(self, data=None):
+    data: TerminalFateData
+    codes: Dict[Observation, int]
+
+    def __init__(self, data: Optional[TerminalFateData] = None):
         """Constructor description
 
         There is one constructor without arguments that simply setup
@@ -158,10 +101,43 @@ class DataTerminalFate:
 
         if data is not None:
             self.data = data
+        else:
+            # Modified by Costes on 30-05-2012
+            self.data = {
+                (1, Observation.LARGE): [0.500, 0.167, 0.000, 0.333],
+                (1, Observation.MEDIUM): [0.000, 0.000, 0.000, 1.000],
+                (1, Observation.SMALL): [0.100, 0.100, 0.300, 0.500],
+                (1, Observation.FLORAL): [0.100, 0.300, 0.600, 0.000],
+                (2, Observation.LARGE): [0.246, 0.185, 0.000, 0.569],
+                (2, Observation.MEDIUM): [0.016, 0.238, 0.032, 0.714],
+                (2, Observation.SMALL): [0.066, 0.067, 0.317, 0.550],
+                (2, Observation.FLORAL): [0.317, 0.250, 0.433, 0.000],
+                (3, Observation.LARGE): [0.351, 0.106, 0.010, 0.533],
+                (3, Observation.MEDIUM): [0.123, 0.148, 0.063, 0.666],
+                (3, Observation.SMALL): [0.015, 0.094, 0.453, 0.438],
+                (3, Observation.FLORAL): [0.182, 0.249, 0.569, 0.000],
+                (4, Observation.LARGE): [0.213, 0.082, 0.000, 0.705],
+                (4, Observation.MEDIUM): [0.027, 0.046, 0.016, 0.911],
+                (4, Observation.SMALL): [0.000, 0.024, 0.205, 0.771],
+                (4, Observation.FLORAL): [0.003, 0.413, 0.584, 0.000],
+                (5, Observation.LARGE): [0.100, 0.050, 0.000, 0.850],
+                (5, Observation.MEDIUM): [0.000, 0.020, 0.130, 0.850],
+                (5, Observation.SMALL): [0.000, 0.000, 0.375, 0.625],
+                (5, Observation.FLORAL): [0.008, 0.325, 0.667, 0.000],
+                (6, Observation.LARGE): [0.000, 0.100, 0.000, 0.900],
+                (6, Observation.MEDIUM): [0.000, 0.050, 0.050, 0.900],
+                (6, Observation.SMALL): [0.000, 0.000, 0.350, 0.650],
+                (6, Observation.FLORAL): [0.000, 0.200, 0.800, 0.000]
+            }
 
-        self.codes = {'large': 0, 'medium': 1, 'small': 2, 'floral': 3}
+        self.codes = {
+            Observation.LARGE: 0,
+            Observation.MEDIUM: 1,
+            Observation.SMALL: 2,
+            Observation.FLORAL: 3
+        }
 
-    def get_data_terminal_fate(self, year_no, code):
+    def get_data_terminal_fate(self, year_no: int, code: Observation) -> List[float]:
         """Returns the probabilities corresponding to a shoot code and a year
 
         It uses hardcoded list of probabilities such as::
@@ -200,7 +176,11 @@ class DataTerminalFate:
             assert sum(data) == 1
 
 
-def terminal_fate(year_no, observation, data_terminal_fate=None):
+def terminal_fate(
+    year_no: int,
+    observation: Observation,
+    data_terminal_fate: Optional[TerminalFateData] = None
+) -> Observation:
     """This function returns a type of metamer (large, short, ...)
 
 
@@ -212,18 +192,20 @@ def terminal_fate(year_no, observation, data_terminal_fate=None):
 
     """
 
-    d = DataTerminalFate(data_terminal_fate)
+    d = TerminalFate(data_terminal_fate)
     data = d.get_data_terminal_fate(year_no, observation)
     index = _non_parametric_distribution(data)
 
     if index == 1:
-        return 'large'
+        return Observation.LARGE
     if index == 2:
-        return 'medium'
+        return Observation.MEDIUM
     if index == 3:
-        return 'small'
+        return Observation.SMALL
     if index == 4:
-        return 'floral'
+        return Observation.FLORAL
+
+    raise ValueError(f"Unknown index {index}")
 
 
 def _non_parametric_distribution(pdf):
@@ -249,7 +231,7 @@ def _non_parametric_distribution(pdf):
     return i
 
 
-def generate_hsm_sequence(hsm, sequence_length=100):
+def generate_hsm_sequence(hsm, sequence_length=100) -> Sequence:
     """Generate a Hidden Semi Markov Sequence given an input transition matrix
 
     Used by :meth:`~openalea.stocatree.sequences.generate_sequence`
@@ -269,13 +251,13 @@ def generate_hsm_sequence(hsm, sequence_length=100):
     for i in range(0, sequence_length):
         if simulation[0][i] == 6:
             break
-        sequence.append([simulation[0][i], simulation[1][i]])
-
+        sequence.append((simulation[0][i], simulation[1][i]))
     sequence.reverse()
+
     return sequence
 
 
-def generate_bounded_hsm_sequence(hsm, lower_bound, upper_bound):
+def generate_bounded_hsm_sequence(hsm, lower_bound, upper_bound) -> Sequence:
     """Returns a bouded sequence
 
     One problem with the Markov chains is that they may produce sequences
@@ -301,6 +283,7 @@ def generate_bounded_hsm_sequence(hsm, lower_bound, upper_bound):
     """
     length = upper_bound + 1  # defines a max length for the sequence
     count = 0
+    sequence = []
 
     while length > upper_bound or length < lower_bound and count < 1000:
         sequence = generate_hsm_sequence(hsm)
@@ -315,7 +298,7 @@ def generate_bounded_hsm_sequence(hsm, lower_bound, upper_bound):
     return sequence
 
 
-def generate_short_sequence():
+def generate_short_sequence() -> Sequence:
     """Generate a short sequence
 
     Used by :meth:`~openalea.stocatree.sequences.generate_sequence`
@@ -330,10 +313,10 @@ def generate_short_sequence():
 
     """
 
-    return [[0, 0], [0, 0], [0, 0], [0, 0]]
+    return [(0, 0), (0, 0), (0, 0), (0, 0)]
 
 
-def generate_floral_sequence():
+def generate_floral_sequence() -> Sequence:
     """Generate a floral sequence
 
     Used by :meth:`~openalea.stocatree.sequences.generate_sequence`
@@ -347,10 +330,10 @@ def generate_floral_sequence():
     .. todo:: original code uses s(0,12) but was not used
     """
 
-    return [[0, 0], [0, 0], [0, 0], [0, 0]]
+    return [(0, 0), (0, 0), (0, 0), (0, 0)]
 
 
-def generate_trunk(trunk_seq='sequences.seq', select=0):
+def generate_trunk(trunk_seq='trunk/sequences.seq', select: Union[List[int], int] = 0) -> Sequence:
     """Generate a trunk sequence randomly selected within a list of hard-coded trunk sequences
 
     Used by :meth:`~openalea.stocatree.sequences.generate_sequence` only
@@ -362,24 +345,28 @@ def generate_trunk(trunk_seq='sequences.seq', select=0):
         >>> deterministic_sequence = generate_trunk(select=1)
 
     """
-    select = select[0] if type(select) == list else select
-    s = np.loadtxt(get_shared_data(trunk_seq), str)
+    select_ = 0
+    if type(select) is list:
+        select_ = select[0]
+    elif type(select) is int:
+        select_ = select
+    seqs = np.loadtxt(get_shared_data(trunk_seq), int)
 
-    assert 0 <= select < len(s)
+    assert 0 <= select_ < len(seqs)
 
-    seq = list(s[select])
-    sequence = []
+    seq: List[int] = list(seqs[select_])
+    sequence: Sequence = []
     for obs in seq:
         if obs == 9:
             break
-        sequence.append([None, obs])
+        sequence.append((None, obs))
 
     sequence.reverse()
 
     return sequence
 
 
-def _generate_random_draw_sequence():
+def _generate_random_draw_sequence() -> Sequence:
     """an alternative to the long shoot  model of the 2nd year. Usually not used."""
 
     max_length = 65
@@ -397,21 +384,27 @@ def _generate_random_draw_sequence():
         [0, 0, 0, 0, 0, 3, 0, 3, 3, 0, 3, 0, 0, 0, 0, 0, 0, 0, 3, 0, 1, 0, 0, 4, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 1, 0, 0, 1, 1, 1, 1, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9]
     ]
 
-    select_branch = srandom.random(number)
+    select_branch = int(srandom.random(number))
     i = 0
-    sequence = []
+    sequence: Sequence = []
     for i in range(0, max_length):
         if second_year_branches[select_branch][i] == 9:
             break
-        sequence.append([None, second_year_branches[select_branch][i]])
+        sequence.append((None, second_year_branches[select_branch][i]))
 
     sequence.reverse()
 
     return sequence
 
 
-def generate_sequence(obs, markov=None, year_no=0, second_year_draws=False,
-                      trunk_seq='sequences.seq', select_trunk=0):
+def generate_sequence(
+    obs: Observation,
+    markov: Markov,
+    year_no: int = 0,
+    second_year_draws: bool = False,
+    trunk_seq: str = 'trunk/sequences.seq',
+    select_trunk: int = 0
+) -> Sequence:
     """Generation of sequences from Markov chains, based directly on the work
     of Michael Renton
 
@@ -441,15 +434,15 @@ def generate_sequence(obs, markov=None, year_no=0, second_year_draws=False,
     srand(int(random.uniform(0, 1e6)))
 
     # The "sylleptic"s to the conditions as following were added by Han on 30-04-2012
-    if obs == 'trunk':
+    if obs == Observation.TRUNK:
         return generate_trunk(trunk_seq=trunk_seq, select=select_trunk)
-    elif obs == 'small' or obs == 'sylleptic_small':
+    elif obs == Observation.SMALL or obs == Observation.SYLLEPTIC_SMALL:
         return generate_short_sequence()
-    elif obs == 'floral':
+    elif obs == Observation.FLORAL:
         return generate_floral_sequence()
-    elif obs == 'medium' or obs == 'sylleptic_medium':
+    elif obs == Observation.MEDIUM or obs == Observation.SYLLEPTIC_MEDIUM:
         return generate_bounded_hsm_sequence(markov.hsm_medium, 5, 15)
-    elif obs == 'large' or obs == 'sylleptic_large':
+    elif obs == Observation.LARGE or obs == Observation.SYLLEPTIC_LARGE:
         if (second_year_draws and year_no == 1):
             return _generate_random_draw_sequence()
         else:
@@ -461,11 +454,21 @@ def generate_sequence(obs, markov=None, year_no=0, second_year_draws=False,
                 return generate_bounded_hsm_sequence(markov.hsm_long, 26, 41)
             elif res == 3:
                 return generate_bounded_hsm_sequence(markov.hsm_long, 41, markov.maximum_length)
-    else:
-        raise ValueError("ERROR: A bad sequence observation (%s) was passed to generate_sequence().\n" % obs)
+
+    raise ValueError("A bad sequence observation (%s) was passed to generate_sequence().\n" % obs)
 
 
-def generate_pruned_sequence(obs, react_pos, rank, closest_apex, farthest_apex, sons_nb, markov=None, year=0):
+# currently usused
+def generate_pruned_sequence(
+    obs: Observation,
+    react_pos,
+    rank,
+    closest_apex,
+    farthest_apex,
+    sons_nb,
+    markov: Markov,
+    year=0
+):
     """The pruned length is assimilated to the distance to the farthest apex
 
     obs is the shoot type of the prunned shoot
@@ -508,7 +511,7 @@ def generate_pruned_sequence(obs, react_pos, rank, closest_apex, farthest_apex, 
 
     hsm_react_long, hsm_react_medium = pruned_hsmc(year, markov)
 
-    if new_obs == 'trunk' or new_obs == 'large' or new_obs == 'sylleptic_large':
+    if new_obs in (Observation.TRUNK, Observation.LARGE, Observation.SYLLEPTIC_LARGE):
         if farthest_apex > 30:
             return generate_bounded_hsm_sequence(hsm_react_long, 41, markov.maximum_length)
         elif farthest_apex > 20:
@@ -518,25 +521,25 @@ def generate_pruned_sequence(obs, react_pos, rank, closest_apex, farthest_apex, 
         else:
             return generate_bounded_hsm_sequence(hsm_react_medium, 5, 15)
 
-    elif new_obs == 'medium' or new_obs == 'sylleptic_medium':
+    elif new_obs in (Observation.MEDIUM, Observation.SYLLEPTIC_MEDIUM):
         if farthest_apex > 5:
             return generate_bounded_hsm_sequence(hsm_react_long, 15, 26)
         else:
             return generate_bounded_hsm_sequence(hsm_react_medium, 5, 15)
 
-    elif new_obs == 'small' or new_obs == 'sylleptic_small':
+    elif new_obs in (Observation.SMALL, Observation.SYLLEPTIC_SMALL):
         return generate_short_sequence()
 
-    elif new_obs == 'floral':
+    elif new_obs == Observation.FLORAL:
         return generate_floral_sequence()
 
 
-def shoot_type_react(year, pruned_shoot_type, pruning_case, react_pos):
+def shoot_type_react(year, pruned_shoot_type: Observation, pruning_case, react_pos) -> Observation:
 
-    if pruned_shoot_type == 'trunk':
-        pruned_shoot_type = 'large'
-        reiteration = 'large'
-        succession = 'large'
+    if pruned_shoot_type == Observation.TRUNK:
+        pruned_shoot_type = Observation.LARGE
+        reiteration = Observation.LARGE
+        succession = Observation.LARGE
         lower_cat = terminal_fate(year, pruned_shoot_type)
     else:
         reiteration = pruned_shoot_type
@@ -565,6 +568,8 @@ def shoot_type_react(year, pruned_shoot_type, pruning_case, react_pos):
             print("reaction at pos {0} in case {1} of type {2}".format(react_pos, pruning_case, lower_cat))
             return lower_cat
 
+    raise ValueError(f"Reaction at {react_pos} not implemented")
+
 
 def pruned_hsmc(year, markov):
     """
@@ -587,7 +592,7 @@ def pruned_hsmc(year, markov):
     return hsmc_long, hsmc_medium
 
 
-def length_pool(year):
+def length_pool(year: int):
     """Returns a random number according to `year`
     If the trunk was cut far enough from the top, generate the longest possible shoot, otherwise,
     depending on the pruned length, i.e. farthest apex. year should come from simulation.year

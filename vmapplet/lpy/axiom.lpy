@@ -1,5 +1,5 @@
 from vmapplet.organs import ApexData
-
+from vmapplet.enums import Observation
 
 module apex(apex_data): scale=2
 module root(): scale=1
@@ -9,7 +9,7 @@ axiom:
         **options.apex,
         **options.markov
     }
-    produce apex(ApexData(hlu=tree.initial_hlu, observation='trunk', **parameters))
+    produce apex(ApexData(hlu=tree.initial_hlu, observation=Observation.TRUNK, **parameters))
 
 production:
 

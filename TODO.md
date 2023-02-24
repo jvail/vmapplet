@@ -1,5 +1,5 @@
 
-# Study cases for multi-scale analyses of tree structure
+# Study cases for multi-scale analyses of tree structure (by Evelyne Costes)
 
 ## Examples of up-scaling
 

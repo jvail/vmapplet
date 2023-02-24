@@ -1,4 +1,7 @@
+from typing import List, Union, Tuple
+
 from ..frame import Frame
+from ..enums import Observation
 
 
 class ApexData:
@@ -50,10 +53,62 @@ class ApexData:
 
     """
 
-    states = ['dormant', 'large', 'medium', 'small', 'floral', 'trunk',
-              'new_shoot', 'sylleptic_small', 'sylleptic_medium', 'sylleptic_large']
+    sequence_position: int
+    _observation: Union[None, Observation]
+    parent_observation: Observation
+    hlu: Frame
+    sequence: Union[None, List[Tuple[int, int]]]
+    radius: float
+    target_radius: float
+    expansion_period: int
+    expansion_days_counter: int
+    sequence_minimum_length: float
+    sequence_maximum_length: float
+    sequence_length_range: float
 
-    def __init__(self, hlu=Frame(), observation='trunk',
+    # expansion rate of the radius
+    terminal_expansion_rate: float
+
+    # define the radius size
+    maximum_size: float
+    minimum_size: float
+    radius_range: float
+
+    # This is used to record the parent unit id
+    # Added by Han
+    parent_unit_id: int
+
+    # This is used to record the parent branch id (first-order branch)
+    # Added by Han on 02-05-2011
+    parent_fbr_id: int
+
+    # Since only one tree is investigated at this stage, there is no need to
+    # update this parameter:
+    parent_tree_id: int
+
+    # Added by Han on 29-05-2012
+    # The value will be set to be the same with the current year once a
+    # growth unit (sequence) is fully generated
+    # This is to avoid there are two growth units at the same year
+    year: int
+
+    # Added by Han on 06-07-2012
+    # This is to avoid "1,2,3,4" growth units to be syllpetic at the first year
+    sylleptic: bool
+
+    # Flag to show that this apex was generated as a reaction to pruning
+    from_pruning: bool
+
+    # Information related to pruning reaction
+    rank: int
+    react_pos: int
+    closest_apex: int
+    farthest_apex: int
+
+    # the cumulated sum of metamers sons
+    sons_nb: int
+
+    def __init__(self, hlu=Frame(), observation=Observation.TRUNK,
                  terminal_expansion_rate=0.00002, minimum_size=0.00075,
                  maximum_size=0.006, minimum_length=4, maximum_length=70,
                  expansion_period=300, target_radius=0.006, sylleptic=False, **kwargs):
@@ -80,7 +135,7 @@ class ApexData:
         =========================== =============== ============
         :attr:`radius`              0.              meters
         :attr:`target_radius`       0.              meters
-        parent_observation          'new_shoot'
+        parent_observation          'NEW_SHOOT'
         trunk                       False
         sequence_position           0
         sequence                    None
@@ -91,20 +146,15 @@ class ApexData:
         self.sequence_position = 0
         self._observation = None
         self.set_observation(observation)
-        self.parent_observation = 'new_shoot'
+        self.parent_observation = Observation.NEW_SHOOT
+        self.trunk = observation == Observation.TRUNK
         self.hlu = hlu
-        if observation == 'trunk':
-            self.trunk = True
-        else:
-            self.trunk = False
         self.sequence = None
 
         self.radius = 0.
         self.target_radius = 0.
         self.expansion_period = expansion_period
         self.expansion_days_counter = 0
-
-        # sequence length
         self.sequence_minimum_length = minimum_length
         self.sequence_maximum_length = maximum_length
         assert self.sequence_maximum_length > self.sequence_minimum_length
@@ -112,93 +162,62 @@ class ApexData:
             self.sequence_maximum_length -
             self.sequence_minimum_length
         )
-
-        # expansion rate of the radius
         self.terminal_expansion_rate = terminal_expansion_rate
-
-        # define the radius size
         self.maximum_size = maximum_size
         self.minimum_size = minimum_size
         self.radius_range = maximum_size - minimum_size
-
-        # This is used to record the parent unit id
-        # Added by Han
         self.parent_unit_id = 0
-
-        # This is used to record the parent branch id (first-order branch)
-        # Added by Han on 02-05-2011
         self.parent_fbr_id = 0
-
-        # Since only one tree is investigated at this stage, there is no need to
-        # update this parameter:
         self.parent_tree_id = 0
-
-        # Added by Han on 29-05-2012
-        # The value will be set to be the same with the current year once a
-        # growth unit (sequence) is fully generated
-        # This is to avoid there are two growth units at the same year
         self.year = 1993
-
-        # Added by Han on 06-07-2012
-        # This is to avoid "1,2,3,4" growth units to be syllpetic at the first year
         self.sylleptic = sylleptic
-
-        # Flag to show that this apex was generated as a reaction to pruning
         self.from_pruning = False
-        # Information related to pruning reaction
         self.rank = 0
         self.react_pos = 0
         self.closest_apex = 0
         self.farthest_apex = 0
-        # the cumulated sum of metamers sons
         self.sons_nb = 0
 
-    def set_observation(self, observation):
-        """set the apex observation
-
-        :param observation: a valid observation
-
-        observation values are given in the class documentation, or by typing::
-
-            >>> import openalea.stocatree.apex as apex
-            >>> apex.apex_data.states
-            ['dormant', 'large', 'medium', 'small', 'floral', 'trunk', 'new_shoot']
-
+    def set_observation(self, observation: Observation):
+        """
+        Set the apex observation. Observation values are defined in the enum 'Observation'
         """
 
-        if observation in ApexData.states:
+        if observation in list(Observation):
             self._observation = observation
         else:
             raise ValueError("observation must be in %s , %s provided"
-                             % (ApexData.states, observation))
+                             % (Observation, observation))
 
-    def get_observation(self):
+    def get_observation(self) -> Union[Observation, None]:
         """returns the current apex observation"""
         return self._observation
 
-    def get_observation_from_sequence(self):
+    def get_observation_from_sequence(self) -> Observation:
         """return observation corresponding to the current position"""
+
         index = self.sequence[self.sequence_position][1] if self.sequence is not None else -1
+
         if index == 0:
-            return 'dormant'
+            return Observation.DORMANT
         elif index == 1:
-            return 'large'
+            return Observation.LARGE
         elif index == 2:
-            return 'medium'
+            return Observation.MEDIUM
         elif index == 3:
-            return 'small'
+            return Observation.SMALL
         elif index == 4:
-            return 'floral'
+            return Observation.FLORAL
         # The following indexes were added by Han on 30-04-2012
         elif index == 5:
-            return 'sylleptic_small'
+            return Observation.SYLLEPTIC_SMALL
         elif index == 6:
-            return 'sylleptic_medium'
+            return Observation.SYLLEPTIC_MEDIUM
         elif index == 7:
-            return 'sylleptic_large'
+            return Observation.SYLLEPTIC_LARGE
         else:
             # should never reach this line, however old sequences may contain 9s
-            return 'dormant'
+            return Observation.DORMANT
 
     def max_terminal_radius_target(self):
         """Set the max terminal radius :attr:`target_radius`
@@ -226,10 +245,9 @@ class ApexData:
 
         """
         assert self.sequence_position >= self.sequence_minimum_length
-        res = self.minimum_size + self.radius_range * (
+        self.target_radius = self.minimum_size + self.radius_range * (
             self.sequence_position - self.sequence_minimum_length
         ) / self.sequence_length_range
-        self.target_radius = res
 
     def terminal_expansion(self, dt):
         self.radius = self.radius + self.terminal_expansion_rate * dt

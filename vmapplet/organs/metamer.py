@@ -8,6 +8,7 @@ from .. import (
 )
 from ..physics import rotate_frame_at_branch
 from ..srandom import boolean_event
+from ..enums import FruitState, LeafState
 
 
 class cambial_layer():
@@ -139,9 +140,9 @@ class MetamerData:
         self.year = 0
         self.length = self.internode._min_length              # internode units is in m
         if floral:
-            self.fruit.state = 'flower'
+            self.fruit.state = FruitState.FLOWER
         else:
-            self.fruit.state = 'no_flower'
+            self.fruit.state = FruitState.NO_FLOWER
 
         self.trunk = False
 
@@ -219,35 +220,35 @@ class MetamerData:
 
         additional_fruit = 0
 
-        if self.fruit._state == 'no_flower':
+        if self.fruit._state == FruitState.NO_FLOWER:
             if simulation.events.harvest.active:
-                self.fruit.state = 'fruit_scar'
+                self.fruit.state = FruitState.FRUIT_SCAR
 
-        elif self.fruit._state == 'flower':
+        elif self.fruit._state == FruitState.FLOWER:
             if self.age > self.fruit._flower_duration:
                 if boolean_event(self.fruit._probability):
-                    self.fruit.state = 'fruit'
+                    self.fruit.state = FruitState.FRUIT
                     additional_fruit += 1
                 else:
-                    self.fruit.state = 'fruit_scar'
-        elif self.fruit._state == 'fruit':
+                    self.fruit.state = FruitState.FRUIT_SCAR
+        elif self.fruit._state == FruitState.FRUIT:
             if simulation.events.harvest.active:
-                self.fruit.state = 'fruit_scar'
+                self.fruit.state = FruitState.FRUIT_SCAR
                 self.fruit.mass = 0.
             else:
                 self.fruit.mass = self.fruit.compute_mass()  # useless ? mass already set by compute_mass
-        elif self.fruit._state == 'fruit_scar':
+        elif self.fruit._state == FruitState.FRUIT_SCAR:
             self.fruit.mass = 0.
 
-        if self.leaf.state != 'scar':
+        if self.leaf.state != LeafState.SCAR:
             if simulation.events.leaf_out.active:
-                self.leaf.state = 'scar'
+                self.leaf.state = LeafState.SCAR
 
             if simulation.events.leaf_fall.active:
                 if (boolean_event(self.leaf.fall_probability)):
-                    self.leaf.state = 'scar'
+                    self.leaf.state = LeafState.SCAR
 
-            if self.leaf.state == 'growing':
+            if self.leaf.state == LeafState.GROWING:
                 # If the value of "maturation" needs to be manipulated for sensitivity
                 # analysis for instance, it would be easier to calculate the leaf
                 # area based on the function (.fset) rather than using the numpy array (Han, 04-2011)
@@ -257,7 +258,7 @@ class MetamerData:
                 self.leaf.compute_mass()
 
         # added by Han on 29-04-2011
-        if self.leaf.state == 'scar':
+        if self.leaf.state == LeafState.SCAR:
             self.leaf.area = 0
             self.ta_pgl = 0
             self.sa_pgl = 0

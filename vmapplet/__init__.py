@@ -7,8 +7,8 @@ cppyy.include(f'{__path__[0]}/optimization.h')
 cppyy.load_library('pglmath')
 
 
-def get_shared_data(file_name):
-    return f'{__path__[0]}/data/{file_name}'
+def get_shared_data(path: str):
+    return f'{__path__[0]}/data/{path}'
 
 
 __all__ = [

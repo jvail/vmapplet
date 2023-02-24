@@ -1,4 +1,4 @@
-Build structural_analysis without scikit-build
+Building structural_analysis without scikit-build
 
 ```sh
 conda activate vmapplet

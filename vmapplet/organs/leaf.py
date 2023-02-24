@@ -1,6 +1,8 @@
 import numpy
 from scipy import interpolate
 
+from ..enums import LeafState
+
 sigmoid = numpy.array([
     0.00247262, 0.00669285, 0.01798621, 0.04742587,
     0.11920292, 0.26894142, 0.5, 0.73105858,
@@ -34,7 +36,8 @@ class Leaf:
     By default, there is a setter/getter for the state.
 
     """
-    valid_state = ['scar', 'growing']
+
+    _state: LeafState
 
     def __init__(self):
         self.mass = 0.  # [g]
@@ -44,7 +47,7 @@ class Leaf:
         self.mass_per_area = None  # [g/m**2]
         self.maturation = None  # [D]
         self.func_leaf_area = None
-        self._state = Leaf.valid_state[0]
+        self._state = LeafState.SCAR
 
         self.pathogen = False
 
@@ -73,14 +76,14 @@ class Leaf:
             if getattr(self, attr) is None:
                 raise NotImplementedError("%s is None. Set a value." % attr)
 
-    def _get_state(self):
+    def _get_state(self) -> LeafState:
         return self._state
 
-    def _set_state(self, state):
-        if state in Leaf.valid_state:
+    def _set_state(self, state: LeafState):
+        if state in list(LeafState):
             self._state = state
         else:
-            raise ValueError("state must be in %s , %s provided" % (Leaf.valid_state, state))
+            raise ValueError("state must be in %s , %s provided" % (LeafState, state))
 
     state = property(
         fget=_get_state,
@@ -105,7 +108,7 @@ class AppleLeaf(Leaf):
 
 
     """
-    def __init__(self, state='growing', fall_probability=0.1, maturation=12,
+    def __init__(self, state: LeafState = LeafState.GROWING, fall_probability=0.1, maturation=12,
                  mass_per_area=0.220, max_area=0.0030, min_final_area=0.0020,
                  petiole_radius=0.0006, preformed_leaves=8):
         """**Constructor**
