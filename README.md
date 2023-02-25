@@ -2,6 +2,8 @@
 
 A refactored implementation and maintenance release of MAppleT. Original sources copied and modified from [openalea/incubator](https://github.com/openalea-incubator/MAppleT).
 
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jvail/vmapplet/master?urlpath=lab/tree/notebooks/simple_simulation.ipynb)
+
 Major changes:
 
 - support Python 3 and updated dependencies
@@ -10,8 +12,6 @@ Major changes:
 - incorporates all dependencies previously hosted at [openalea/incubator](https://github.com/openalea-incubator)
 - redesign of configuration files
 - bug fixes, typing and linting
-
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jvail/vmapplet/master)
 
 ## Install
 

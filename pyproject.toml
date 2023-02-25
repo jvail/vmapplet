@@ -1,6 +1,6 @@
 [build-system]
 requires = [
-    "scikit-build",
+    "scikit-build==0.16",
     "setuptools>=58,<63"
 ]
 
