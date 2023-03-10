@@ -23,7 +23,7 @@ ignore: growth_unit
 production:
 
 apex(a):
-    bud_break = 'bud_break' in simulation.active_events()
+    bud_break = 'bud_break' in simulation.get_active_events()
     if (
         a.sequence_position == 0 and
         a.get_observation() != Observation.DORMANT and (

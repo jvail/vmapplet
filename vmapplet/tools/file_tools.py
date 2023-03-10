@@ -12,7 +12,7 @@
 
 
 
-
+import pathlib
 import glob
 import os
 from openalea.mtg import MTG
@@ -29,6 +29,11 @@ from openalea.mtg.aml import (
     Father,
     VtxList,
 )
+
+
+def get_shared_data_path(path: str) -> str:
+    return str((pathlib.Path(__file__).parent / '../data' / path).resolve())
+
 
 class File_Index(object):
     def __init__(self, dir):

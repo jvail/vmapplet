@@ -16,7 +16,7 @@ import datetime
 from math import exp
 import calendar
 
-from vmapplet import get_shared_data
+from vmapplet.tools.file_tools import get_shared_data_path
 
 
 class TemperatureDate:
@@ -45,7 +45,7 @@ class TemperatureDate:
         self.sigmoidal_slope = sigmoidal_slope
         self.heat_quantity_required = heat_quantity_required
 
-        self.temp_file = xlrd.open_workbook(get_shared_data("temperature_data.xls"))
+        self.temp_file = xlrd.open_workbook(get_shared_data_path("temperature_data.xls"))
         self.temp_sheet = self.temp_file.sheet_by_name("moy")
 
         self.chilling_accummulation = 0

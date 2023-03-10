@@ -1,7 +1,6 @@
 from typing import (
     Dict,
-    Tuple,
-    Optional
+    Tuple
 )
 import pathlib
 import dataclasses as dc
@@ -12,7 +11,6 @@ from datetime import (
 import random
 
 import toml
-from pgljupyter import SceneWidget
 
 from .organs.tree import Tree
 from .tools.lsystems import (
@@ -28,12 +26,9 @@ from .tools.structure_analysis import (
     HiddenSemiMarkov,
     StatError
 )
+from .tools.file_tools import get_shared_data_path
 from .options import Options
 from .sequences import Markov
-
-
-def get_shared_data(path: str):
-    return str(pathlib.Path(__file__).joinpath(f'../data/{path}').resolve())
 
 
 def _to_full_path(root: pathlib.Path, paths: LsystemPaths) -> LsystemPaths:
@@ -62,6 +57,7 @@ class Simulation(SimulationInterface):
         year_start = self.options.general.date_start.year
         year_end = self.options.general.date_start.year
 
+        # base class from plantik reused here: unclear why dates take a year (int)
         super().__init__(dt=1, starting_date=year_start, ending_date=year_end)
         random.seed(self.options.general.seed)
 
@@ -76,28 +72,28 @@ class Simulation(SimulationInterface):
 
         self._markov_model = dict(
             fuji_medium_year_3=HiddenSemiMarkov.ascii_read(
-                StatError(), get_shared_data('markov/fuji_medium_year_3.txt')
+                StatError(), get_shared_data_path('markov/fuji_medium_year_3.txt')
             ),
             fuji_medium_year_4=HiddenSemiMarkov.ascii_read(
-                StatError(), get_shared_data('markov/fuji_medium_year_4.txt')
+                StatError(), get_shared_data_path('markov/fuji_medium_year_4.txt')
             ),
             fuji_medium_year_5=HiddenSemiMarkov.ascii_read(
-                StatError(), get_shared_data('markov/fuji_medium_year_5.txt')
+                StatError(), get_shared_data_path('markov/fuji_medium_year_5.txt')
             ),
             fuji_long_year_1=HiddenSemiMarkov.ascii_read(
-                StatError(), get_shared_data('markov/fuji_long_year_1.txt')
+                StatError(), get_shared_data_path('markov/fuji_long_year_1.txt')
             ),
             fuji_long_year_2=HiddenSemiMarkov.ascii_read(
-                StatError(), get_shared_data('markov/fuji_long_year_2.txt')
+                StatError(), get_shared_data_path('markov/fuji_long_year_2.txt')
             ),
             fuji_long_year_3=HiddenSemiMarkov.ascii_read(
-                StatError(), get_shared_data('markov/fuji_long_year_3.txt')
+                StatError(), get_shared_data_path('markov/fuji_long_year_3.txt')
             ),
             fuji_long_year_4=HiddenSemiMarkov.ascii_read(
-                StatError(), get_shared_data('markov/fuji_long_year_4.txt')
+                StatError(), get_shared_data_path('markov/fuji_long_year_4.txt')
             ),
             fuji_long_year_5=HiddenSemiMarkov.ascii_read(
-                StatError(), get_shared_data('markov/fuji_long_year_5.txt')
+                StatError(), get_shared_data_path('markov/fuji_long_year_5.txt')
             )
         )
 
@@ -118,7 +114,7 @@ class Simulation(SimulationInterface):
             dict(mechanics=dict(steps=self.options.general.convergence_steps))
         )
 
-        self._func_leaf_area_init(get_shared_data('lpy/functions.fset'))
+        self._func_leaf_area_init(get_shared_data_path('lpy/functions.fset'))
         self.rotation_convergence = RotationConvergence(steps=self.options.general.convergence_steps)
 
     def _func_leaf_area_init(self, filename='lpy/functions.fset', func_name='leaf_area'):
@@ -143,7 +139,7 @@ class Simulation(SimulationInterface):
             self._markov.hsm_medium = self._markov_model['fuji_medium_year_5']
             self._markov.hsm_long = self._markov_model['fuji_long_year_5']
 
-    def active_events(self) -> Tuple[str, ...]:
+    def get_active_events(self) -> Tuple[str, ...]:
         active_events = tuple([event.name for event in self.events if event.active])
         if 'leaf_out' in active_events:
             self._growth_pause = True
@@ -153,21 +149,13 @@ class Simulation(SimulationInterface):
             active_events = ('growth_pause',) + active_events
         return active_events
 
-    def run(self, scene_widget: Optional[SceneWidget] = None) -> None:
+    def advance(self):
+        """
+        Advance simulation by one day and derive all lsystems
+        """
+        super().advance()
+        self._set_markov_model()
+        self._lsystems.derive()
 
-        date_start = self.options.general.date_start
-        date_end = self.options.general.date_end
-
-        for step in range((date_end - date_start).days):
-
-            self.advance()
-            self._set_markov_model()
-            self._lsystems.derive()
-
-            if scene_widget is not None:
-                events = self.active_events()
-                if 'growth_pause' not in events and 'leaf_out' not in events:
-                    # avoid displaying scenes when nothing changes visualy during a growth pause
-                    scene = self._lsystems.sceneInterpretation()
-                    if scene is not None:
-                        scene_widget.set_scenes(scene, scales=0.1)
+    def get_scene(self):
+        return self._lsystems.sceneInterpretation()

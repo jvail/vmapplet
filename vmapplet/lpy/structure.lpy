@@ -64,7 +64,7 @@ metamer(m) < apex(a):
         mn.trunk = a.trunk
         mn.year = simulation.date.year
         mn.sylleptic = a.sylleptic
-        if not 'growth_pause' in simulation.active_events():
+        if not 'growth_pause' in simulation.get_active_events():
             produce metamer(mn) apex(a)
         else:
             a.sequence_position = 0
@@ -97,7 +97,7 @@ apex(a):
         m.trunk = a.trunk
         m.year = simulation.date.year
         m.sylleptic = a.sylleptic
-        if not 'growth_pause' in simulation.active_events():
+        if not 'growth_pause' in simulation.get_active_events():
             produce metamer(m) apex(a)
         else:
             a.sequence_position = 0
@@ -130,7 +130,7 @@ metamer(m) > metamer(mr) apex(a):
         produce metamer(m) SB() branch() apex(sylleptic_apex) EB()
 
 metamer(m):
-    bud_break = 'bud_break' in simulation.active_events()
+    bud_break = 'bud_break' in simulation.get_active_events()
     if options.general.ruptures and rupture(m.cumulated_torque, m.radius, wood._modulus_of_rupture):
         print('There was a rupture in the system.')
         produce Label('Cut') Cut()

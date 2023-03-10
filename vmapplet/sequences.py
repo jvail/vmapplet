@@ -16,14 +16,12 @@ from typing import List, Dict, Tuple, Optional, Union, Any
 import random
 import numpy as np
 
+from . import srandom
 from .tools.structure_analysis import (
     SemiMarkovIterator,
     srand
 )
-from . import (
-    get_shared_data,
-    srandom
-)
+from .tools.file_tools import get_shared_data_path
 from .enums import Observation
 
 Sequence = List[Tuple[Union[int, None], int]]
@@ -350,7 +348,7 @@ def generate_trunk(trunk_seq='trunk/sequences.seq', select: Union[List[int], int
         select_ = select[0]
     elif type(select) is int:
         select_ = select
-    seqs = np.loadtxt(get_shared_data(trunk_seq), int)
+    seqs = np.loadtxt(get_shared_data_path(trunk_seq), int)
 
     assert 0 <= select_ < len(seqs)
 
