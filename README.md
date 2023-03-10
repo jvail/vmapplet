@@ -4,16 +4,14 @@ A refactored implementation and maintenance release of MAppleT. Original sources
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jvail/vmapplet/master?urlpath=lab/tree/notebooks/simple_simulation.ipynb)
 
-Major changes:
 
-- support Python 3 and updated dependencies
-- support Jupyter notebooks
-- modularized L-Py files
-- incorporates all dependencies previously hosted at [openalea/incubator](https://github.com/openalea-incubator)
-- redesign of configuration files
-- bug fixes, typing and linting
+## Requirements
+
+A local conda/miniconda installation.
 
 ## Install
+
+First clone/download the repository. The `mamba` install is optional but recommended.
 
 #### Install mamba
 
@@ -32,4 +30,11 @@ mamba env create -f binder/environment.yml
 ```sh
 activate vmapplet
 jupyter lab --notebook-dir=notebooks
+```
+
+## Run script
+
+```sh
+activate vmapplet
+python -m vmapplet vmapplet/data/simulation.toml
 ```
