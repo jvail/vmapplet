@@ -1,6 +1,6 @@
 # VMAppleT
 
-A refactored implementation and maintenance release of MAppleT. Original sources copied and modified from [openalea/incubator](https://github.com/openalea-incubator/MAppleT).
+A - _work-in-progress_ - refactored implementation and maintenance release of MAppleT. Original sources copied and modified from [openalea/incubator](https://github.com/openalea-incubator/MAppleT).
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jvail/vmapplet/master?urlpath=lab/tree/notebooks/simple_simulation.ipynb)
 
