@@ -5,7 +5,7 @@ from typing import (
 )
 import dataclasses as dc
 import pathlib
-from datetime import datetime
+from datetime import date
 
 import toml
 
@@ -33,8 +33,8 @@ class OptionsBase(Mapping):
 @dc.dataclass
 class OptionsGeneral(OptionsBase):
 
-    date_start: datetime = dc.field(default_factory=lambda: datetime(1994, 1, 1))
-    date_end: datetime = dc.field(default_factory=lambda: datetime(1998, 6, 30))
+    date_start: date = dc.field(default_factory=lambda: date(1994, 1, 1))
+    date_end: date = dc.field(default_factory=lambda: date(1998, 6, 30))
     seed: int = 1163078255
     # the second year shoots
     second_year_draws: bool = True

@@ -54,17 +54,16 @@ class Simulation(SimulationInterface):
 
         self.options = Options(**toml.loads(options))
 
-        year_start = self.options.general.date_start.year
-        year_end = self.options.general.date_start.year
+        start_date = self.options.general.date_start
+        end_date = self.options.general.date_end
 
-        # base class from plantik reused here: unclear why dates take a year (int)
-        super().__init__(dt=1, starting_date=year_start, ending_date=year_end)
+        super().__init__(starting_date=start_date, ending_date=end_date)
         random.seed(self.options.general.seed)
 
         for name, event in dc.asdict(self.options.events).items():
             self.events.add_event(
                 name,
-                datetime(year_start, event['month'], event['day']),
+                datetime(self.options.general.date_start.year, event['month'], event['day']),
                 duration=timedelta(event['duration'])
             )
 

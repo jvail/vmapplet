@@ -1,8 +1,6 @@
 import datetime
 import dataclasses as dc
 
-from .read_function import ReadFunction
-
 
 class Calendar(object):
     """A calendar class
@@ -399,19 +397,18 @@ class SimulationInterface(object):
 
     """
 
-    def __init__(self, dt=1., starting_date=2000., ending_date=2010):
+    def __init__(self, starting_date: datetime.date, ending_date: datetime.date, dt=1.):
 
-        self._ending_date = self.convert_input_date(ending_date)
+        self._ending_date = datetime.datetime(ending_date.year, ending_date.month, ending_date.day)
 
-        # set up the calendar, must convert the floating year to a date before
-        date = self.convert_input_date(starting_date)
+        date = datetime.datetime(starting_date.year, starting_date.month, starting_date.day)
         self._starting_date = date
         self.calendar = Calendar(year=date.year, month=date.month, day=date.day, delta_in_days=dt)
 
         # setup a event list with an example, the starting date
         self.events = Events()
         # we store the beginnin of the simulation as an event.
-        self.events.add_event('starting_date', date, datetime.timedelta(1), periodic=False)
+        self.events.add_event('starting_date', date, datetime.timedelta(0), periodic=False)
 
         #: read-only attribute (in days using datetime.timedelta)
         self._time_elapsed = datetime.timedelta(0.)
@@ -514,105 +511,3 @@ class RotationConvergence:
     @property
     def step(self) -> float:
         return 1.0 / self.steps
-
-
-# deprecated
-class SimulationStocatree(SimulationInterface):
-
-    def __init__(self, date_start: str, date_end: str, seed: int = 1163078257, dt: int = 1):
-
-        year_start = datetime.datetime.fromisoformat(date_start).year
-        year_end = datetime.datetime.fromisoformat(date_end).year
-
-        super().__init__(dt=dt, starting_date=year_start, ending_date=year_end)
-
-        mydt = datetime.timedelta(dt)
-
-        self.events.add_event(
-            'bud_break',
-            datetime.datetime(year_start, 5, 15),
-            duration=datetime.timedelta(0)
-        )
-        self.events.add_event(
-            'new_cambial_layer',
-            datetime.datetime(year_start, 5, 15),
-            duration=mydt
-        )
-        self.events.add_event(
-            'pre_harvest',
-            datetime.datetime(year_start, 10, 29),
-            duration=mydt
-        )
-        self.events.add_event(
-            'harvest',
-            datetime.datetime(year_start, 10, 30),
-            duration=mydt
-        )
-        self.events.add_event(
-            'autumn',
-            datetime.datetime(year_start, 11, 1),
-            duration=datetime.timedelta(45)
-        )
-        self.events.add_event(
-            'leaf_fall',
-            datetime.datetime(year_start, 11, 15),
-            duration=datetime.timedelta(45)
-        )
-        # to make sure there are no remaining leaves for next year
-        self.events.add_event(
-            'leaf_out',
-            datetime.datetime(year_start, 12, 25),
-            duration=mydt
-        )
-        self.phase = 0  # initialisation
-        self.error = False  # purpose of that attribut is not clear, seems not used
-        self.seed = seed
-        self.base_dt = dt
-        self.number = 0
-        self.rotation_convergence = RotationConvergence()
-        self.harvested = False    # purpose of that attribut is not clear, seems not used
-
-        # --------------------------------------------------------------------#
-        # Here comes element that should be saved in order to be able to      #
-        # restart the simulation from a saved point                           #
-        # --------------------------------------------------------------------#
-
-        # the tree representation as a lstring should be set just before saving to avoid duplication
-        # and be deleted after loading to continue simulation
-        self.lstring = None
-
-        # Data structure that store output
-        # should probably replaced and/or cleaned
-        self.data = None
-
-        # Tree is the unique instance that represent the tree and store tree status
-        self.tree = None
-
-        # Budbreak date is also saved in case the simulation is saved and reloaded
-        # between 01/01 when budbreak date is calculated and the calculated date
-        self.bud_break = None
-
-    def load_save(self, lstr, dat, tr, bbreak):
-        """
-        Gather all simulation element that are necessary to be able to reload it
-        before being serialized
-        """
-        self.lstring = lstr
-        self.data = dat
-        self.tree = tr
-        self.bud_break = bbreak
-
-    def unload_save(self):
-        """
-        Free some memory by setting some attributs back to None
-        """
-        self.lstring = None
-        self.data = None
-        self.tree = None
-
-    def func_leaf_area_init(self, filename='functions.fset', func_name='leaf_area'):
-        """read the functions.fset once for all the metamers"""
-        self.func_leaf_area = ReadFunction(filename, func_name)
-
-    def active_events(self):
-        return tuple([event.name for event in self.events if event.active])
