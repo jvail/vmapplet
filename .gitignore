@@ -2,8 +2,7 @@
 *.bgeom
 notebooks/tests
 notebooks/xsimlab
-# old mapplet output folder
-notebooks/PararunResults
+notebooks/output
 
 
 # ignore cmake stuff

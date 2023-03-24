@@ -1,6 +1,7 @@
 from typing import (
     Dict,
-    Tuple
+    Tuple,
+    Optional
 )
 import pathlib
 import dataclasses as dc
@@ -9,10 +10,15 @@ from datetime import (
     timedelta
 )
 import random
+import io
+import os
+import pickle
 
+from openalea.mtg.io import axialtree2mtg
 import toml
 
 from .organs.tree import Tree
+from .organs import get_scale
 from .tools.lsystems import (
     LsystemPaths,
     Lsystems
@@ -46,13 +52,15 @@ class Simulation(SimulationInterface):
     _lsystems: Lsystems
     _markov: Markov
     _markov_model: Dict[str, HiddenSemiMarkov]
+    _output_path: pathlib.Path
 
     # calculated from events: between leaf_out and bud_break
     _growth_pause: bool = False
 
-    def __init__(self, options: str):
+    def __init__(self, options: str, output_path: Optional[str] = None):
 
         self.options = Options(**toml.loads(options))
+        self._output_path = pathlib.Path(output_path or os.getcwd() + '/output')
 
         start_date = self.options.general.date_start
         end_date = self.options.general.date_end
@@ -120,6 +128,22 @@ class Simulation(SimulationInterface):
         """read the functions.fset once for all the metamers"""
         self.func_leaf_area = ReadFunction(filename, func_name)
 
+    def _write_output(self, lstring):
+
+        file_name = f'{datetime.date(self.calendar.date).isoformat()}.mtg'
+
+        if not os.path.exists(self._output_path):
+            os.mkdir(self._output_path)
+
+        with io.open(self._output_path / file_name, 'xb') as file:
+            mtg = axialtree2mtg(
+                lstring,
+                scale={organ: get_scale(organ) for organ in self.options.output.attributes.keys()},
+                scene=None,
+                parameters=self.options.output.attributes,
+            )
+            pickle.dump(mtg, file)
+
     def _set_markov_model(self):
 
         if self.year_no == 0:
@@ -154,7 +178,10 @@ class Simulation(SimulationInterface):
         """
         super().advance()
         self._set_markov_model()
-        self._lsystems.derive()
+        lstring = self._lsystems.derive()
+        for day_month in self.options.output.dates:
+            if day_month['day'] == self.calendar.day and day_month['month'] == self.calendar.month:
+                self._write_output(lstring)
 
     def get_scene(self):
         return self._lsystems.sceneInterpretation()

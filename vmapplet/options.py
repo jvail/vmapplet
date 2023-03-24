@@ -2,6 +2,7 @@ from collections.abc import Mapping
 from typing import (
     Any,
     Dict,
+    List
 )
 import dataclasses as dc
 import pathlib
@@ -58,21 +59,8 @@ class OptionsGeneral(OptionsBase):
 
 @dc.dataclass
 class OptionsOutput(OptionsBase):
-    # Select which data to write to files during the simulation
-    # - sequences - The sequences of observations generated from the Markov models
-    # - l_string  - The L-string
-    # - counts    - The numbers of shoots generated per length category
-    # - leaves    - The leaves position, age and area at a given time
-    # - trunk     - Properties regarding the metamer adjacent to the root
-    # - mtg       - An MTG representation of the tree
-    sequences: bool = False
-    l_string: bool = False
-    light_interception: bool = False
-    counts: bool = False
-    trunk: bool = False
-    leaves: bool = True
-    mtg: bool = False
-    shoots: bool = False
+    dates: List[Dict[str, int]] = dc.field(default_factory=lambda: list())
+    attributes: Dict[str, List[str]] = dc.field(default_factory=lambda: dict())
 
 
 @dc.dataclass

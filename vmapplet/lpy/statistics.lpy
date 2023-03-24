@@ -67,21 +67,20 @@ apex(a):
         # record the unit id that this apex belongs to (the id values start from 0)
         a.parent_unit_id = tree.growth_units-1
         # update counts
-        if options.output.counts:
-            if a.parent_observation == Observation.FLORAL:
-                data.counts.florals += 1
-            elif a.parent_observation == Observation.SMALL:
-                data.counts.shorts += 1
-            elif a.parent_observation == Observation.MEDIUM:
-                data.counts.mediums += 1
-            elif a.parent_observation == Observation.LARGE:
-                data.counts.longs += 1
-                if a.sequence_position < 26:
-                    data.counts.len_16_to_25 += 1
-                elif a.sequence_position < 41:
-                    data.counts.len_26_to_40+=1
-                else:
-                    data.counts.len_over_40+=1
+        # if a.parent_observation == Observation.FLORAL:
+        #     data.counts.florals += 1
+        # elif a.parent_observation == Observation.SMALL:
+        #     data.counts.shorts += 1
+        # elif a.parent_observation == Observation.MEDIUM:
+        #     data.counts.mediums += 1
+        # elif a.parent_observation == Observation.LARGE:
+        #     data.counts.longs += 1
+        #     if a.sequence_position < 26:
+        #         data.counts.len_16_to_25 += 1
+        #     elif a.sequence_position < 41:
+        #         data.counts.len_26_to_40+=1
+        #     else:
+        #         data.counts.len_over_40+=1
         # # save sequences into output data
         # if options.output.sequences and simulation.date.year < 1999 and (a.parent_observation in ['large', 'medium', 'small']):
         #     data.sequences.save(a.sequence, a.sequence_position)

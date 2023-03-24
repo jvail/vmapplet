@@ -73,7 +73,7 @@ class Calendar(object):
 
     month = property(fget=_get_month, fset=_set_month, doc="Set month given a valid month (between 1 and 12)")
 
-    def _get_day(self):
+    def _get_day(self) -> int:
         return self._date.day
 
     def _set_day(self, day):
@@ -81,7 +81,7 @@ class Calendar(object):
 
     day = property(fget=_get_day, fset=_set_day, doc="Set day given a valid day (between 1 and 31)")
 
-    def _get_year(self):
+    def _get_year(self) -> int:
         return self._date.year
 
     def _set_year(self, year):

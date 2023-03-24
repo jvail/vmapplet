@@ -1,6 +1,6 @@
 [general]
 date_start = 1994-05-01
-date_end = 2010-06-30
+date_end = 2000-06-30
 seed = 1163078255
 second_year_draws = true
 ruptures = true
@@ -21,14 +21,48 @@ structure = 'structure.lpy'
 interpretation = 'interpretation.lpy'
 
 [output]
-sequences = false
-l_string = false
-light_interception = false
-counts = false
-trunk = false
-leaves = true
-mtg = false
-shoots = false
+dates = [
+    { day = 1, month = 6 },
+    { day = 1, month = 11 },
+]
+
+[output.attributes]
+tree = [
+    'growth_units'
+]
+# FIX: mtg display error when GUs are exported
+# growth_unit = [
+#     'year',
+#     'inflorescence'
+# ]
+metamer = [
+    'number',
+    'closest_apex',
+    'farthest_apex',
+    'sons_nb',
+    'observation',
+    'parent_observation',
+    'parent_unit_id',
+    'parent_fbr_id',
+    'parent_tree_id',
+    'zone',
+    'cumulated_mass',
+    'radius',
+    'offset',
+    'developped',
+    'phyllotactic_angle',
+    'branching_angle',
+    'rigidity',
+    'age',
+    'year',
+    'length',
+    'trunk',
+    'fruit_age',
+    'fruit_mass',
+    'leaf_age',
+    'leaf_mass',
+    'leaf_area',
+]
 
 [events]
 bud_break = { day = 15, month = 5, duration = 0 }

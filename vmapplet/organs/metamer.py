@@ -456,6 +456,23 @@ class MetamerData:
             angles.append((acos(dot(hlu.heading.normed(), Vector3(0, 0, 1)))))
         return new_branching_angle, angles.index(min(angles)) * phylo_angle + self.phyllotactic_angle
 
+    # expose child properties to make then available in e.g. mtg export
+    @property
+    def fruit_age(self):
+        return self.fruit.age
+
+    @property
+    def fruit_mass(self):
+        return self.fruit.mass
+
+    @property
+    def leaf_age(self):
+        return self.leaf.age
+
+    @property
+    def leaf_mass(self):
+        return self.leaf.mass
+
 
 def reaction_wood_target(up, heading, previous_heading):
     r"""Reaction wood target
