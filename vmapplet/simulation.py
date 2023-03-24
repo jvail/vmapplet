@@ -1,7 +1,8 @@
 from typing import (
     Dict,
     Tuple,
-    Optional
+    Optional,
+    Union
 )
 import pathlib
 import dataclasses as dc
@@ -57,9 +58,13 @@ class Simulation(SimulationInterface):
     # calculated from events: between leaf_out and bud_break
     _growth_pause: bool = False
 
-    def __init__(self, options: str, output_path: Optional[str] = None):
+    def __init__(self, options: Union[str, Options], output_path: Optional[str] = None):
 
-        self.options = Options(**toml.loads(options))
+        if isinstance(options, Options):
+            self.options = options
+        else:
+            self.options = Options(**toml.loads(options))
+
         self._output_path = pathlib.Path(output_path or os.getcwd() + '/output')
 
         start_date = self.options.general.date_start
