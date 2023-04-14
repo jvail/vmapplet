@@ -1,3 +1,4 @@
+from ..enums import Zone
 
 
 class Internode:
@@ -20,7 +21,7 @@ class Internode:
         self._final_dormant_end = 0.25 * self._max_length / 1.5
         self._final_else = 0.25 * self._max_length / 1.5
 
-    def growth_rate(self, uzone):
+    def growth_rate(self, zone: Zone):
         """compute te growth rate of the internode as a function of its zone
 
         :Hypothesis:
@@ -32,19 +33,19 @@ class Internode:
         :returns: a velocity in m/day
         """
 
-        if uzone is None:
+        if zone is None:
             res = self._final_none / self._elongation_period
-        elif uzone == 'dormant_start':
+        elif zone == Zone.DORMANT_START:
             res = self._final_dormant_start / self._elongation_period
-        elif uzone == 'small':
+        elif zone == Zone.SMALL:
             res = self._final_small / self._elongation_period
-        elif uzone == 'diffuse':
+        elif zone == Zone.DIFFUSE:
             res = self._final_diffuse / self._elongation_period
-        elif uzone == 'medium':
+        elif zone == Zone.MEDIUM:
             res = self._final_medium / self._elongation_period
-        elif uzone == 'floral':
+        elif zone == Zone.FLORAL:
             res = self._final_floral / self._elongation_period
-        elif uzone == 'dormant_end':
+        elif zone == Zone.DORMANT_END:
             res = self._final_dormant_end / self._elongation_period
         else:
             res = self._final_else / self._elongation_period

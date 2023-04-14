@@ -1,4 +1,7 @@
-from .enums import Observation
+from .enums import (
+    Observation,
+    Zone as ZoneEnum
+)
 
 
 class Colors():
@@ -167,16 +170,16 @@ class Zone(ColorInterface):
 
     def set_colors(self):
         return {
-            'dormant_start': 7,
-            'small': 8,
-            'diffuse': 9,
-            'medium': 10,
-            'floral': 11,
-            'dormant_end': 12,
+            ZoneEnum.DORMANT_START: 7,
+            ZoneEnum.SMALL: 8,
+            ZoneEnum.DIFFUSE: 9,
+            ZoneEnum.MEDIUM: 10,
+            ZoneEnum.FLORAL: 11,
+            ZoneEnum.DORMANT_END: 12,
             None: 13
         }
 
-    def get_color(self, zone):
+    def get_color(self, zone: ZoneEnum):
         if zone in self.colors.keys():
             shoot_colour = self.colors[zone]
             return shoot_colour

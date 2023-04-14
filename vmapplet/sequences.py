@@ -22,9 +22,12 @@ from .tools.structure_analysis import (
     srand
 )
 from .tools.file_tools import get_shared_data_path
-from .enums import Observation
+from .enums import (
+    Observation,
+    Zone
+)
 
-Sequence = List[Tuple[Union[int, None], int]]
+Sequence = List[Tuple[Union[Zone, None], int]]
 TerminalFateData = Dict[Tuple[int, Observation], List[float]]
 
 
@@ -247,7 +250,7 @@ def generate_hsm_sequence(hsm, sequence_length=100) -> Sequence:
     i = 0
     sequence = []
     for i in range(0, sequence_length):
-        if simulation[0][i] == 6:
+        if simulation[0][i] == Zone.DORMANT_END:
             break
         sequence.append((simulation[0][i], simulation[1][i]))
     sequence.reverse()
@@ -255,7 +258,7 @@ def generate_hsm_sequence(hsm, sequence_length=100) -> Sequence:
     return sequence
 
 
-def generate_bounded_hsm_sequence(hsm, lower_bound, upper_bound) -> Sequence:
+def generate_bounded_hsm_sequence(hsm, lower_bound: int, upper_bound: int) -> Sequence:
     """Returns a bouded sequence
 
     One problem with the Markov chains is that they may produce sequences
@@ -311,7 +314,12 @@ def generate_short_sequence() -> Sequence:
 
     """
 
-    return [(0, 0), (0, 0), (0, 0), (0, 0)]
+    return [
+        (Zone.DORMANT_START, 0),
+        (Zone.DORMANT_START, 0),
+        (Zone.DORMANT_START, 0),
+        (Zone.DORMANT_START, 0)
+    ]
 
 
 def generate_floral_sequence() -> Sequence:
@@ -328,7 +336,12 @@ def generate_floral_sequence() -> Sequence:
     .. todo:: original code uses s(0,12) but was not used
     """
 
-    return [(0, 0), (0, 0), (0, 0), (0, 0)]
+    return [
+        (Zone.DORMANT_START, 0),
+        (Zone.DORMANT_START, 0),
+        (Zone.DORMANT_START, 0),
+        (Zone.DORMANT_START, 0)
+    ]
 
 
 def generate_trunk(trunk_seq='trunk/sequences.seq', select: Union[List[int], int] = 0) -> Sequence:

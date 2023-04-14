@@ -1,4 +1,7 @@
-from enum import Enum
+from enum import (
+    Enum,
+    IntEnum
+)
 
 
 class Observation(str, Enum):
@@ -12,6 +15,15 @@ class Observation(str, Enum):
     FLORAL = 'FLORAL'
     TRUNK = 'TRUNK'
     NEW_SHOOT = 'NEW_SHOOT'
+
+
+class Zone(IntEnum):
+    DORMANT_START = 0
+    SMALL = 1
+    DIFFUSE = 2
+    MEDIUM = 3
+    FLORAL = 4
+    DORMANT_END = 5
 
 
 class FruitState(str, Enum):

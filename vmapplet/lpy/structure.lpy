@@ -14,16 +14,6 @@ from vmapplet.enums import Observation
 wood = Wood(**options.wood)
 internode = Internode(**options.internode)
 
-zone_converter = {
-    0: 'dormant_start',
-    1: 'small',
-    2: 'diffuse',
-    3: 'medium',
-    4: 'floral',
-    5: 'dormant_end',
-    None: 'None'
-}
-
 module apex(apex_data): scale=2
 module branch(): scale=1
 module growth_unit(growth_unit_data): scale=1

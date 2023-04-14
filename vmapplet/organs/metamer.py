@@ -1,3 +1,5 @@
+from typing import Union
+
 from math import acos
 
 from openalea.plantgl.all import Vector3, dot
@@ -8,7 +10,11 @@ from .. import (
 )
 from ..physics import rotate_frame_at_branch
 from ..srandom import boolean_event
-from ..enums import FruitState, LeafState
+from ..enums import (
+    Zone,
+    FruitState,
+    LeafState
+)
 
 
 class cambial_layer():
@@ -27,17 +33,6 @@ class cambial_layer():
         self.radius = radius
         self.reaction_wood = 0.
         self.second_moment_of_area = 0.
-
-
-zone_converter = {
-    0: 'dormant_start',
-    1: 'small',
-    2: 'diffuse',
-    3: 'medium',
-    4: 'floral',
-    5: 'dormant_end',
-    None: None
-}
 
 
 class MetamerData:
@@ -59,7 +54,8 @@ class MetamerData:
     """
     def __init__(
         self, floral=False, number=0, hlu=None,
-        zone=None, observation=None,
+        zone: Union[None, Zone] = None,
+        observation=None,
         parent_observation=None, parent_unit_id=None, parent_fbr_id=None,
         parent_tree_id=0,
         p_angle=0., b_angle=0.,
@@ -123,7 +119,7 @@ class MetamerData:
         self.parent_tree_id = parent_tree_id
 
         try:
-            self.zone = zone_converter[zone]
+            self.zone = zone
         except Exception:
             pass
 

@@ -46,6 +46,11 @@ def _to_full_path(root: pathlib.Path, paths: LsystemPaths) -> LsystemPaths:
 
 
 class Simulation(SimulationInterface):
+    """Instantiate a VMAppleT Simulation
+
+    :param options: a string (toml) or an Options instance
+    :param output_path: a string/path were output files will be created
+    """
 
     options: Options
     rotation_convergence: RotationConvergence
