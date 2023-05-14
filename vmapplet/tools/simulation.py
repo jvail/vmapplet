@@ -407,7 +407,7 @@ class SimulationInterface(object):
 
         # setup a event list with an example, the starting date
         self.events = Events()
-        # we store the beginnin of the simulation as an event.
+        # we store the beginning of the simulation as an event.
         self.events.add_event('starting_date', date, datetime.timedelta(0), periodic=False)
 
         #: read-only attribute (in days using datetime.timedelta)

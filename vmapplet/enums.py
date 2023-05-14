@@ -18,6 +18,10 @@ class Observation(str, Enum):
 
 
 class Zone(IntEnum):
+    """
+    Region of the sequence of nodes in a branch with similar lateral branching properties
+    Note: Markov has a 7th "absorbing/final" state
+    """
     DORMANT_START = 0
     SMALL = 1
     DIFFUSE = 2

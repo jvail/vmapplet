@@ -1,26 +1,10 @@
 # lpy / plantgl / notebooks
 *.bgeom
+*.mtg
+*.bmtg
 notebooks/tests
 notebooks/xsimlab
 notebooks/output
-
-
-# ignore cmake stuff
-
-CMakeLists.txt.user
-CMakeCache.txt
-CMakeFiles
-CMakeScripts
-Testing
-Makefile
-cmake_install.cmake
-install_manifest.txt
-compile_commands.json
-CTestTestfile.cmake
-_deps
-build
-lib
-_skbuild
 
 # .gitignore for python and jupyter notebook
 

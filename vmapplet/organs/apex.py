@@ -244,6 +244,9 @@ class ApexData:
          of leaves in a shoot (i.e., position)
 
         """
+        if self.sequence_position < self.sequence_minimum_length:
+            print(self.sequence_position, self.sequence_minimum_length)
+            print(self.sequence)
         assert self.sequence_position >= self.sequence_minimum_length
         self.target_radius = self.minimum_size + self.radius_range * (
             self.sequence_position - self.sequence_minimum_length

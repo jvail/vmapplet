@@ -1,9 +1,9 @@
 [general]
 date_start = 1994-05-01
-date_end = 1998-06-30
+date_end = 2000-06-30
 seed = 1163078255
 second_year_draws = true
-ruptures = true
+ruptures = false
 stake = true
 select_trunk = 0
 mechanics = true
@@ -31,10 +31,10 @@ tree = [
     'growth_units'
 ]
 # FIX: mtg display error when GUs are exported
-# growth_unit = [
-#     'year',
-#     'inflorescence'
-# ]
+growth_unit = [
+     'year',
+     'inflorescence'
+]
 metamer = [
     'number',
     'closest_apex',
@@ -140,6 +140,7 @@ large = [0.000, 0.100, 0.000, 0.900]
 medium = [0.000, 0.050, 0.050, 0.900]
 small = [0.000, 0.000, 0.350, 0.650]
 floral = [0.000, 0.200, 0.800, 0.000]
+
 
 [fruit]
 flower_duration = 10.0

@@ -1,9 +1,6 @@
 [build-system]
 requires = [
-    "scikit-build==0.16",
-    # Restrict setuptools version
-    # https://github.com/scikit-build/scikit-build/issues/770
-    "setuptools>=58,<63"
+    "setuptools>=58"
 ]
 
 build-backend = "setuptools.build_meta"

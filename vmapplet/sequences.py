@@ -1,83 +1,73 @@
-"""
-.. topic:: Summary
+from typing import Dict, List, Tuple, Union, Optional
 
-    This module implements a set of functions that return random sequences
-    Only :func:`generate_sequence`, :class:`Markov` and :meth:`terminal_fate`
-    should be used.
-
-    It contains quite a few harcoded data arrays that may need to be extracted
-
-    :Code: mature
-    :Documentation: mature
-    :Author: Thomas Cokelaer <Thomas.Cokelaer@sophia.inria.fr>
-    :Revision: $Id$
-"""
-from typing import List, Dict, Tuple, Optional, Union, Any
-import random
 import numpy as np
 
 from . import srandom
-from .tools.structure_analysis import (
-    SemiMarkovIterator,
-    srand
-)
 from .tools.file_tools import get_shared_data_path
 from .enums import (
     Observation,
     Zone
+)
+from .markov import (
+    Markov,
+    MarkovSequence
 )
 
 Sequence = List[Tuple[Union[Zone, None], int]]
 TerminalFateData = Dict[Tuple[int, Observation], List[float]]
 
 
-class Markov:
-    """
-    Class to manage all the markov and hidden semi markov sequences
-    """
+def _markov_to_sequence(sequence: MarkovSequence) -> Sequence:
+    # sequence are read from end to start: therefor reversed
+    return [(Zone(state), observation) for state, observation in reversed(sequence)]
 
-    hsm_medium: Any
-    hsm_long: Any
-    hsm_short: Any
-    maximum_length: int
-    minimum_length: int
+# class Markov:
+#     """
+#     Class to manage all the markov and hidden semi markov sequences
+#     """
 
-    def __init__(self, maximum_length=70, minimum_length=4, **kwargs):
-        """
-        :param max_sequence_length: the maximum length of markov sequence (default is 100)
-        :param max_length: the maximum length (default is 70)
-        :param min_length: the minimum length (default is 4)
+#     hsm_medium: Any
+#     hsm_long: Any
+#     hsm_short: Any
+#     maximum_length: int
+#     minimum_length: int
 
-        :attributes:
-            * hsm_medium
-            * hsm_long
-            * hsm_short
-            * hsm_short
-            * hsm_96_medium
-            * hsm_97_medium
-            * hsm_98_medium
-            * hsm_95_long
-            * hsm_96_long
-            * hsm_97_long
-            * hsm_98_long
-        """
-        assert maximum_length <= 300
-        assert maximum_length > minimum_length
-        assert minimum_length > 0
+#     def __init__(self, maximum_length=70, minimum_length=4, **kwargs):
+#         """
+#         :param max_sequence_length: the maximum length of markov sequence (default is 100)
+#         :param max_length: the maximum length (default is 70)
+#         :param min_length: the minimum length (default is 4)
 
-        self.max_sequence_length = 100
-        self.maximum_length = maximum_length
-        self.minimum_length = minimum_length
-        self.hsm_medium = None
-        self.hsm_long = None
-        self.hsm_short = None
-        self.hsm_medium1 = None
-        self.hsm_medium2 = None
-        self.hsm_medium3 = None
-        self.hsm_long1 = None
-        self.hsm_long2 = None
-        self.hsm_long3 = None
-        self.hsm_long4 = None
+#         :attributes:
+#             * hsm_medium
+#             * hsm_long
+#             * hsm_short
+#             * hsm_short
+#             * hsm_96_medium
+#             * hsm_97_medium
+#             * hsm_98_medium
+#             * hsm_95_long
+#             * hsm_96_long
+#             * hsm_97_long
+#             * hsm_98_long
+#         """
+#         assert maximum_length <= 300
+#         assert maximum_length > minimum_length
+#         assert minimum_length > 0
+
+#         self.max_sequence_length = 100
+#         self.maximum_length = maximum_length
+#         self.minimum_length = minimum_length
+#         self.hsm_medium = None
+#         self.hsm_long = None
+#         self.hsm_short = None
+#         self.hsm_medium1 = None
+#         self.hsm_medium2 = None
+#         self.hsm_medium3 = None
+#         self.hsm_long1 = None
+#         self.hsm_long2 = None
+#         self.hsm_long3 = None
+#         self.hsm_long4 = None
 
 
 class TerminalFate:
@@ -232,71 +222,71 @@ def _non_parametric_distribution(pdf):
     return i
 
 
-def generate_hsm_sequence(hsm, sequence_length=100) -> Sequence:
-    """Generate a Hidden Semi Markov Sequence given an input transition matrix
+# def generate_hsm_sequence(hsm, sequence_length=100) -> Sequence:
+#     """Generate a Hidden Semi Markov Sequence given an input transition matrix
 
-    Used by :meth:`~openalea.stocatree.sequences.generate_sequence`
+#     Used by :meth:`~openalea.stocatree.sequences.generate_sequence`
 
-    :param hsm: A hidden semi markov instance of HiddenSemiMarkov class from VPlants.Sequence_analysis
-    :param sequence_length: a length of sequence set to 100 by default
+#     :param hsm: A hidden semi markov instance of HiddenSemiMarkov class from VPlants.Sequence_analysis
+#     :param sequence_length: a length of sequence set to 100 by default
 
-    :returns: a sequence
+#     :returns: a sequence
 
-    """
+#     """
 
-    iterator = SemiMarkovIterator(hsm)
-    simulation = iterator.simulation(sequence_length, True)
+#     iterator = SemiMarkovIterator(hsm)
+#     simulation = iterator.simulation(sequence_length, True)
 
-    i = 0
-    sequence = []
-    for i in range(0, sequence_length):
-        if simulation[0][i] == Zone.DORMANT_END:
-            break
-        sequence.append((simulation[0][i], simulation[1][i]))
-    sequence.reverse()
+#     i = 0
+#     sequence = []
+#     for i in range(0, sequence_length):
+#         if simulation[0][i] == Zone.DORMANT_END:  # take last entry of zones instead
+#             break
+#         sequence.append((simulation[0][i], simulation[1][i]))
+#     sequence.reverse()
 
-    return sequence
+#     return sequence
 
 
-def generate_bounded_hsm_sequence(hsm, lower_bound: int, upper_bound: int) -> Sequence:
-    """Returns a bouded sequence
+# def generate_bounded_hsm_sequence(hsm, lower_bound: int, upper_bound: int) -> Sequence:
+#     """Returns a bouded sequence
 
-    One problem with the Markov chains is that they may produce sequences
-    with an unrealistic number of metamers. when this occurs, the generated
-    sequence is thrown away and a new one is generated.
+#     One problem with the Markov chains is that they may produce sequences
+#     with an unrealistic number of metamers. when this occurs, the generated
+#     sequence is thrown away and a new one is generated.
 
-    Medium shoots are always limited to five to fifteen metamers.
+#     Medium shoots are always limited to five to fifteen metamers.
 
-    Long shoots ashrinks as the tree ages. They are therefore separated into
-    subcategories: 15-25, 26-40 and over 40 metamers (41 to 70).
+#     Long shoots ashrinks as the tree ages. They are therefore separated into
+#     subcategories: 15-25, 26-40 and over 40 metamers (41 to 70).
 
-    The probability to select one type of shoot length depends on the year. These
-    probabilities are stored within the hsm data structure
+#     The probability to select one type of shoot length depends on the year. These
+#     probabilities are stored within the hsm data structure
 
-    :param hsm: a HiddenSemiMarkov instance
-    :param lower_bound: int
-    :param upper_bound: int
+#     :param hsm: a HiddenSemiMarkov instance
+#     :param lower_bound: int
+#     :param upper_bound: int
 
-    ::
+#     ::
 
-        generate_bounded_hsm_sequence(markov.hsm_long,  15, 26);
+#         generate_bounded_hsm_sequence(markov.hsm_long,  15, 26);
 
-    """
-    length = upper_bound + 1  # defines a max length for the sequence
-    count = 0
-    sequence = []
+#     """
+#     length = upper_bound + 1  # defines a max length for the sequence
+#     count = 0
+#     sequence = []
 
-    while length > upper_bound or length < lower_bound and count < 1000:
-        sequence = generate_hsm_sequence(hsm)
-        length = len(sequence)
-        count += 1
+#     while length > upper_bound or length < lower_bound and count < 1000:
+#         sequence = generate_hsm_sequence(hsm)
+#         length = len(sequence)
+#         count += 1
 
-    if count == 1000:
-        raise ValueError('to be done. max count limit reached in generate_bounded_hsm_sequence')
-    if count > 100:
-        print('Warning, count in generate_bounded_hsm_sequence was large :%d' % count)
+#     if count == 1000:
+#         raise ValueError('to be done. max count limit reached in generate_bounded_hsm_sequence')
+#     if count > 100:
+#         print('Warning, count in generate_bounded_hsm_sequence was large :%d' % count)
 
-    return sequence
+#     return sequence
 
 
 def generate_short_sequence() -> Sequence:
@@ -419,6 +409,20 @@ def generate_sequence(
     """Generation of sequences from Markov chains, based directly on the work
     of Michael Renton
 
+    Bounded sequences:
+
+    One problem with the Markov chains is that they may produce sequences
+    with an unrealistic number of metamers. when this occurs, the generated
+    sequence is thrown away and a new one is generated.
+
+    Medium shoots are always limited to five to fifteen metamers.
+
+    Long shoots ashrinks as the tree ages. They are therefore separated into
+    subcategories: 15-25, 26-40 and over 40 metamers (41 to 70).
+
+    The probability to select one type of shoot length depends on the year. These
+    probabilities are stored within the hsm data structure
+
     if observation is
         * trunk, call :meth:`~openalea.stocatree.sequences.generate_trunk`
         * small, call :meth:`~openalea.stocatree.sequences.generate_short_sequence`
@@ -442,7 +446,7 @@ def generate_sequence(
     # This fix the c++ seed at each call with a random number from the uniform law in python
     # were the seed was also fixed. Therefore the successive seeds used in c++ are fixed for
     # a given python seed allowing to reproduce trees.
-    srand(int(random.uniform(0, 1e6)))
+    # srand(int(random.uniform(0, 1e6)))
 
     # The "sylleptic"s to the conditions as following were added by Han on 30-04-2012
     if obs == Observation.TRUNK:
@@ -452,7 +456,8 @@ def generate_sequence(
     elif obs == Observation.FLORAL:
         return generate_floral_sequence()
     elif obs == Observation.MEDIUM or obs == Observation.SYLLEPTIC_MEDIUM:
-        return generate_bounded_hsm_sequence(markov.hsm_medium, 5, 15)
+        return _markov_to_sequence(markov.generate_bounded_medium_sequence(5, 15))
+        # return generate_bounded_hsm_sequence(markov.hsm_medium, 5, 15)
     elif obs == Observation.LARGE or obs == Observation.SYLLEPTIC_LARGE:
         if (second_year_draws and year_no == 1):
             return _generate_random_draw_sequence()
@@ -460,89 +465,92 @@ def generate_sequence(
             res = length_pool(year_no)
             assert res in [1, 2, 3], 'Error Bad Length pool category'
             if res == 1:
-                return generate_bounded_hsm_sequence(markov.hsm_long, 15, 26)
+                return _markov_to_sequence(markov.generate_bounded_long_sequence(15, 26))
+                # return generate_bounded_hsm_sequence(markov.hsm_long, 15, 26)
             elif res == 2:
-                return generate_bounded_hsm_sequence(markov.hsm_long, 26, 41)
+                return _markov_to_sequence(markov.generate_bounded_long_sequence(26, 41))
+                # return generate_bounded_hsm_sequence(markov.hsm_long, 26, 41)
             elif res == 3:
-                return generate_bounded_hsm_sequence(markov.hsm_long, 41, markov.maximum_length)
+                return _markov_to_sequence(markov.generate_bounded_long_sequence(41, markov._maximum_length))
+                # return generate_bounded_hsm_sequence(markov.hsm_long, 41, markov.maximum_length)
 
     raise ValueError("A bad sequence observation (%s) was passed to generate_sequence().\n" % obs)
 
 
 # currently usused
-def generate_pruned_sequence(
-    obs: Observation,
-    react_pos,
-    rank,
-    closest_apex,
-    farthest_apex,
-    sons_nb,
-    markov: Markov,
-    year=0
-):
-    """The pruned length is assimilated to the distance to the farthest apex
+# def generate_pruned_sequence(
+#     obs: Observation,
+#     react_pos,
+#     rank,
+#     closest_apex,
+#     farthest_apex,
+#     sons_nb,
+#     markov: Markov,
+#     year=0
+# ):
+#     """The pruned length is assimilated to the distance to the farthest apex
 
-    obs is the shoot type of the prunned shoot
-    react_pos is the position of the reacting apex from the cuting point [0,2]
-    year is the year pruned shoot creation - start date year
+#     obs is the shoot type of the prunned shoot
+#     react_pos is the position of the reacting apex from the cuting point [0,2]
+#     year is the year pruned shoot creation - start date year
 
-    Determining the case of pruning reaction for the 3 react-pos
-     A : Succession - Succession - lower Cat
-     B : Reiteration - Succession - lower Cat
-     C : Reiteration - Reiteration - Succession
+#     Determining the case of pruning reaction for the 3 react-pos
+#      A : Succession - Succession - lower Cat
+#      B : Reiteration - Succession - lower Cat
+#      C : Reiteration - Reiteration - Succession
 
 
-    Case of pruning a shoot w/o branching
-    Type of shoot is generated according to the pruned length
-    """
+#     Case of pruning a shoot w/o branching
+#     Type of shoot is generated according to the pruned length
+#     """
 
-    if closest_apex == farthest_apex:
-        # ratio of pruned over total length
-        pruned_ratio = 1.0 * farthest_apex / (rank + farthest_apex)
-        if pruned_ratio < 0.25:
-            case = 'A'
-        elif pruned_ratio < 0.75:
-            case = 'B'
-        else:
-            case = 'C'
-        new_obs = shoot_type_react(year, obs, case, react_pos)
-    else:
-        # Case of pruning a shoot with branching. Then depending on the pruned length
-        # and biomass represented by the sons_nb.
-        # ratio of total biomass(sons_nb) over pruned length(farthest_apex)
-        bio_ratio = 1.0 * sons_nb / farthest_apex
-        if bio_ratio < 2:
-            case = 'A'
-        if bio_ratio < 3:
-            case = 'B'
-        else:
-            case = 'C'
+#     if closest_apex == farthest_apex:
+#         # ratio of pruned over total length
+#         pruned_ratio = 1.0 * farthest_apex / (rank + farthest_apex)
+#         if pruned_ratio < 0.25:
+#             case = 'A'
+#         elif pruned_ratio < 0.75:
+#             case = 'B'
+#         else:
+#             case = 'C'
+#         new_obs = shoot_type_react(year, obs, case, react_pos)
+#     else:
+#         # Case of pruning a shoot with branching. Then depending on the pruned length
+#         # and biomass represented by the sons_nb.
+#         # ratio of total biomass(sons_nb) over pruned length(farthest_apex)
+#         bio_ratio = 1.0 * sons_nb / farthest_apex
+#         if bio_ratio < 2:
+#             case = 'A'
+#         if bio_ratio < 3:
+#             case = 'B'
+#         else:
+#             case = 'C'
 
-        new_obs = shoot_type_react(year, obs, case, react_pos)
+#         new_obs = shoot_type_react(year, obs, case, react_pos)
 
-    hsm_react_long, hsm_react_medium = pruned_hsmc(year, markov)
+#     hsm_react_long, hsm_react_medium = pruned_hsmc(year, markov)
 
-    if new_obs in (Observation.TRUNK, Observation.LARGE, Observation.SYLLEPTIC_LARGE):
-        if farthest_apex > 30:
-            return generate_bounded_hsm_sequence(hsm_react_long, 41, markov.maximum_length)
-        elif farthest_apex > 20:
-            return generate_bounded_hsm_sequence(hsm_react_long, 26, 41)
-        elif farthest_apex > 8:
-            return generate_bounded_hsm_sequence(hsm_react_long, 15, 26)
-        else:
-            return generate_bounded_hsm_sequence(hsm_react_medium, 5, 15)
+#     if new_obs in (Observation.TRUNK, Observation.LARGE, Observation.SYLLEPTIC_LARGE):
+#         if farthest_apex > 30:
+#             return generate_bounded_hsm_sequence(hsm_react_long, 41, markov.maximum_length)
+#         elif farthest_apex > 20:
+#             return generate_bounded_hsm_sequence(hsm_react_long, 26, 41)
+#         elif farthest_apex > 8:
+#             return generate_bounded_hsm_sequence(hsm_react_long, 15, 26)
+#         else:
+#             return generate_bounded_hsm_sequence(hsm_react_medium, 5, 15)
 
-    elif new_obs in (Observation.MEDIUM, Observation.SYLLEPTIC_MEDIUM):
-        if farthest_apex > 5:
-            return generate_bounded_hsm_sequence(hsm_react_long, 15, 26)
-        else:
-            return generate_bounded_hsm_sequence(hsm_react_medium, 5, 15)
+#     elif new_obs in (Observation.MEDIUM, Observation.SYLLEPTIC_MEDIUM):
+#         if farthest_apex > 5:
+#             return generate_bounded_hsm_sequence(hsm_react_long, 15, 26)
+#         else:
+#             return generate_bounded_hsm_sequence(hsm_react_medium, 5, 15)
 
-    elif new_obs in (Observation.SMALL, Observation.SYLLEPTIC_SMALL):
-        return generate_short_sequence()
+#     elif new_obs in (Observation.SMALL, Observation.SYLLEPTIC_SMALL):
+#         return generate_short_sequence()
 
-    elif new_obs == Observation.FLORAL:
-        return generate_floral_sequence()
+#     elif new_obs == Observation.FLORAL:
+#         return generate_floral_sequence()
 
 
 def shoot_type_react(year, pruned_shoot_type: Observation, pruning_case, react_pos) -> Observation:
