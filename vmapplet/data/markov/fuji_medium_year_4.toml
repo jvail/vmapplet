@@ -25,7 +25,6 @@ observation_distributions = [
 
 [[occupancy_distributions]]
 distribution = 'BINOMIAL'
-parameter = 1.0
 probability = 0.273065
 bounds = [1.0, 13.0]
 [[occupancy_distributions]]
@@ -40,7 +39,6 @@ probability = 0.196206
 bounds = [1.0, +inf]
 [[occupancy_distributions]]
 distribution = 'BINOMIAL'
-parameter = 1.0
 probability = 0.0
 bounds = [5.0, 6.0]
 [[occupancy_distributions]]

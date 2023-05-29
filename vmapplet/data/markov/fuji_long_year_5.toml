@@ -45,7 +45,6 @@ probability = 0.166667
 bounds = [8.0, +inf]
 [[occupancy_distributions]]
 distribution = 'BINOMIAL'
-parameter = 1.0
 probability = 0.114985
 bounds = [1.0, 62.0]
 [[occupancy_distributions]]

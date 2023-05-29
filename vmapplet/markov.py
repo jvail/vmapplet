@@ -133,9 +133,8 @@ class Markov:
                 parameters = (parameter, probability)
             elif distribution['distribution'] == 'BINOMIAL':
                 fn = self._rng.binomial
-                parameter = distribution['parameter']
                 probability = distribution['probability']
-                parameters = (parameter, probability)
+                parameters = (1, probability)
             elif distribution['distribution'] == 'POISSON':
                 fn = self._rng.poisson
                 parameter = distribution['parameter']
