@@ -28,7 +28,7 @@ mamba env create -f binder/environment.yml
 ## Run Jupyter
 
 ```sh
-activate vmapplet
+conda activate vmapplet
 jupyter lab --notebook-dir=notebooks
 ```
 

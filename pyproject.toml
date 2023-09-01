@@ -1,6 +1,20 @@
 [build-system]
-requires = [
-    "setuptools>=58"
-]
-
+requires = ["setuptools>=58"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "vmapplet"
+version = "0.1.0"
+license = {file = "LICENSE.txt"}
+authors = [
+  { name = "Thomas Cokelaer" },
+  { name = "Colin Smith" },
+  { name = "Jan Vaillant" },
+  { name = "Frederic Boudon" }
+]
+description = "Apple Tree simulation using Markov Chains based on MAppleT"
+readme = "README.md"
+requires-python = "~=3.9.0"
+
+[tool.setuptools]
+packages = ["vmapplet"]
