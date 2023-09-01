@@ -20,6 +20,7 @@ dependencies:
   - pip=23.0
   - flake8
   - mypy
+  - black
   - pip:
     - pgljupyter==2.0.0
     - -e ..

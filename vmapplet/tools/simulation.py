@@ -33,6 +33,7 @@ class Calendar(object):
         True
 
     """
+
     def __init__(self, year=-1, month=1, day=1, delta_in_days=1):
         """**Constructor**
 
@@ -63,7 +64,11 @@ class Calendar(object):
     def _set_date(self, date):
         self._date = date
 
-    date = property(fget=_get_date, fset=_set_date, doc="Set date given a valid datetime.datetime() instance")
+    date = property(
+        fget=_get_date,
+        fset=_set_date,
+        doc="Set date given a valid datetime.datetime() instance",
+    )
 
     def _get_month(self):
         return self._date.month
@@ -71,7 +76,11 @@ class Calendar(object):
     def _set_month(self, month):
         self._date = datetime.datetime(self.year, month, self.day)
 
-    month = property(fget=_get_month, fset=_set_month, doc="Set month given a valid month (between 1 and 12)")
+    month = property(
+        fget=_get_month,
+        fset=_set_month,
+        doc="Set month given a valid month (between 1 and 12)",
+    )
 
     def _get_day(self) -> int:
         return self._date.day
@@ -79,14 +88,22 @@ class Calendar(object):
     def _set_day(self, day):
         self._date = datetime.datetime(self.year, self.month, day)
 
-    day = property(fget=_get_day, fset=_set_day, doc="Set day given a valid day (between 1 and 31)")
+    day = property(
+        fget=_get_day, fset=_set_day, doc="Set day given a valid day (between 1 and 31)"
+    )
 
     def _get_year(self) -> int:
         return self._date.year
 
     def _set_year(self, year):
         self._date = datetime.datetime(
-            year, self._date.month, self._date.day, self._date.hour, self.date.minute, self._date.second, self._date.microsecond
+            year,
+            self._date.month,
+            self._date.day,
+            self._date.hour,
+            self.date.minute,
+            self._date.second,
+            self._date.microsecond,
         )
         self._year = year
 
@@ -98,11 +115,15 @@ class Calendar(object):
     def _set_dt(self, dt):
         self._dt = datetime.timedelta(days=dt)
 
-    dt = property(fget=_get_dt, fset=_set_dt, doc="Set the delta time increment in days (may be non integer)")
+    dt = property(
+        fget=_get_dt,
+        fset=_set_dt,
+        doc="Set the delta time increment in days (may be non integer)",
+    )
 
     def __str__(self):
-        res = 'current date and time= %s\n' % str(self._date)
-        res += 'current increment= %s\n' % str(self._dt)
+        res = "current date and time= %s\n" % str(self._date)
+        res += "current increment= %s\n" % str(self._dt)
         return res
 
     def advance(self):
@@ -138,7 +159,9 @@ class Event(object):
 
     """
 
-    def __init__(self, name, starting_date, duration=datetime.timedelta(1), periodic=True):
+    def __init__(
+        self, name, starting_date, duration=datetime.timedelta(1), periodic=True
+    ):
         """
 
         :param name: set a label to an event
@@ -158,14 +181,15 @@ class Event(object):
 
         """
         # some assertions
-        assert type(starting_date) == datetime.datetime, \
-            'date must be of type datetime.datetime()'
-        assert type(name) == str, 'name must be of type str'
-        assert type(duration) == datetime.timedelta, \
-            'duration must be of type datetime.timedelta'
-        assert periodic in [True, False], 'duration must be of type boolean'
-        assert duration.days < 365, \
-            'Duration of an event must be less than a year'
+        assert (
+            type(starting_date) is datetime.datetime
+        ), "date must be of type datetime.datetime()"
+        assert type(name) is str, "name must be of type str"
+        assert (
+            type(duration) is datetime.timedelta
+        ), "duration must be of type datetime.timedelta"
+        assert periodic in [True, False], "duration must be of type boolean"
+        assert duration.days < 365, "Duration of an event must be less than a year"
 
         self._name = name
         self._starting_date = starting_date
@@ -198,7 +222,7 @@ class Event(object):
 
         """
 
-        assert type(date) == datetime.datetime
+        assert type(date) is datetime.datetime
 
         # 2 cases: either the event is periodic and therefore occurs every year,
         # or it happens only once.
@@ -210,17 +234,18 @@ class Event(object):
             else:
                 self._active = False
         else:
-
             # If periodic, we do not want to use the date as such, but we want
             # to switch to the same year as the event itself. One problem arise
             # when the original year is bissextil.
             try:
-                newdate = datetime.datetime(self.starting_date.year,
-                                            date.month, date.day)
+                newdate = datetime.datetime(
+                    self.starting_date.year, date.month, date.day
+                )
             except Exception:
                 if date.month == 2 and date.day == 29:
-                    newdate = datetime.datetime(self.starting_date.year,
-                                                date.month, date.day - 1)
+                    newdate = datetime.datetime(
+                        self.starting_date.year, date.month, date.day - 1
+                    )
 
             if self.ending_date >= newdate and self.starting_date <= newdate:
                 self._active = True
@@ -233,30 +258,41 @@ class Event(object):
 
     def _get_duration(self):
         return self._duration
-    duration = property(fget=_get_duration, fset=_set_duration,
-                        doc="getter/setter for duration. duration is in days.")
+
+    duration = property(
+        fget=_get_duration,
+        fset=_set_duration,
+        doc="getter/setter for duration. duration is in days.",
+    )
 
     def _get_periodic(self):
         return self._periodic
+
     periodic = property(fget=_get_periodic, doc="getter of periodic attribute.")
 
     def _get_active(self):
         return self._active
+
     active = property(fget=_get_active, doc="getter of active attribute.")
 
     def _get_name(self):
         return self._name
+
     name = property(fget=_get_name, doc="returns name of this event.")
 
     def _get_starting_date(self):
         return self._starting_date
-    starting_date = property(fget=_get_starting_date,
-                             doc="returns starting date of this event.")
+
+    starting_date = property(
+        fget=_get_starting_date, doc="returns starting date of this event."
+    )
 
     def _get_ending_date(self):
         return self._ending_date
-    ending_date = property(fget=_get_ending_date,
-                           doc="returns ending date of this event.")
+
+    ending_date = property(
+        fget=_get_ending_date, doc="returns ending date of this event."
+    )
 
 
 class Events(object):
@@ -295,6 +331,7 @@ class Events(object):
 
 
     """
+
     def __init__(self):
         """Empty constructor of Events
 
@@ -308,7 +345,7 @@ class Events(object):
     def __str__(self):
         res = ""
         for event in self.events:
-            res += event.__str__() + '\n'
+            res += event.__str__() + "\n"
         return res
 
     def __len__(self):
@@ -329,7 +366,10 @@ class Events(object):
         e = Event(name, starting_date, duration, periodic=periodic)
         if e.name in self.names:
             import warnings
-            warnings.warn("Event name already chosen. Conisder changing it or rename your event")
+
+            warnings.warn(
+                "Event name already chosen. Conisder changing it or rename your event"
+            )
         else:
             self.events.append(e)
             self.__setattr__(name, e)
@@ -348,11 +388,14 @@ class Events(object):
 
     def _get_names(self):
         return [x.name for x in self.events]
-    names = property(fget=_get_names,
-                     doc="return list of event names stored in :attr:`events`.")
+
+    names = property(
+        fget=_get_names, doc="return list of event names stored in :attr:`events`."
+    )
 
     def _get_events(self):
         return self._events
+
     events = property(fget=_get_events, doc="returns the list of events")
 
 
@@ -397,21 +440,30 @@ class SimulationInterface(object):
 
     """
 
-    def __init__(self, starting_date: datetime.date, ending_date: datetime.date, dt=1.):
+    def __init__(
+        self, starting_date: datetime.date, ending_date: datetime.date, dt=1.0
+    ):
+        self._ending_date = datetime.datetime(
+            ending_date.year, ending_date.month, ending_date.day
+        )
 
-        self._ending_date = datetime.datetime(ending_date.year, ending_date.month, ending_date.day)
-
-        date = datetime.datetime(starting_date.year, starting_date.month, starting_date.day)
+        date = datetime.datetime(
+            starting_date.year, starting_date.month, starting_date.day
+        )
         self._starting_date = date
-        self.calendar = Calendar(year=date.year, month=date.month, day=date.day, delta_in_days=dt)
+        self.calendar = Calendar(
+            year=date.year, month=date.month, day=date.day, delta_in_days=dt
+        )
 
         # setup a event list with an example, the starting date
         self.events = Events()
         # we store the beginning of the simulation as an event.
-        self.events.add_event('starting_date', date, datetime.timedelta(0), periodic=False)
+        self.events.add_event(
+            "starting_date", date, datetime.timedelta(0), periodic=False
+        )
 
         #: read-only attribute (in days using datetime.timedelta)
-        self._time_elapsed = datetime.timedelta(0.)
+        self._time_elapsed = datetime.timedelta(0.0)
 
         self._year_no = 0
 
@@ -421,14 +473,18 @@ class SimulationInterface(object):
     def convert_input_date(self, date):
         if type(date) in [float, int]:
             return self.convert_fractional_year_to_date(date)
-        elif type(date) == str:
+        elif type(date) is str:
             try:
                 date = datetime.datetime.strptime(date, "%Y-%m-%d")
             except Exception:
-                raise ValueError("input date does not seem to be in the format year-month-day e.g., 2000-12-30")
+                raise ValueError(
+                    "input date does not seem to be in the format year-month-day e.g., 2000-12-30"
+                )
             return date
         else:
-            raise TypeError("date must be int, float (fractional year) or string format such as 2000-12-30")
+            raise TypeError(
+                "date must be int, float (fractional year) or string format such as 2000-12-30"
+            )
 
     @staticmethod
     def convert_fractional_year_to_date(year):
@@ -454,20 +510,26 @@ class SimulationInterface(object):
 
     def _get_starting_date(self):
         return self._starting_date
+
     starting_date = property(fget=_get_starting_date, doc="getter to starting date")
 
     def _get_ending_date(self):
         return self._ending_date
+
     ending_date = property(fget=_get_ending_date, doc="getter to ending date")
 
     def _get_date(self):
         return self.calendar.date
+
     date = property(fget=_get_date, doc="returns date from calendar instance")
 
     def _get_time_elapsed(self):
         return self._time_elapsed
-    time_elapsed = property(fget=_get_time_elapsed,
-                            doc="returns time elapsed since simulation began in datetime format")
+
+    time_elapsed = property(
+        fget=_get_time_elapsed,
+        doc="returns time elapsed since simulation began in datetime format",
+    )
 
     def _get_dt(self):
         return self.calendar.dt

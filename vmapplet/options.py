@@ -1,9 +1,5 @@
 from collections.abc import Mapping
-from typing import (
-    Any,
-    Dict,
-    List
-)
+from typing import Any, Dict, List
 import dataclasses as dc
 import pathlib
 from datetime import date
@@ -20,7 +16,6 @@ def _make_dataclass(cls, data_or_cls):
 
 @dc.dataclass
 class OptionsBase(Mapping):
-
     def __getitem__(self, key):
         return dc.asdict(self).__getitem__(key)
 
@@ -33,7 +28,6 @@ class OptionsBase(Mapping):
 
 @dc.dataclass
 class OptionsGeneral(OptionsBase):
-
     date_start: date = dc.field(default_factory=lambda: date(1994, 1, 1))
     date_end: date = dc.field(default_factory=lambda: date(1998, 6, 30))
     seed: int = 1163078255
@@ -48,7 +42,7 @@ class OptionsGeneral(OptionsBase):
     # Enable/Disable the rotation calculations (mechanics)
     mechanics: bool = True
     # render mode  may be bark, observations, zones, reaction_wood, year
-    render_mode: str = 'bark'
+    render_mode: str = "bark"
     # should be an integer. This is the number of elements of the shapes (e.g., leaf)
     stride_number: int = 5
     # Set to true to enalbe pruning# otherwise false (added by Liqi Han, 11-10-2011)
@@ -65,26 +59,39 @@ class OptionsOutput(OptionsBase):
 
 @dc.dataclass
 class OptionsInput(OptionsBase):
-
     lpy_files: LsystemPaths = dc.field(default_factory=lambda: dict())
-    lpy_path: str = dc.field(default_factory=lambda: str(pathlib.Path(__file__).parent.joinpath('lpy')))
+    lpy_path: str = dc.field(
+        default_factory=lambda: str(pathlib.Path(__file__).parent.joinpath("lpy"))
+    )
 
 
 @dc.dataclass
 class OptionsEvents(OptionsBase):
-
-    bud_break: Dict[str, int] = dc.field(default_factory=lambda: dict(day=15, month=5, duration=1))
-    new_cambial_layer: Dict[str, int] = dc.field(default_factory=lambda: dict(day=15, month=5, duration=1))
-    pre_harvest: Dict[str, int] = dc.field(default_factory=lambda: dict(day=29, month=10, duration=1))
-    harvest: Dict[str, int] = dc.field(default_factory=lambda: dict(day=30, month=10, duration=1))
-    autumn: Dict[str, int] = dc.field(default_factory=lambda: dict(day=1, month=11, duration=45))
-    leaf_fall: Dict[str, int] = dc.field(default_factory=lambda: dict(day=15, month=11, duration=45))
-    leaf_out: Dict[str, int] = dc.field(default_factory=lambda: dict(day=25, month=12, duration=1))
+    bud_break: Dict[str, int] = dc.field(
+        default_factory=lambda: dict(day=15, month=5, duration=1)
+    )
+    new_cambial_layer: Dict[str, int] = dc.field(
+        default_factory=lambda: dict(day=15, month=5, duration=1)
+    )
+    pre_harvest: Dict[str, int] = dc.field(
+        default_factory=lambda: dict(day=29, month=10, duration=1)
+    )
+    harvest: Dict[str, int] = dc.field(
+        default_factory=lambda: dict(day=30, month=10, duration=1)
+    )
+    autumn: Dict[str, int] = dc.field(
+        default_factory=lambda: dict(day=1, month=11, duration=45)
+    )
+    leaf_fall: Dict[str, int] = dc.field(
+        default_factory=lambda: dict(day=15, month=11, duration=45)
+    )
+    leaf_out: Dict[str, int] = dc.field(
+        default_factory=lambda: dict(day=25, month=12, duration=1)
+    )
 
 
 @dc.dataclass
 class OptionsTree(OptionsBase):
-
     phyllotactic_angle: float = -144.0
     branching_angle: float = 45.0
     floral_angle: float = -10.0
@@ -96,7 +103,6 @@ class OptionsTree(OptionsBase):
 
 @dc.dataclass
 class OptionsWood(OptionsBase):
-
     wood_density: float = 1000  # [kg/m3]
     reaction_wood_rate: float = 0.5
     reaction_wood_inertia_coefficient: float = 0.1
@@ -106,7 +112,6 @@ class OptionsWood(OptionsBase):
 
 @dc.dataclass
 class OptionsInternode(OptionsBase):
-
     min_length: float = 0.0001  # [m]
     elongation_period: float = 10.0  # [D]
     plastochron: float = 3.0
@@ -115,7 +120,6 @@ class OptionsInternode(OptionsBase):
 
 @dc.dataclass
 class OptionsApex(OptionsBase):
-
     terminal_expansion_rate: float = 0.00002  # [m/D]
     minimum_size: float = 0.00075  # [m]
     maximum_size: float = 0.003  # [m]
@@ -123,13 +127,11 @@ class OptionsApex(OptionsBase):
 
 @dc.dataclass
 class OptionsMarkov(OptionsBase):
-
     maximum_length: int = 70  # < 100
     minimum_length: int = 4
     terminal_fate: Dict[Any, Any] = dc.field(default_factory=lambda: dict())
 
     def __post_init__(self):
-
         # create the expected structure/types from toml input
         # i.e. a list of dicts with observations as keys
         terminal_fate = {}
@@ -137,13 +139,14 @@ class OptionsMarkov(OptionsBase):
             for i, item in enumerate(self.terminal_fate):
                 for observation_str, probabilities in item.items():
                     # start with year_no = 1
-                    terminal_fate[(i + 1, Observation(observation_str.upper()))] = probabilities
+                    terminal_fate[
+                        (i + 1, Observation(observation_str.upper()))
+                    ] = probabilities
         self.terminal_fate = terminal_fate
 
 
 @dc.dataclass
 class OptionsFruit(OptionsBase):
-
     flower_duration: float = 10.0
     max_relative_growth_rate: float = 0.167
     lost_time: float = 28
@@ -154,7 +157,6 @@ class OptionsFruit(OptionsBase):
 
 @dc.dataclass
 class OptionsLeaf(OptionsBase):
-
     fall_probability: float = 0.1
     maturation: int = 12  # [D]
     mass_per_area: float = 0.220  # [kg/m**2]
@@ -166,7 +168,6 @@ class OptionsLeaf(OptionsBase):
 
 @dc.dataclass
 class Options(OptionsBase):
-
     general: OptionsGeneral = dc.field(default_factory=lambda: OptionsGeneral())
     input: OptionsInput = dc.field(default_factory=lambda: OptionsInput())
     output: OptionsOutput = dc.field(default_factory=lambda: OptionsOutput())
@@ -180,7 +181,6 @@ class Options(OptionsBase):
     leaf: OptionsLeaf = dc.field(default_factory=lambda: OptionsLeaf())
 
     def __post_init__(self):
-
         self.general = _make_dataclass(OptionsGeneral, self.general)
         self.input = _make_dataclass(OptionsInput, self.input)
         self.output = _make_dataclass(OptionsOutput, self.output)
@@ -194,7 +194,7 @@ class Options(OptionsBase):
         self.leaf = _make_dataclass(OptionsLeaf, self.leaf)
 
     @staticmethod
-    def loads(options: str) -> 'Options':
+    def loads(options: str) -> "Options":
         return Options(**toml.loads(options))
 
     def dumps(self) -> str:

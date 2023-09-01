@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 .. topic:: read_function.py summary
 
@@ -18,14 +18,15 @@
 
 def _getdata(line, key):
     assert line.startswith(key)
-    res = line.split(' ')[1].replace('\n','')
+    res = line.split(" ")[1].replace("\n", "")
     return res
+
 
 class _FSet(object):
     def __init__(self, name=None, samples=100, flip=False, x=None, y=None):
-        if flip=='off':
+        if flip == "off":
             self.flip = False
-        elif flip=='on':
+        elif flip == "on":
             self.flip = True
         else:
             raise ValueError("flip must be either 'on' or 'off' %s provided" % flip)
@@ -33,21 +34,22 @@ class _FSet(object):
         self.y = y
         self.name = name
         self.samples = samples
-        assert len(x)==len(y)
+        assert len(x) == len(y)
 
     def __str__(self):
-        output = 'name: %s\n' % self.name
-        output+= 'samples: %s\n' % self.samples
-        if self.flip == False:
-            output+= 'flip: off\n'
+        output = "name: %s\n" % self.name
+        output += "samples: %s\n" % self.samples
+        if not self.flip:
+            output += "flip: off\n"
         else:
-            output+= 'flip: on\n'
-        output+= 'points: %s\n' % len(self.x)
-        for x,y in zip(self.x, self.y):
-            output+= '%s %s\n' % (x, y)
+            output += "flip: on\n"
+        output += "points: %s\n" % len(self.x)
+        for x, y in zip(self.x, self.y):
+            output += "%s %s\n" % (x, y)
         return output
 
-def _readFunction(filename='functions.set', func_name=None, x=0):
+
+def _readFunction(filename="functions.set", func_name=None, x=0):
     """Function to read a functions.fset file according to L-studio syntax given
     a function name . It returns the f(x) value (interpolated).
 
@@ -95,41 +97,40 @@ def _readFunction(filename='functions.set', func_name=None, x=0):
         x2 y2
     """
     try:
-        fdata = open(filename, 'r')
-    except:
-        raise IOError('Could not read filename %s', filename)
+        fdata = open(filename, "r")
+    except Exception:
+        raise IOError("Could not read filename %s", filename)
 
-    #skipe first line
+    # skipe first line
     fdata.readline()
     # get number of items
-    items = int(_getdata(fdata.readline(), 'items'))
+    items = int(_getdata(fdata.readline(), "items"))
 
-    fsets = []
-    for item in range(0,items):
+    # fsets = []
+    for item in range(0, items):
         # skip fver
         fdata.readline()
-        name = _getdata(fdata.readline(), 'name')
-        samples = float(_getdata(fdata.readline(), 'samples'))
-        flip = _getdata(fdata.readline(), 'flip')
-        points = int(_getdata(fdata.readline(), 'points'))
+        name = _getdata(fdata.readline(), "name")
+        samples = float(_getdata(fdata.readline(), "samples"))
+        flip = _getdata(fdata.readline(), "flip")
+        points = int(_getdata(fdata.readline(), "points"))
         datax = []
         datay = []
         for i in range(points):
-            data = fdata.readline().split(' ')
+            data = fdata.readline().split(" ")
 
             if float(data[0]) not in datax:
                 datax.append(float(data[0]))
                 datay.append(float(data[1]))
 
-        fset = _FSet(name=name, samples=samples, flip=flip,x=datax, y=datay)
+        fset = _FSet(name=name, samples=samples, flip=flip, x=datax, y=datay)
 
     fdata.close()
 
-    return '', fset
+    return "", fset
 
 
-
-class ReadFunction():
+class ReadFunction:
     """Read a L-studio functions.fset file, extract a func_name
     and returns interpolated values.
 
@@ -167,12 +168,13 @@ class ReadFunction():
         >>> func = ReadFunction('functions.fset', 'leaf_area')
         >>> func.gety(0.5)
     """
+
     def __init__(self, filename, func_name):
         """
         :param filename: the filename with the extension
         :param func_name: the function name to extract
         """
-        dummy, self.fset = _readFunction(filename, func_name, 0 )
+        dummy, self.fset = _readFunction(filename, func_name, 0)
         self.x = self.fset.x
         self.y = self.fset.y
         self.length = len(self.x)
@@ -189,13 +191,17 @@ class ReadFunction():
 
             x.gety(0.5)
         """
-        if x<=0: return self.y[0]
-        if x>=1: return self.y[self.length-1]
+        if x <= 0:
+            return self.y[0]
+        if x >= 1:
+            return self.y[self.length - 1]
         index = 0
         for i, this in enumerate(self.x):
-            if x>this:
+            if x > this:
                 index = i
             else:
                 break
-        newy = self.y[index] + (self.y[index+1]-self.y[index])/(self.x[index+1]-self.x[index]) * (x-self.x[index])
+        newy = self.y[index] + (self.y[index + 1] - self.y[index]) / (
+            self.x[index + 1] - self.x[index]
+        ) * (x - self.x[index])
         return newy

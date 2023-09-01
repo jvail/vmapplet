@@ -9,10 +9,10 @@ from .wood import Wood
 
 
 _SCALE = {
-    'TREE': 0,
-    'GROWTH_UNIT': 1,
-    'APEX': 2,
-    'METAMER': 2,
+    "TREE": 0,
+    "GROWTH_UNIT": 1,
+    "APEX": 2,
+    "METAMER": 2,
 }
 
 
@@ -22,12 +22,12 @@ def get_scale(organ: str):
 
 
 __all__ = [
-    'ApexData',
-    'AppleFruit',
-    'GrowthUnitData',
-    'Internode',
-    'AppleLeaf',
-    'MetamerData',
-    'Tree',
-    'Wood'
+    "ApexData",
+    "AppleFruit",
+    "GrowthUnitData",
+    "Internode",
+    "AppleLeaf",
+    "MetamerData",
+    "Tree",
+    "Wood",
 ]

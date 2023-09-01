@@ -72,10 +72,24 @@ def reorient_frame(initial_hlu, rotation_velocity, length):
     left.normalize()
     velocity = rotation_velocity.normalize()
     if abs(velocity * length) >= 0.01:
-        heading = optimisation.rotate(rotation_velocity.x, rotation_velocity.y,
-                                      rotation_velocity.z, velocity * length, heading.x, heading.y, heading.z)
-        left = optimisation.rotate(rotation_velocity.x, rotation_velocity.y,
-                                   rotation_velocity.z, velocity * length, left.x, left.y, left.z)
+        heading = optimisation.rotate(
+            rotation_velocity.x,
+            rotation_velocity.y,
+            rotation_velocity.z,
+            velocity * length,
+            heading.x,
+            heading.y,
+            heading.z,
+        )
+        left = optimisation.rotate(
+            rotation_velocity.x,
+            rotation_velocity.y,
+            rotation_velocity.z,
+            velocity * length,
+            left.x,
+            left.y,
+            left.z,
+        )
     heading.normalize()
     left.normalize()
     return Frame(heading, left, pgl.cross(heading, left))
@@ -170,7 +184,11 @@ def second_moment_of_area_annular_section(inner_radius, thickness, section):
     """
 
     assert section <= 2 * constants.pi
-    return 0.125 * ((inner_radius + thickness)**4 - inner_radius**4) * (section + sin(section))
+    return (
+        0.125
+        * ((inner_radius + thickness) ** 4 - inner_radius**4)
+        * (section + sin(section))
+    )
 
 
 def rotate_frame_at_branch(initial_hlu, branching_angle, phyllotactic_angle):
@@ -194,25 +212,53 @@ def rotate_frame_at_branch(initial_hlu, branching_angle, phyllotactic_angle):
 
     hlu = Frame(initial_hlu.heading, initial_hlu.up, initial_hlu.left)
 
-    hlu.heading = pgl.Vector3(optimisation.rotate(
-        initial_hlu.left.x, initial_hlu.left.y, initial_hlu.left.z,
-        branching_angle,
-        initial_hlu.heading.x, initial_hlu.heading.y, initial_hlu.heading.z))
-    hlu.up = pgl.Vector3(optimisation.rotate(
-        initial_hlu.left.x, initial_hlu.left.y, initial_hlu.left.z,
-        branching_angle,
-        initial_hlu.up.x, initial_hlu.up.y, initial_hlu.up.z))
+    hlu.heading = pgl.Vector3(
+        optimisation.rotate(
+            initial_hlu.left.x,
+            initial_hlu.left.y,
+            initial_hlu.left.z,
+            branching_angle,
+            initial_hlu.heading.x,
+            initial_hlu.heading.y,
+            initial_hlu.heading.z,
+        )
+    )
+    hlu.up = pgl.Vector3(
+        optimisation.rotate(
+            initial_hlu.left.x,
+            initial_hlu.left.y,
+            initial_hlu.left.z,
+            branching_angle,
+            initial_hlu.up.x,
+            initial_hlu.up.y,
+            initial_hlu.up.z,
+        )
+    )
     hlu.heading.normalize()
     hlu.up.normalize()
 
-    hlu.heading = pgl.Vector3(optimisation.rotate(
-        initial_hlu.heading.x, initial_hlu.heading.y, initial_hlu.heading.z,
-        phyllotactic_angle, hlu.heading.x, hlu.heading.y, hlu.heading.z
-    ))
-    hlu.up = pgl.Vector3(optimisation.rotate(
-        initial_hlu.heading.x, initial_hlu.heading.y, initial_hlu.heading.z,
-        phyllotactic_angle, hlu.up.x, hlu.up.y, hlu.up.z
-    ))
+    hlu.heading = pgl.Vector3(
+        optimisation.rotate(
+            initial_hlu.heading.x,
+            initial_hlu.heading.y,
+            initial_hlu.heading.z,
+            phyllotactic_angle,
+            hlu.heading.x,
+            hlu.heading.y,
+            hlu.heading.z,
+        )
+    )
+    hlu.up = pgl.Vector3(
+        optimisation.rotate(
+            initial_hlu.heading.x,
+            initial_hlu.heading.y,
+            initial_hlu.heading.z,
+            phyllotactic_angle,
+            hlu.up.x,
+            hlu.up.y,
+            hlu.up.z,
+        )
+    )
 
     hlu.heading.normalize()
     hlu.up.normalize()
@@ -222,8 +268,7 @@ def rotate_frame_at_branch(initial_hlu, branching_angle, phyllotactic_angle):
 
 
 def stress(torque, radius):
-    """Stress. Not used for the moment
-    """
+    """Stress. Not used for the moment"""
 
     moment_of_bending = torque.__norm__()
 

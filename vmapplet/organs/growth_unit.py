@@ -12,6 +12,7 @@ class GrowthUnitData:
         nproduce growth_unit(growth_unit_data(10, 1994, parent_observation=='floral'))
 
     """
+
     def __init__(self, index=0, year=0, inflorescence=False):
         """
         :param index: the index of this growth unit (default is 0)

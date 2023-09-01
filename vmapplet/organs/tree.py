@@ -13,11 +13,16 @@ class Tree:
     >>> tree = Tree(branching_angle=45, tropism=0.5)
     >>> tree.convert_to_radians()
     """
+
     def __init__(
-            self, phyllotactic_angle=-144.0, branching_angle=-45.,
-            floral_angle=-10., tropism=0.1, preformed_leaves=8,
-            spur_death_probability=0.3,
-            inflorescence_death_probability=0.2
+        self,
+        phyllotactic_angle=-144.0,
+        branching_angle=-45.0,
+        floral_angle=-10.0,
+        tropism=0.1,
+        preformed_leaves=8,
+        spur_death_probability=0.3,
+        inflorescence_death_probability=0.2,
     ):
         """**Constructor**
 
@@ -50,19 +55,21 @@ class Tree:
             Neither in original code.
 
         """
-        self.angle_unit = 'radians'
+        self.angle_unit = "radians"
         self.phyllotactic_angle = phyllotactic_angle / 180.0 * pi
         self.branching_angle = branching_angle / 180.0 * pi
         self.floral_branching_angle = floral_angle / 180.0 * pi
-        self.initial_hlu = Frame(Vector3(0.0, 0.0, 1.0), Vector3(0.0, 1.0, 0.0), Vector3(1., 0.0, 0.))
+        self.initial_hlu = Frame(
+            Vector3(0.0, 0.0, 1.0), Vector3(0.0, 1.0, 0.0), Vector3(1.0, 0.0, 0.0)
+        )
         self.spur_death_probability = spur_death_probability
         self.inflorescence_death_probability = inflorescence_death_probability
         self.preformed_leaves = preformed_leaves
 
         # variables
         self.trunk_radius = 0.0  # in m
-        self.trunk_cross_sectional_area = 0    # cm**2
-        self.fruit_load = 0.  # 1/m**2
+        self.trunk_cross_sectional_area = 0  # cm**2
+        self.fruit_load = 0.0  # 1/m**2
         # Count the number of growth units (note that the parent_unit_id starts from 0):
         self.growth_units = 0
         # Count the number of first-order branches (note that the parent_branch_id starts from 0)

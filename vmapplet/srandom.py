@@ -33,7 +33,7 @@ def random(*args):
         elif isinstance(scale, float):
             return scale * std_random.random()
         else:
-            raise ValueError('put an error message if we enter here')
+            raise ValueError("put an error message if we enter here")
     elif len(args) == 2:
         m = args[0]
         M = args[1]
@@ -54,7 +54,7 @@ def boolean_event(probability):
         a = boolean_event(0.5)
     """
 
-    assert probability >= 0.
+    assert probability >= 0.0
     assert probability <= 1.0
 
     return std_random.random() < probability

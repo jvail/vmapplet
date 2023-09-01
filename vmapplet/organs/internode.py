@@ -4,9 +4,13 @@ from ..enums import Zone
 class Internode:
     """Internode class to be used within a metamer"""
 
-    def __init__(self, min_length=0.0001, elongation_period=10.,
-                 plastochron=3.0, max_length=0.03):
-
+    def __init__(
+        self,
+        min_length=0.0001,
+        elongation_period=10.0,
+        plastochron=3.0,
+        max_length=0.03,
+    ):
         self._min_length = min_length  # m/day
         self._plastochron = plastochron  # days
         self._elongation_period = elongation_period  # days

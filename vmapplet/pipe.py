@@ -37,7 +37,7 @@ def get_new_radius(ra, rb, exponent=2.49, previous_rt=-1):
 
     """
 
-    exponent_invert = 1. / exponent
+    exponent_invert = 1.0 / exponent
     rap = pow(ra, exponent)
     rbp = pow(rb, exponent)
     newrt = pow(rap + rbp, exponent_invert)

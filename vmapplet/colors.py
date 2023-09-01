@@ -1,10 +1,7 @@
-from .enums import (
-    Observation,
-    Zone as ZoneEnum
-)
+from .enums import Observation, Zone as ZoneEnum
 
 
-class Colors():
+class Colors:
     """Define the indices for the colours to be used in the geometrical representation.
 
     This class gathers all color information related to the different rendering of
@@ -36,6 +33,7 @@ class Colors():
     >>> color.observation.get_color('small')
     5
     """
+
     def __init__(self):
         self.observation = ObservationColors()
         self.year = Year()
@@ -67,12 +65,12 @@ class ColorInterface:
     The setter defines a dictionary containing keywords and their corresponding color
     indices. The getter should return the color corresponding to an input keyword.
     """
+
     def __init__(self):
         pass
 
     def set_colors(self):
-        """returns a dictionary of keys and correponding index color.
-        """
+        """returns a dictionary of keys and correponding index color."""
         raise NotImplementedError
 
     def get_color(self, key):
@@ -83,7 +81,7 @@ class ColorInterface:
 
 
 class ObservationColors(ColorInterface):
-    """ Set of color codes for observation rendering
+    """Set of color codes for observation rendering
 
     Change the option *rendering* in the config.ini to *observations*
 
@@ -110,7 +108,7 @@ class ObservationColors(ColorInterface):
             Observation.LARGE: 3,
             Observation.MEDIUM: 4,
             Observation.SMALL: 5,
-            Observation.FLORAL: 6
+            Observation.FLORAL: 6,
         }
 
     def get_color(self, observation: Observation):
@@ -118,12 +116,14 @@ class ObservationColors(ColorInterface):
             color = self.colors[observation]
             return color
         else:
-            raise ValueError("wrong observation argument (%s). Must be in %s"
-                             % (observation, self.colors.keys()))
+            raise ValueError(
+                "wrong observation argument (%s). Must be in %s"
+                % (observation, self.colors.keys())
+            )
 
 
 class ReactionWood(ColorInterface):
-    """ Set of color codes for reaction wood rendering
+    """Set of color codes for reaction wood rendering
 
     rection wood is between 0 and pi. colors between 32
     and 47 are used.
@@ -141,12 +141,13 @@ class ReactionWood(ColorInterface):
 
     def get_color(self, reaction_wood):
         from scipy import pi
+
         color = int(((reaction_wood / pi) * (47 - 32)) + 32)
         return color
 
 
 class Zone(ColorInterface):
-    """ Set of color codes for zone rendering
+    """Set of color codes for zone rendering
 
     =============== ===============
     type            color index
@@ -164,6 +165,7 @@ class Zone(ColorInterface):
     Change the option *rendering* in the config.ini to *zone*
     inherits set_colors and get_colors from :class:`colorInterface`
     """
+
     def __init__(self):
         ColorInterface.__init__(self)
         self.colors = self.set_colors()
@@ -176,7 +178,7 @@ class Zone(ColorInterface):
             ZoneEnum.MEDIUM: 10,
             ZoneEnum.FLORAL: 11,
             ZoneEnum.DORMANT_END: 12,
-            None: 13
+            None: 13,
         }
 
     def get_color(self, zone: ZoneEnum):
@@ -184,12 +186,13 @@ class Zone(ColorInterface):
             shoot_colour = self.colors[zone]
             return shoot_colour
         else:
-            raise ValueError("wrong zone argument (%s). Must be in %s"
-                             % (zone, self.colors.keys()))
+            raise ValueError(
+                "wrong zone argument (%s). Must be in %s" % (zone, self.colors.keys())
+            )
 
 
 class Year(ColorInterface):
-    """ Set of color codes for year rendering
+    """Set of color codes for year rendering
 
     a linear color index between 48 and 56 for each year from
     starting year onwards.
@@ -206,11 +209,11 @@ class Year(ColorInterface):
         self.colors = self.set_colors()
 
     def set_colors(self):
-        return {'base': 24, 'max': 29}
+        return {"base": 24, "max": 29}
 
     def get_color(self, year, starting_year):
-        color = int(self.colors['base'] + year - starting_year)
-        color = min(color, self.colors['max'])
+        color = int(self.colors["base"] + year - starting_year)
+        color = min(color, self.colors["max"])
         return color
 
 
@@ -227,10 +230,10 @@ class Pruning(ColorInterface):
         self.colors = self.set_colors()
 
     def set_colors(self):
-        return {'prune': 29, 'base': 25}
+        return {"prune": 29, "base": 25}
 
     def get_color(self, to_prune):
         if to_prune:
-            return self.colors['prune']
+            return self.colors["prune"]
         else:
-            return self.colors['base']
+            return self.colors["base"]
