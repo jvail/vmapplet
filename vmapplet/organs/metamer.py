@@ -10,7 +10,7 @@ from ..srandom import boolean_event
 from ..enums import Zone, FruitState, LeafState
 
 
-class cambial_layer:
+class CambialLayer:
     """A simple layer class to manage cambial layers
 
     :param float thickness:  the thickness of the layer (default 0)
@@ -182,7 +182,7 @@ class MetamerData:
         """
         if self.number:
             self.season_initial_heading = self.hlu.heading
-            layer = cambial_layer(thickness=self.radius, radius=0)
+            layer = CambialLayer(thickness=self.radius, radius=0)
             self.layers.append(layer)
             self.nlayers += 1
 
@@ -322,7 +322,7 @@ class MetamerData:
             self.layers[-1].second_moment_of_area = second_moment_of_area
             # cumulate the second moment
             self.total_second_moment_of_area += second_moment_of_area
-            layer = cambial_layer(radius=self.radius)
+            layer = CambialLayer(radius=self.radius)
             self.layers.append(layer)
             self.nlayers += 1
 

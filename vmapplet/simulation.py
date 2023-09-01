@@ -98,11 +98,12 @@ class Simulation(SimulationInterface):
         lpy_options = dict(
             options=self.options, simulation=self, markov=self._markov, tree=tree
         )
-        self._lsystems = Lsystems(
-            _to_full_path(pathlib.Path(lpy_path), lpy_files),
-            lpy_options,
-            dict(mechanics=dict(steps=self.options.general.convergence_steps)),
-        )
+        if lpy_files:
+            self._lsystems = Lsystems(
+                _to_full_path(pathlib.Path(lpy_path), lpy_files),
+                lpy_options,
+                dict(mechanics=dict(steps=self.options.general.convergence_steps)),
+            )
 
         self._func_leaf_area_init(get_shared_data_path("lpy/functions.fset"))
         self.rotation_convergence = RotationConvergence(

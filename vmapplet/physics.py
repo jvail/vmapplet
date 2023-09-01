@@ -72,23 +72,27 @@ def reorient_frame(initial_hlu, rotation_velocity, length):
     left.normalize()
     velocity = rotation_velocity.normalize()
     if abs(velocity * length) >= 0.01:
-        heading = optimisation.rotate(
-            rotation_velocity.x,
-            rotation_velocity.y,
-            rotation_velocity.z,
-            velocity * length,
-            heading.x,
-            heading.y,
-            heading.z,
+        heading = pgl.Vector3(
+            optimisation.rotate(
+                rotation_velocity.x,
+                rotation_velocity.y,
+                rotation_velocity.z,
+                velocity * length,
+                heading.x,
+                heading.y,
+                heading.z,
+            )
         )
-        left = optimisation.rotate(
-            rotation_velocity.x,
-            rotation_velocity.y,
-            rotation_velocity.z,
-            velocity * length,
-            left.x,
-            left.y,
-            left.z,
+        left = pgl.Vector3(
+            optimisation.rotate(
+                rotation_velocity.x,
+                rotation_velocity.y,
+                rotation_velocity.z,
+                velocity * length,
+                left.x,
+                left.y,
+                left.z,
+            )
         )
     heading.normalize()
     left.normalize()
@@ -141,7 +145,7 @@ def second_moment_of_area_circle(radius):
     return quarter_pi * radius * radius * radius * radius
 
 
-def _second_moment_of_area_circular_section(radius, section):
+def second_moment_of_area_circular_section(radius, section):
     """Returns second moment of area (circular section)
 
     This is a particular case of annular section.

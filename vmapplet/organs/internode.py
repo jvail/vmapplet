@@ -1,3 +1,5 @@
+from typing import Optional
+
 from ..enums import Zone
 
 
@@ -25,7 +27,7 @@ class Internode:
         self._final_dormant_end = 0.25 * self._max_length / 1.5
         self._final_else = 0.25 * self._max_length / 1.5
 
-    def growth_rate(self, zone: Zone):
+    def growth_rate(self, zone: Optional[Zone] = None):
         """compute te growth rate of the internode as a function of its zone
 
         :Hypothesis:
