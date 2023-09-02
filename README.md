@@ -1,16 +1,20 @@
 # VMAppleT
 
-A - _work-in-progress_ - refactored implementation and maintenance release of MAppleT. Original sources copied and modified from [openalea/incubator](https://github.com/openalea-incubator/MAppleT).
+A refactored implementation and maintenance release of MAppleT. Original sources copied and modified from [openalea/incubator](https://github.com/openalea-incubator/MAppleT).
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jvail/vmapplet/master?urlpath=lab/tree/notebooks/simple_simulation.ipynb)
 
 
-## Requirements
+## Major changes compared to MAppleT
 
-A local conda/miniconda installation.
+* Build system and dependencies: All outdated and unmaintained dependencies have been removed or replaced
+* Modularization: The L-Py file has been splitted up into several smaller modules
+* Markov: A pure Python implementation of the semi-hidden Markov chain
+* Jupyter integration: Run and visualize simulations in Jupyter lab notebooks
 
 ## Install
 
+A local conda/miniconda installation is required.
 First clone/download the repository. The `mamba` install is optional but recommended.
 
 #### Install mamba
@@ -23,18 +27,20 @@ conda install mamba -n base -c conda-forge
 
 ```sh
 mamba env create -f binder/environment.yml
+# or
+# conda env create -f binder/environment.yml
 ```
 
-## Run Jupyter
+## Jupyter
 
 ```sh
 conda activate vmapplet
 jupyter lab --notebook-dir=notebooks
 ```
 
-## Run script
+## Script
 
 ```sh
 activate vmapplet
-python -m vmapplet vmapplet/data/simulation.toml
+python -m vmapplet vmapplet/data/simulation.toml out_folder
 ```
