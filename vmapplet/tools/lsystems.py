@@ -62,8 +62,9 @@ class Lsystems:
             else:
                 self._lsystems.append(lpy.Lsystem(path_or_paths, context))
 
-        self._axiom = self._lsystems[0].axiom
-        self._lstrings = [self._axiom] * len(self._lsystems)
+        if self._lsystems:
+            self._axiom = self._lsystems[0].axiom
+            self._lstrings = [self._axiom] * len(self._lsystems)
         self._keys = list(paths.keys())
         self._derivation_step = 0
 
