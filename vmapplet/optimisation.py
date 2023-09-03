@@ -4,13 +4,20 @@ import cppyy
 
 from .frame import Frame
 
-rotate = cppyy.gbl.optimization.rotate
 second_moment_of_area_annular_section = (
     cppyy.gbl.optimization.second_moment_of_area_annular_section
 )
 second_moment_of_area_circle = cppyy.gbl.optimization.second_moment_of_area_circle
 get_new_radius = cppyy.gbl.optimization.get_new_radius
 # _reaction_wood_target = cppyy.gbl.optimization.reaction_wood_target
+
+
+def rotate(
+    v3x: float, v3y: float, v3z: float, angle: float, vx: float, vy: float, vz: float
+):
+    # pgl can not handle the vector: wrap in list
+    return list(cppyy.gbl.optimization.rotate(v3x, v3y, v3z, angle, vx, vy, vz))
+
 
 import openalea.plantgl.all as pgl
 
