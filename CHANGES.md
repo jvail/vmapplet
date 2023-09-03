@@ -1,6 +1,6 @@
 # 0.1.0
 
-Major changes compared to the original `MAppleT`:
+Major changes compared to the original `MAppleT/StocaTree`:
 
 - support Python 3 and updated dependencies
 - support Jupyter notebooks

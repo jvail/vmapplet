@@ -4,14 +4,8 @@ import numpy as np
 
 from . import srandom
 from .tools.file_tools import get_shared_data_path
-from .enums import (
-    Observation,
-    Zone
-)
-from .markov import (
-    Markov,
-    MarkovSequence
-)
+from .enums import Observation, Zone
+from .markov import Markov, MarkovSequence
 
 Sequence = List[Tuple[Union[Zone, None], int]]
 TerminalFateData = Dict[Tuple[int, Observation], List[float]]
@@ -20,6 +14,7 @@ TerminalFateData = Dict[Tuple[int, Observation], List[float]]
 def _markov_to_sequence(sequence: MarkovSequence) -> Sequence:
     # sequence are read from end to start: therefor reversed
     return [(Zone(state), observation) for state, observation in reversed(sequence)]
+
 
 # class Markov:
 #     """
@@ -118,14 +113,14 @@ class TerminalFate:
                 (6, Observation.LARGE): [0.000, 0.100, 0.000, 0.900],
                 (6, Observation.MEDIUM): [0.000, 0.050, 0.050, 0.900],
                 (6, Observation.SMALL): [0.000, 0.000, 0.350, 0.650],
-                (6, Observation.FLORAL): [0.000, 0.200, 0.800, 0.000]
+                (6, Observation.FLORAL): [0.000, 0.200, 0.800, 0.000],
             }
 
         self.codes = {
             Observation.LARGE: 0,
             Observation.MEDIUM: 1,
             Observation.SMALL: 2,
-            Observation.FLORAL: 3
+            Observation.FLORAL: 3,
         }
 
     def get_data_terminal_fate(self, year_no: int, code: Observation) -> List[float]:
@@ -151,7 +146,9 @@ class TerminalFate:
         if code in self.codes.keys():
             return self.data[(year_no, code)]
         else:
-            raise ValueError('code must be in %s. %s provided' % (self.codes.keys(), code))
+            raise ValueError(
+                "code must be in %s. %s provided" % (self.codes.keys(), code)
+            )
 
     def _check_probabilities(self):
         """Check that all arrays sum up to a probability of 1
@@ -170,7 +167,7 @@ class TerminalFate:
 def terminal_fate(
     year_no: int,
     observation: Observation,
-    data_terminal_fate: Optional[TerminalFateData] = None
+    data_terminal_fate: Optional[TerminalFateData] = None,
 ) -> Observation:
     """This function returns a type of metamer (large, short, ...)
 
@@ -308,7 +305,7 @@ def generate_short_sequence() -> Sequence:
         (Zone.DORMANT_START, 0),
         (Zone.DORMANT_START, 0),
         (Zone.DORMANT_START, 0),
-        (Zone.DORMANT_START, 0)
+        (Zone.DORMANT_START, 0),
     ]
 
 
@@ -330,11 +327,13 @@ def generate_floral_sequence() -> Sequence:
         (Zone.DORMANT_START, 0),
         (Zone.DORMANT_START, 0),
         (Zone.DORMANT_START, 0),
-        (Zone.DORMANT_START, 0)
+        (Zone.DORMANT_START, 0),
     ]
 
 
-def generate_trunk(trunk_seq='trunk/sequences.seq', select: Union[List[int], int] = 0) -> Sequence:
+def generate_trunk(
+    trunk_seq="trunk/sequences.seq", select: Union[List[int], int] = 0
+) -> Sequence:
     """Generate a trunk sequence randomly selected within a list of hard-coded trunk sequences
 
     Used by :meth:`~openalea.stocatree.sequences.generate_sequence` only
@@ -374,15 +373,609 @@ def _generate_random_draw_sequence() -> Sequence:
     number = 9
 
     second_year_branches = [
-        [0, 0, 0, 0, 0, 3, 2, 2, 1, 1, 0, 0, 0, 0, 2, 0, 1, 1, 4, 1, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-        [0, 0, 0, 0, 4, 0, 0, 4, 0, 4, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 3, 0, 4, 4, 4, 0, 4, 0, 4, 4, 0, 0, 4, 0, 0, 0, 2, 3, 0, 0, 0, 3, 3, 3, 3, 0, 0, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-        [0, 0, 0, 0, 0, 0, 0, 3, 0, 3, 4, 0, 1, 4, 4, 1, 0, 4, 0, 1, 4, 4, 0, 4, 4, 4, 4, 4, 4, 0, 4, 4, 0, 0, 0, 1, 0, 4, 4, 4, 0, 4, 0, 4, 0, 0, 0, 3, 0, 1, 0, 0, 0, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-        [0, 0, 0, 0, 0, 0, 0, 2, 2, 4, 1, 1, 4, 3, 1, 0, 0, 4, 0, 0, 4, 0, 0, 4, 0, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 3, 0, 0, 0, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-        [0, 0, 0, 0, 0, 0, 3, 2, 3, 0, 0, 3, 3, 0, 0, 0, 1, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 4, 0, 0, 4, 0, 0, 0, 0, 0, 0, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-        [0, 0, 0, 0, 4, 3, 2, 4, 4, 0, 2, 0, 3, 0, 2, 0, 0, 4, 0, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 4, 0, 4, 4, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 2, 3, 0, 0, 0, 3, 2, 0, 0, 9, 9, 9],
-        [0, 0, 0, 0, 1, 4, 0, 4, 0, 3, 0, 0, 1, 3, 2, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 3, 0, 0, 1, 1, 0, 0, 3, 4, 0, 4, 0, 0, 4, 0, 4, 0, 0, 0, 0, 0, 1, 0, 3, 0, 1, 0, 0, 0, 0, 1, 9, 9, 9, 9, 9, 9, 9, 9],
-        [0, 0, 0, 0, 0, 3, 0, 3, 3, 0, 3, 0, 0, 0, 0, 0, 0, 0, 3, 0, 1, 0, 0, 4, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 1, 0, 0, 1, 1, 1, 1, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9]
+        [
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            2,
+            2,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            2,
+            0,
+            1,
+            1,
+            4,
+            1,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+        ],
+        [
+            0,
+            0,
+            0,
+            0,
+            4,
+            0,
+            0,
+            4,
+            0,
+            4,
+            0,
+            0,
+            4,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+        ],
+        [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            3,
+            0,
+            0,
+            0,
+            0,
+            0,
+            4,
+            4,
+            4,
+            4,
+            4,
+            3,
+            0,
+            4,
+            4,
+            4,
+            0,
+            4,
+            0,
+            4,
+            4,
+            0,
+            0,
+            4,
+            0,
+            0,
+            0,
+            2,
+            3,
+            0,
+            0,
+            0,
+            3,
+            3,
+            3,
+            3,
+            0,
+            0,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+        ],
+        [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            0,
+            3,
+            4,
+            0,
+            1,
+            4,
+            4,
+            1,
+            0,
+            4,
+            0,
+            1,
+            4,
+            4,
+            0,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            0,
+            4,
+            4,
+            0,
+            0,
+            0,
+            1,
+            0,
+            4,
+            4,
+            4,
+            0,
+            4,
+            0,
+            4,
+            0,
+            0,
+            0,
+            3,
+            0,
+            1,
+            0,
+            0,
+            0,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+        ],
+        [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            2,
+            2,
+            4,
+            1,
+            1,
+            4,
+            3,
+            1,
+            0,
+            0,
+            4,
+            0,
+            0,
+            4,
+            0,
+            0,
+            4,
+            0,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            0,
+            0,
+            3,
+            0,
+            0,
+            0,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+        ],
+        [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            2,
+            3,
+            0,
+            0,
+            3,
+            3,
+            0,
+            0,
+            0,
+            1,
+            2,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            4,
+            0,
+            4,
+            0,
+            0,
+            4,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+        ],
+        [
+            0,
+            0,
+            0,
+            0,
+            4,
+            3,
+            2,
+            4,
+            4,
+            0,
+            2,
+            0,
+            3,
+            0,
+            2,
+            0,
+            0,
+            4,
+            0,
+            4,
+            4,
+            4,
+            4,
+            4,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            4,
+            0,
+            4,
+            4,
+            0,
+            0,
+            0,
+            0,
+            4,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            0,
+            2,
+            3,
+            0,
+            0,
+            0,
+            3,
+            2,
+            0,
+            0,
+            9,
+            9,
+            9,
+        ],
+        [
+            0,
+            0,
+            0,
+            0,
+            1,
+            4,
+            0,
+            4,
+            0,
+            3,
+            0,
+            0,
+            1,
+            3,
+            2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            4,
+            0,
+            0,
+            0,
+            3,
+            0,
+            0,
+            1,
+            1,
+            0,
+            0,
+            3,
+            4,
+            0,
+            4,
+            0,
+            0,
+            4,
+            0,
+            4,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            3,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            1,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+        ],
+        [
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            0,
+            3,
+            3,
+            0,
+            3,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            0,
+            1,
+            0,
+            0,
+            4,
+            0,
+            4,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            4,
+            0,
+            0,
+            1,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+            9,
+        ],
     ]
 
     select_branch = int(srandom.random(number))
@@ -403,8 +996,8 @@ def generate_sequence(
     markov: Markov,
     year_no: int = 0,
     second_year_draws: bool = False,
-    trunk_seq: str = 'trunk/sequences.seq',
-    select_trunk: int = 0
+    trunk_seq: str = "trunk/sequences.seq",
+    select_trunk: int = 0,
 ) -> Sequence:
     """Generation of sequences from Markov chains, based directly on the work
     of Michael Renton
@@ -459,22 +1052,30 @@ def generate_sequence(
         return _markov_to_sequence(markov.generate_bounded_medium_sequence(5, 15))
         # return generate_bounded_hsm_sequence(markov.hsm_medium, 5, 15)
     elif obs == Observation.LARGE or obs == Observation.SYLLEPTIC_LARGE:
-        if (second_year_draws and year_no == 1):
+        if second_year_draws and year_no == 1:
             return _generate_random_draw_sequence()
         else:
             res = length_pool(year_no)
-            assert res in [1, 2, 3], 'Error Bad Length pool category'
+            assert res in [1, 2, 3], "Error Bad Length pool category"
             if res == 1:
-                return _markov_to_sequence(markov.generate_bounded_long_sequence(15, 26))
+                return _markov_to_sequence(
+                    markov.generate_bounded_long_sequence(15, 26)
+                )
                 # return generate_bounded_hsm_sequence(markov.hsm_long, 15, 26)
             elif res == 2:
-                return _markov_to_sequence(markov.generate_bounded_long_sequence(26, 41))
+                return _markov_to_sequence(
+                    markov.generate_bounded_long_sequence(26, 41)
+                )
                 # return generate_bounded_hsm_sequence(markov.hsm_long, 26, 41)
             elif res == 3:
-                return _markov_to_sequence(markov.generate_bounded_long_sequence(41, markov._maximum_length))
+                return _markov_to_sequence(
+                    markov.generate_bounded_long_sequence(41, markov._maximum_length)
+                )
                 # return generate_bounded_hsm_sequence(markov.hsm_long, 41, markov.maximum_length)
 
-    raise ValueError("A bad sequence observation (%s) was passed to generate_sequence().\n" % obs)
+    raise ValueError(
+        "A bad sequence observation (%s) was passed to generate_sequence().\n" % obs
+    )
 
 
 # currently usused
@@ -553,8 +1154,9 @@ def generate_sequence(
 #         return generate_floral_sequence()
 
 
-def shoot_type_react(year, pruned_shoot_type: Observation, pruning_case, react_pos) -> Observation:
-
+def shoot_type_react(
+    year, pruned_shoot_type: Observation, pruning_case, react_pos
+) -> Observation:
     if pruned_shoot_type == Observation.TRUNK:
         pruned_shoot_type = Observation.LARGE
         reiteration = Observation.LARGE
@@ -566,25 +1168,49 @@ def shoot_type_react(year, pruned_shoot_type: Observation, pruning_case, react_p
         lower_cat = terminal_fate(year, terminal_fate(year, pruned_shoot_type))
 
     if react_pos == 0:
-        if pruning_case == 'A':
-            print("reaction at pos {0} in case {1} of type {2}".format(react_pos, pruning_case, succession))
+        if pruning_case == "A":
+            print(
+                "reaction at pos {0} in case {1} of type {2}".format(
+                    react_pos, pruning_case, succession
+                )
+            )
             return succession
         else:
-            print("reaction at pos {0} in case {1} of type {2}".format(react_pos, pruning_case, reiteration))
+            print(
+                "reaction at pos {0} in case {1} of type {2}".format(
+                    react_pos, pruning_case, reiteration
+                )
+            )
             return reiteration
     elif react_pos == 1:
-        if pruning_case == 'C':
-            print("reaction at pos {0} in case {1} of type {2}".format(react_pos, pruning_case, reiteration))
+        if pruning_case == "C":
+            print(
+                "reaction at pos {0} in case {1} of type {2}".format(
+                    react_pos, pruning_case, reiteration
+                )
+            )
             return reiteration
         else:
-            print("reaction at pos {0} in case {1} of type {2}".format(react_pos, pruning_case, succession))
+            print(
+                "reaction at pos {0} in case {1} of type {2}".format(
+                    react_pos, pruning_case, succession
+                )
+            )
             return succession
     elif react_pos == 2:
-        if pruning_case == 'C':
-            print("reaction at pos {0} in case {1} of type {2}".format(react_pos, pruning_case, succession))
+        if pruning_case == "C":
+            print(
+                "reaction at pos {0} in case {1} of type {2}".format(
+                    react_pos, pruning_case, succession
+                )
+            )
             return succession
         else:
-            print("reaction at pos {0} in case {1} of type {2}".format(react_pos, pruning_case, lower_cat))
+            print(
+                "reaction at pos {0} in case {1} of type {2}".format(
+                    react_pos, pruning_case, lower_cat
+                )
+            )
             return lower_cat
 
     raise ValueError(f"Reaction at {react_pos} not implemented")

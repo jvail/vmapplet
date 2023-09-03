@@ -108,10 +108,20 @@ class ApexData:
     # the cumulated sum of metamers sons
     sons_nb: int
 
-    def __init__(self, hlu=Frame(), observation=Observation.TRUNK,
-                 terminal_expansion_rate=0.00002, minimum_size=0.00075,
-                 maximum_size=0.006, minimum_length=4, maximum_length=70,
-                 expansion_period=300, target_radius=0.006, sylleptic=False, **kwargs):
+    def __init__(
+        self,
+        hlu=Frame(),
+        observation=Observation.TRUNK,
+        terminal_expansion_rate=0.00002,
+        minimum_size=0.00075,
+        maximum_size=0.006,
+        minimum_length=4,
+        maximum_length=70,
+        expansion_period=300,
+        target_radius=0.006,
+        sylleptic=False,
+        **kwargs,
+    ):
         """
         The arguments "expansion_period" and "target_radius" were added by Han
         on 14-04-2011.
@@ -151,16 +161,15 @@ class ApexData:
         self.hlu = hlu
         self.sequence = None
 
-        self.radius = 0.
-        self.target_radius = 0.
+        self.radius = 0.0
+        self.target_radius = 0.0
         self.expansion_period = expansion_period
         self.expansion_days_counter = 0
         self.sequence_minimum_length = minimum_length
         self.sequence_maximum_length = maximum_length
         assert self.sequence_maximum_length > self.sequence_minimum_length
         self.sequence_length_range = float(
-            self.sequence_maximum_length -
-            self.sequence_minimum_length
+            self.sequence_maximum_length - self.sequence_minimum_length
         )
         self.terminal_expansion_rate = terminal_expansion_rate
         self.maximum_size = maximum_size
@@ -186,8 +195,9 @@ class ApexData:
         if observation in list(Observation):
             self._observation = observation
         else:
-            raise ValueError("observation must be in %s , %s provided"
-                             % (Observation, observation))
+            raise ValueError(
+                "observation must be in %s , %s provided" % (Observation, observation)
+            )
 
     def get_observation(self) -> Union[Observation, None]:
         """returns the current apex observation"""
@@ -196,7 +206,11 @@ class ApexData:
     def get_observation_from_sequence(self) -> Observation:
         """return observation corresponding to the current position"""
 
-        index = self.sequence[self.sequence_position][1] if self.sequence is not None else -1
+        index = (
+            self.sequence[self.sequence_position][1]
+            if self.sequence is not None
+            else -1
+        )
 
         if index == 0:
             return Observation.DORMANT
@@ -248,9 +262,12 @@ class ApexData:
             print(self.sequence_position, self.sequence_minimum_length)
             print(self.sequence)
         assert self.sequence_position >= self.sequence_minimum_length
-        self.target_radius = self.minimum_size + self.radius_range * (
-            self.sequence_position - self.sequence_minimum_length
-        ) / self.sequence_length_range
+        self.target_radius = (
+            self.minimum_size
+            + self.radius_range
+            * (self.sequence_position - self.sequence_minimum_length)
+            / self.sequence_length_range
+        )
 
     def terminal_expansion(self, dt):
         self.radius = self.radius + self.terminal_expansion_rate * dt
@@ -258,7 +275,11 @@ class ApexData:
 
     # Added by Han on 11-07-2012, to be used as a condition to control the first-year sylleptic growth from trunk
     def trunk_sylleptic(self):
-        index = self.sequence[self.sequence_position][1] if self.sequence is not None else -1
+        index = (
+            self.sequence[self.sequence_position][1]
+            if self.sequence is not None
+            else -1
+        )
         if index == 0:
             return False
         elif index == 1:

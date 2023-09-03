@@ -4,8 +4,9 @@ This module was written by Han in April and May, 2011
 
 from .csv import GroupCSV, LstringCSV
 
+
 class Group(object):
-    def __init__(self, lstring, group_id_name = '', attribute_list = []):
+    def __init__(self, lstring, group_id_name="", attribute_list=[]):
         # The name for the group id. For example, "parent_unit_id" if this is for the unit level.
         self.group_id_name = group_id_name
         # The list of attributes that are studied here. For example ['length', 'radius']
@@ -52,9 +53,9 @@ class Group(object):
 
     """
 
-    def id_group(self,lstring):
+    def id_group(self, lstring):
         for i, elt in enumerate(lstring):
-            if elt.name == 'metamer':
+            if elt.name == "metamer":
                 # For example, if the value of self.group_id_name is "parent_unit_id",
                 # then group_id will have the value of elt[0].parent_unit_id
                 group_id = getattr(elt[0], self.group_id_name)
@@ -62,14 +63,21 @@ class Group(object):
                 if group_id in self.group_metamer:
                     self.group_metamer[group_id].append(i)
                 else:
-                    self.group_metamer.update({group_id:[i]})
+                    self.group_metamer.update({group_id: [i]})
 
                 if self.group_id_name != "parent_unit_id":
                     if group_id in self.group_unit:
-                        if lstring[i][0].parent_unit_id not in self.group_unit[group_id]:
-                            self.group_unit[group_id].append(lstring[i][0].parent_unit_id)
+                        if (
+                            lstring[i][0].parent_unit_id
+                            not in self.group_unit[group_id]
+                        ):
+                            self.group_unit[group_id].append(
+                                lstring[i][0].parent_unit_id
+                            )
                     else:
-                        self.group_unit.update({group_id: [lstring[i][0].parent_unit_id]})
+                        self.group_unit.update(
+                            {group_id: [lstring[i][0].parent_unit_id]}
+                        )
 
                 if self.group_id_name == "parent_tree_id":
                     if group_id in self.group_fbr:
@@ -78,7 +86,7 @@ class Group(object):
                     else:
                         self.group_fbr.update({group_id: [lstring[i][0].parent_fbr_id]})
 
-    def attr_group(self,lstring):
+    def attr_group(self, lstring):
         self.id_group(lstring)
 
         # To initialise a dictionary like {attr1_name:{}, attr2_name:{}, ...}
@@ -86,22 +94,23 @@ class Group(object):
             if attribute not in self.group_metamer_attributes:
                 if attribute == "parent_observation":
                     if self.group_id_name == "parent_unit_id":
-                        self.group_metamer_attributes.update({attribute:{}})
+                        self.group_metamer_attributes.update({attribute: {}})
                 else:
-                    self.group_metamer_attributes.update({attribute:{}})
+                    self.group_metamer_attributes.update({attribute: {}})
 
-        for gid,mid_list in self.group_metamer.iteritems():
+        for gid, mid_list in self.group_metamer.iteritems():
             for attr in self.group_metamer_attributes:
                 if gid not in self.group_metamer_attributes[attr]:
-                    self.group_metamer_attributes[attr].update({gid:[]})
+                    self.group_metamer_attributes[attr].update({gid: []})
                 for mid in mid_list:
                     # Note that the value of attr is a string, thus the "getattr()" method is needed here
                     # to return the value of attribute that corresponds to attr
-                    if hasattr(lstring[mid][0],attr):
-                        self.group_metamer_attributes[attr][gid].append(getattr(lstring[mid][0],attr))
+                    if hasattr(lstring[mid][0], attr):
+                        self.group_metamer_attributes[attr][gid].append(
+                            getattr(lstring[mid][0], attr)
+                        )
                     else:
                         self.group_metamer_attributes[attr][gid].append("N/A")
-
 
         """
         The above loop is to further extend the dicitonary self.group_metamer_attributes to
@@ -134,20 +143,30 @@ class Group(object):
         """
 
 
-
 class Statistics(object):
-    def __init__(self, lstring, attribute_list = [], shoot_level = True, branch_level = False, tree_level = False, exp_id = 0, growth_date = 1994, exp_date = 2011, dir = "Batchmode_ExpCounters&Results/"):
-        #self.lstring = lstring
+    def __init__(
+        self,
+        lstring,
+        attribute_list=[],
+        shoot_level=True,
+        branch_level=False,
+        tree_level=False,
+        exp_id=0,
+        growth_date=1994,
+        exp_date=2011,
+        dir="Batchmode_ExpCounters&Results/",
+    ):
+        # self.lstring = lstring
 
-        #The list of attributes to be investigated
+        # The list of attributes to be investigated
         self.attribute_list = attribute_list
-        #These are used to control which level of the structure that needs to be grouped
+        # These are used to control which level of the structure that needs to be grouped
         self.shoot_level = shoot_level
         self.branch_level = branch_level
         self.tree_level = tree_level
 
         self.exp_id = exp_id
-        self.growth_date= growth_date
+        self.growth_date = growth_date
         self.exp_date = exp_date
         self.dir = dir
 
@@ -171,7 +190,7 @@ class Statistics(object):
         self.lstring_details(lstring, self.metamer_file_name)
 
     # a function to return the average value
-    def average(self,lstring, group_id_name):
+    def average(self, lstring, group_id_name):
         group_avg = {}
         """
         group_avg is to be:
@@ -225,16 +244,22 @@ class Statistics(object):
         know how many metamers each unit has.
         """
 
-        for attr,groups in grp.group_metamer_attributes.iteritems():
+        for attr, groups in grp.group_metamer_attributes.iteritems():
             if attr not in group_avg:
-                group_avg.update({attr:{}})
+                group_avg.update({attr: {}})
             # Here avl is a list of metamer attribute values
-            for gid,avl in groups.iteritems():
+            for gid, avl in groups.iteritems():
                 # Since the value of "parent_observation" is a string, it cannot
                 # really be averaged
-                if attr == "parent_observation" or attr == "leaf_state" or attr == "zone":
-                    group_avg[attr].update({gid : grp.group_metamer_attributes[attr][gid][0]})
-                    #print attr, group_avg[attr]
+                if (
+                    attr == "parent_observation"
+                    or attr == "leaf_state"
+                    or attr == "zone"
+                ):
+                    group_avg[attr].update(
+                        {gid: grp.group_metamer_attributes[attr][gid][0]}
+                    )
+                    # print attr, group_avg[attr]
                 else:
                     if len(avl) != 0:
                         # Here it is divided by (len(avl) - avl.count(0)) rather
@@ -244,44 +269,66 @@ class Statistics(object):
                         # not be calculated from division by the number of metamers
                         # it has.
                         if (len(avl) - avl.count(0)) != 0:
-                            a = sum(avl)/(len(avl) - avl.count(0))
+                            a = sum(avl) / (len(avl) - avl.count(0))
                         else:
                             a = 0
                     else:
                         a = 0
-                    group_avg[attr].update({gid:a})
-
+                    group_avg[attr].update({gid: a})
 
         if "star_pgl" in group_avg:
-            group_avg.update({"total_star":{}})
+            group_avg.update({"total_star": {}})
             for gid in grp.group_metamer.keys():
-                if sum(grp.group_metamer_attributes["ta_pgl"][gid]) !=0:
-                    group_avg["total_star"].update({gid: sum(grp.group_metamer_attributes["sa_pgl"][gid])/sum(grp.group_metamer_attributes["ta_pgl"][gid])})
+                if sum(grp.group_metamer_attributes["ta_pgl"][gid]) != 0:
+                    group_avg["total_star"].update(
+                        {
+                            gid: sum(grp.group_metamer_attributes["sa_pgl"][gid])
+                            / sum(grp.group_metamer_attributes["ta_pgl"][gid])
+                        }
+                    )
                 else:
                     group_avg["total_star"].update({gid: 0})
 
         self.gp_stat_updt(group_avg, "metamer_number")
         self.gp_stat_updt(group_avg, "leaf_number")
-        for gid,v in self.group_metamer[group_id_name].iteritems():
-            #group_avg["metamer_number"].update({gid: len(v)})
-            #Modified by Han on 12-01-2012, because there are two extra elements
-            #lstring[0] and lstring[1] in the pseudo lstring
+        for gid, v in self.group_metamer[group_id_name].iteritems():
+            # group_avg["metamer_number"].update({gid: len(v)})
+            # Modified by Han on 12-01-2012, because there are two extra elements
+            # lstring[0] and lstring[1] in the pseudo lstring
             if gid > 0:
                 group_avg["metamer_number"].update({gid: len(v)})
             else:
-                group_avg["metamer_number"].update({gid: (len(v)-2)})
+                group_avg["metamer_number"].update({gid: (len(v) - 2)})
             if "leaf_area" in grp.group_metamer_attributes:
                 if gid > 0:
-                    group_avg["leaf_number"].update({gid: (len(grp.group_metamer_attributes["leaf_area"][gid]) - grp.group_metamer_attributes["leaf_area"][gid].count(0))})
+                    group_avg["leaf_number"].update(
+                        {
+                            gid: (
+                                len(grp.group_metamer_attributes["leaf_area"][gid])
+                                - grp.group_metamer_attributes["leaf_area"][gid].count(
+                                    0
+                                )
+                            )
+                        }
+                    )
                 else:
-                    group_avg["leaf_number"].update({gid: (len(grp.group_metamer_attributes["leaf_area"][gid]) - grp.group_metamer_attributes["leaf_area"][gid].count(0) - 2)})
+                    group_avg["leaf_number"].update(
+                        {
+                            gid: (
+                                len(grp.group_metamer_attributes["leaf_area"][gid])
+                                - grp.group_metamer_attributes["leaf_area"][gid].count(
+                                    0
+                                )
+                                - 2
+                            )
+                        }
+                    )
             else:
                 group_avg["leaf_number"].update({gid: 0})
                 for i in v:
                     if lstring[i][0].leaf_state == "growing":
                         group_avg["leaf_number"][gid] += 1
             assert group_avg["leaf_number"][gid] <= group_avg["metamer_number"][gid]
-
 
         """
         The above statement and loop updates the group_avg dictionary with:
@@ -307,32 +354,35 @@ class Statistics(object):
         if group_id_name != "parent_unit_id":
             self.group_unit.update({group_id_name: grp.group_unit})
             self.gp_stat_updt(group_avg, "unit_number")
-            for gid,v in self.group_unit[group_id_name].iteritems():
+            for gid, v in self.group_unit[group_id_name].iteritems():
                 group_avg["unit_number"].update({gid: len(v)})
             if group_id_name == "parent_tree_id":
                 self.group_fbr.update({group_id_name: grp.group_fbr})
                 self.gp_stat_updt(group_avg, "fbr_number")
-                for gid,v in self.group_fbr[group_id_name].iteritems():
+                for gid, v in self.group_fbr[group_id_name].iteritems():
                     group_avg["fbr_number"].update({gid: len(v)})
 
         return group_avg
 
-
     # This method is used to output the grouped resutls at shoot, branch or tree levels
     def output(self, group_id_name, group_stat):
-        #self.exp_info = ["Experiment_ID", "Growth_Date", "Experiment_Date"]
-        self.exp_info = {"Experiment_ID": self.exp_id, "Growth_Date": self.growth_date, "Experiment_Date":self.exp_date}
-        #self.group_id_info = [group_id_name]
-        #self.line_feed = ["\n"]
-        #self.item_name_list = self.exp_info + self.group_id_info + self.attribute_list
+        # self.exp_info = ["Experiment_ID", "Growth_Date", "Experiment_Date"]
+        self.exp_info = {
+            "Experiment_ID": self.exp_id,
+            "Growth_Date": self.growth_date,
+            "Experiment_Date": self.exp_date,
+        }
+        # self.group_id_info = [group_id_name]
+        # self.line_feed = ["\n"]
+        # self.item_name_list = self.exp_info + self.group_id_info + self.attribute_list
 
         group_output = group_stat
 
-        for name,value in self.exp_info.iteritems():
+        for name, value in self.exp_info.iteritems():
             if name not in group_output.keys():
-                group_output.update({name:{}})
+                group_output.update({name: {}})
             for gid in self.groupid_values[group_id_name]:
-                group_output[name].update({gid:value})
+                group_output[name].update({gid: value})
         """
         The above loop updates group_output with:
         {
@@ -352,9 +402,9 @@ class Statistics(object):
         }
         """
 
-        group_output.update({group_id_name:{}})
+        group_output.update({group_id_name: {}})
         for gid in self.groupid_values[group_id_name]:
-            group_output[group_id_name].update({gid:gid})
+            group_output[group_id_name].update({gid: gid})
         """
         The above statement and loop update group_output with:
         {
@@ -366,9 +416,13 @@ class Statistics(object):
         }
         """
 
-
-
-        item_name_list = self.exp_info.keys() + [group_id_name] + self.attribute_list + ["total_star", "metamer_number", "leaf_number"] + ["unit_number", "fbr_number"]
+        item_name_list = (
+            self.exp_info.keys()
+            + [group_id_name]
+            + self.attribute_list
+            + ["total_star", "metamer_number", "leaf_number"]
+            + ["unit_number", "fbr_number"]
+        )
 
         self.shoot_file_name = "Statistics_Shoot.csv"
         self.branch_file_name = "Statistics_Branch.csv"
@@ -381,11 +435,17 @@ class Statistics(object):
         elif group_id_name == "parent_tree_id":
             fn = self.tree_file_name
 
-        csv = GroupCSV(self.dir, fn, item_name_list, group_output, self.groupid_values[group_id_name])
+        csv = GroupCSV(
+            self.dir,
+            fn,
+            item_name_list,
+            group_output,
+            self.groupid_values[group_id_name],
+        )
         csv.open()
-        #if (self.exp_id == -1 or self.exp_id == 0) and self.growth_date == 1994:
-        if csv.read() == '':
-            #csv.clear()
+        # if (self.exp_id == -1 or self.exp_id == 0) and self.growth_date == 1994:
+        if csv.read() == "":
+            # csv.clear()
             csv.item_names()
             csv.item_values()
         else:
@@ -394,15 +454,16 @@ class Statistics(object):
 
     # This method is used to output attributes of each metamer
     def lstring_details(self, lstring, file_name):
-        item_name_list = self.exp_info.keys() + ["lstring_id"] + self.attribute_list + ["leaf_state"]
+        item_name_list = (
+            self.exp_info.keys() + ["lstring_id"] + self.attribute_list + ["leaf_state"]
+        )
         fn = file_name
         csv = LstringCSV(self.dir, fn, self.exp_info, item_name_list)
         csv.open()
-        if csv.read() == '':
+        if csv.read() == "":
             csv.item_names()
         csv.item_values(lstring)
         csv.close()
-
 
     def gp_stat_updt(self, group_stat, attribute_name):
         if attribute_name not in group_stat:

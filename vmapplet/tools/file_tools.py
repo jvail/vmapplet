@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 # Name:        file_tools
 # Purpose:     data file management
 #
@@ -7,10 +7,10 @@
 # Created:     16/12/2011
 # Copyright:   (c) HAN 2011
 # Licence:     <your licence>
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 
-
-
+# ignore this file but keep it for historic reasons
+# flake8: noqa
 
 import pathlib
 import glob
@@ -32,86 +32,103 @@ from openalea.mtg.aml import (
 
 
 def get_shared_data_path(path: str) -> str:
-    return str((pathlib.Path(__file__).parent / '../data' / path).resolve())
+    return str((pathlib.Path(__file__).parent / "../data" / path).resolve())
 
 
 class File_Index(object):
     def __init__(self, dir):
-        #The directory of files (e.g. "c:\\")
+        # The directory of files (e.g. "c:\\")
         self.dir = dir
-        #The extension of files (e.g. "txt")
-        #self.extn = extn
+        # The extension of files (e.g. "txt")
+        # self.extn = extn
 
-    #The list of paths of all the files (e.g. ["e:\\hi.txt"])
+    # The list of paths of all the files (e.g. ["e:\\hi.txt"])
     def path_list(self, extn):
-        #Get the lis of files with full directories (not sorted yet)
-        p_l = glob.glob(self.dir+"*."+extn)
+        # Get the lis of files with full directories (not sorted yet)
+        p_l = glob.glob(self.dir + "*." + extn)
         return p_l
 
-    #The list of files full names including their extensions (e.g. ["hi.txt"])
+    # The list of files full names including their extensions (e.g. ["hi.txt"])
     def file_list(self, extn):
         f_l = []
         for p in self.path_list(extn):
-            (d,f) = os.path.split(p)
+            (d, f) = os.path.split(p)
             f_l.append(f)
         return f_l
 
-    #The list of file names (e.g. ["hi"])
+    # The list of file names (e.g. ["hi"])
     def fn_list(self, extn):
         fn_l = []
         for f in self.file_list(extn):
-            (n,e) = os.path.splitext(f)
+            (n, e) = os.path.splitext(f)
             fn_l.append(n)
-        #return fn_l
-        #If the file names are pure integers, then sort them with "their values"
+            # return fn_l
+            # If the file names are pure integers, then sort them with "their values"
             try:
-                #Convert them into int type at first
+                # Convert them into int type at first
                 for i in range(len(fn_l)):
                     fn_l[i] = int(fn_l[i])
-                #And then sort the int numbers
+                # And then sort the int numbers
                 fn_l.sort()
-                #And then convert them back to str type
+                # And then convert them back to str type
                 for i in range(len(fn_l)):
                     fn_l[i] = str(fn_l[i])
                 return fn_l
-            except:
+            except Exception:
                 return fn_l
 
-    #A dictionary of file names and their FULL directories
-    #(e.g. {"1":"c:\\1.txt"})
+    # A dictionary of file names and their FULL directories
+    # (e.g. {"1":"c:\\1.txt"})
     def file_dic(self, extn):
         dic = {}
         for p in self.path_list(extn):
-            (d,f) = os.path.split(p)
-            (n,e) = os.path.splitext(f)
-            dic.update({n:p})
+            (d, f) = os.path.split(p)
+            (n, e) = os.path.splitext(f)
+            dic.update({n: p})
         return dic
 
+
 class Mtg_Processing(object):
-    def __init__(self, myfile,attr_list=["observation", "length", "leaf_state",
-                                        "leaf_area", "ta_pgl", "sa_pgl",
-                                        "star_pgl", "unit_id", "branch_id",
-                                        "lstring_id", "zone", "radius"]):
-        #File path + file name
+    def __init__(
+        self,
+        myfile,
+        attr_list=[
+            "observation",
+            "length",
+            "leaf_state",
+            "leaf_area",
+            "ta_pgl",
+            "sa_pgl",
+            "star_pgl",
+            "unit_id",
+            "branch_id",
+            "lstring_id",
+            "zone",
+            "radius",
+        ],
+    ):
+        # File path + file name
         self.file = myfile
         self.mtg = MTG(self.file)
         self.pf = None
         self.attr_list = attr_list
 
-        #The id_dict (actually a list of dictionaries) needed for using envelope
-        #self.id_dict = self.crt_envdic()
-        #The attribute dictionary needed for producing pseudo lstring
+        # The id_dict (actually a list of dictionaries) needed for using envelope
+        # self.id_dict = self.crt_envdic()
+        # The attribute dictionary needed for producing pseudo lstring
         self.attr_dict = self.get_attributes()
-        #The pseudo_lstring as a list
-        #self.pseudo_lstring = self.crt_pseudo_lstring()
+        # The pseudo_lstring as a list
+        # self.pseudo_lstring = self.crt_pseudo_lstring()
 
     def diam(self, x):
         topdia = Feature(x, "TopDia")
-        if not topdia is None:
-            return topdia / 10.
+        if topdia is not None:
+            return topdia / 10.0
         else:
             if x != MTGRoot():
-                raise Exception("An item, other than the root, in the MTG without a TopDia was found")
+                raise Exception(
+                    "An item, other than the root, in the MTG without a TopDia was found"
+                )
             return None
 
     def leaf_area(self, vtx):
@@ -123,13 +140,15 @@ class Mtg_Processing(object):
     def id(self, vtx):
         return Feature(vtx, "lstring_id")
 
-    def chemin(self,vtx):
+    def chemin(self, vtx):
         test_list = []
         chemin_list = []
         for a in Ancestors(vtx):
-            if Successor(a) !=  Undef \
-                    and Class(a) == "G" \
-                    and Pos(Ancestors(vtx), Successor(a)) == Undef:
+            if (
+                Successor(a) != Undef
+                and Class(a) == "G"
+                and Pos(Ancestors(vtx), Successor(a)) == Undef
+            ):
                 test_list.append(a)
         if Size(test_list) > 0:
             for a in Ancestors(vtx):
@@ -146,7 +165,7 @@ class Mtg_Processing(object):
     def it_leaf_list(self, vtx):
         it_leaf = []
         for d in Descendants(vtx, Scale=3):
-            if self.leaf_area(d)>0:
+            if self.leaf_area(d) > 0:
                 it_leaf.append(d)
         return it_leaf
 
@@ -156,8 +175,8 @@ class Mtg_Processing(object):
         for i in Extremities(self.gu_list(vtx)[0]):
             if i not in [self.gu_list(vtx)[0]]:
                 c = self.chemin(i)
-                if c != Undef and c!=[]:
-                    #This p_tab is filtered, equivalent to the "filter(tab(p))"
+                if c != Undef and c != []:
+                    # This p_tab is filtered, equivalent to the "filter(tab(p))"
                     p_tab.append(c)
         for x in p_tab:
             if Order(x[-1]) == _order:
@@ -165,12 +184,25 @@ class Mtg_Processing(object):
         return br_order_list
 
     def leafygu(self, y):
-        if y!=2:
-            return [x for x in Descendants(y) if self.leaf_area(Components(x)[0])>0 and Class(Father(x))!="I" and Feature(Father(x), "year")!= Feature(x, "year") ]
+        if y != 2:
+            return [
+                x
+                for x in Descendants(y)
+                if self.leaf_area(Components(x)[0]) > 0
+                and Class(Father(x)) != "I"
+                and Feature(Father(x), "year") != Feature(x, "year")
+            ]
         else:
-            return [x for x in Descendants(y) if Order(x)==Order(y) and self.leaf_area(Components(x)[0])>0 and Class(Father(x))!="I" and Feature(Father(x), "year")!= Feature(x, "year") ]
+            return [
+                x
+                for x in Descendants(y)
+                if Order(x) == Order(y)
+                and self.leaf_area(Components(x)[0]) > 0
+                and Class(Father(x)) != "I"
+                and Feature(Father(x), "year") != Feature(x, "year")
+            ]
 
-    #Create the dictionaries for using fractalysis envelope
+    # Create the dictionaries for using fractalysis envelope
     def crt_envdic(self):
         self.branch_1 = self.br_order(1, 1, self.pf)
         self.roots_branch_1 = [2] + [i[-1] for i in self.branch_1]
@@ -202,26 +234,26 @@ class Mtg_Processing(object):
 
         self.ss3 = dict_crt_leaf()
 
-        self.sss1 = {0:[]}
+        self.sss1 = {0: []}
         self.sss2 = {}
         self.sss3 = {}
 
-        for k,v in self.ss2.iteritems():
-            new_key = 300000+k
+        for k, v in self.ss2.iteritems():
+            new_key = 300000 + k
             new_v = []
             for i in v:
-                new_i = 600000+i
+                new_i = 600000 + i
                 new_v.append(new_i)
-            self.sss2.update({new_key:new_v})
+            self.sss2.update({new_key: new_v})
             if k in Flatten(self.ss1.values()):
                 self.sss1[0].append(new_key)
 
-        for k,v in self.ss3.iteritems():
-            new_key = 600000+k
-            self.sss3.update({new_key:v})
+        for k, v in self.ss3.iteritems():
+            new_key = 600000 + k
+            self.sss3.update({new_key: v})
 
-        #self.id_dict = [self.sss1, self.sss2, self.sss3]
-        #return self.id_dict
+        # self.id_dict = [self.sss1, self.sss2, self.sss3]
+        # return self.id_dict
         return [self.sss1, self.sss2, self.sss3]
 
         """
@@ -241,11 +273,11 @@ class Mtg_Processing(object):
         v_dic = {}
         for vtx in VtxList(Scale=3):
             lid = Feature(vtx, "lstring_id")
-            v_dic.update({lid:{}})
+            v_dic.update({lid: {}})
             for attr in self.attr_list:
-                v_dic[lid].update({attr:Feature(vtx, attr)})
+                v_dic[lid].update({attr: Feature(vtx, attr)})
         return v_dic
-        #The keys for v_dic are lstring_ids
+        # The keys for v_dic are lstring_ids
         """
         {
             #lstring_id
@@ -269,22 +301,22 @@ class Mtg_Processing(object):
         """
 
     def crt_pseudo_lstring(self):
-        #The size of the pseudo lstring list, which is the maximum lstring id
-        #plus 1, rather than the number of lstring_ids (keys in get_attributes)
-        #This allows the pseudo_lstring[id] to work like lstring[id]
+        # The size of the pseudo lstring list, which is the maximum lstring id
+        # plus 1, rather than the number of lstring_ids (keys in get_attributes)
+        # This allows the pseudo_lstring[id] to work like lstring[id]
         pl_size = max(self.attr_dict.keys()) + 1
-        #The pseudo_lstring list
+        # The pseudo_lstring list
         ###e = L_Element()
         ###e.append(Metamer_Format())
         ###pl = [e] * pl_size
         ######The above line needs to be changed######
         ##################!!!!!!!!!!!!!!!!!!NOTE!!!!!!!!!!!!!!!!!!##################
-        #Be careful of the use of initialisation like
+        # Be careful of the use of initialisation like
         #        self.pseudo_lstring = [e] * len(self.lstring)
-        #The drawback is that, if self.pseudo_lstring[i] is updated, e will be
-        #updated and then all other elements in self.pseudo_lstring will be
-        #updated with the same changes too. The result is that, all elements
-        #of self.pseudo_lstring are identical at last.
+        # The drawback is that, if self.pseudo_lstring[i] is updated, e will be
+        # updated and then all other elements in self.pseudo_lstring will be
+        # updated with the same changes too. The result is that, all elements
+        # of self.pseudo_lstring are identical at last.
         ############################################################################
 
         pl = [None] * pl_size
@@ -292,8 +324,7 @@ class Mtg_Processing(object):
             pl[i] = L_Element()
             pl[i].append(Metamer_Format())
 
-
-        #pl = [None] * pl_size
+        # pl = [None] * pl_size
         for k in self.attr_dict.keys():
             d = Metamer_Format()
             for attr, value in self.attr_dict[k].iteritems():
@@ -306,29 +337,29 @@ class Mtg_Processing(object):
                         d.parent_unit_id = self.attr_dict[k][attr]
                     elif attr == "observation":
                         d.parent_observation = self.attr_dict[k][attr]
-                        #print attr, d.parent_observation
+                        # print attr, d.parent_observation
                     elif attr == "leaf_state":
                         d.leaf_state = self.attr_dict[k][attr]
                         d.leaf.state = d.leaf_state
                     else:
                         vars(d).update({attr: value})
                         d.parent_tree_id = 0
-            #print d.lstring_id
+            # print d.lstring_id
             ne = L_Element()
             ne.append(d)
             pl[k] = ne
-            #print e.name
-            #print "############################"
-            #print len(pl[k])
-            #print k, pl[k].name, pl[k][0].lstring_id
-            #print k, self.attr_dict[k]["lstring_id"]
+            # print e.name
+            # print "############################"
+            # print len(pl[k])
+            # print k, pl[k].name, pl[k][0].lstring_id
+            # print k, self.attr_dict[k]["lstring_id"]
 
         return pl
 
-#A data format/type for elements in pseudo_lstring[i][0]
+
+# A data format/type for elements in pseudo_lstring[i][0]
 class Metamer_Format(object):
     def __init__(self):
-
         self.parent_unit_id = -1
         self.parent_fbr_id = -1
         self.parent_tree_id = -1
@@ -347,55 +378,64 @@ class Metamer_Format(object):
 
         self.leaf = Leaf_Format()
 
+
 class Leaf_Format(object):
     def __init__(self):
         self.state = ""
+
 
 class L_Element(list):
     def __init__(self):
         self.name = "metamer"
 
-#A class to copy information from a real lstring to a pseudo lstring
+
+# A class to copy information from a real lstring to a pseudo lstring
 class Cp_Lstring(object):
     def __init__(self, lstring):
         self.lstring = lstring
         self.pseudo_lstring = None
+
     def copy(self):
         ###e = L_Element()
         ###e.append(Metamer_Format())
-        #print len(lstring)
+        # print len(lstring)
         self.pseudo_lstring = [None] * len(self.lstring)
-        for i  in range(len(self.pseudo_lstring)):
+        for i in range(len(self.pseudo_lstring)):
             self.pseudo_lstring[i] = L_Element()
             self.pseudo_lstring[i].append(Metamer_Format())
 
         ###self.pseudo_lstring = [e] * len(self.lstring)
         ##################!!!!!!!!!!!!!!!!!!NOTE!!!!!!!!!!!!!!!!!!##################
-        #Be careful of the use of initialisation like
+        # Be careful of the use of initialisation like
         #        self.pseudo_lstring = [e] * len(self.lstring)
-        #The drawback is that, if self.pseudo_lstring[i] is updated, e will be
-        #updated and then all other elements in self.pseudo_lstring will be
-        #updated with the same changes too. The result is that, all elements
-        #of self.pseudo_lstring are identical at last.
+        # The drawback is that, if self.pseudo_lstring[i] is updated, e will be
+        # updated and then all other elements in self.pseudo_lstring will be
+        # updated with the same changes too. The result is that, all elements
+        # of self.pseudo_lstring are identical at last.
         ############################################################################
 
-
-        #print len(pseudo_lstring)
-        #print vars(lstring[1][0]).keys()
-        #print isinstance(lstring[2][0], metamer_data)
-        #print len(lstring), len(self.pseudo_lstring)
+        # print len(pseudo_lstring)
+        # print vars(lstring[1][0]).keys()
+        # print isinstance(lstring[2][0], metamer_data)
+        # print len(lstring), len(self.pseudo_lstring)
 
         for i in range(len(self.pseudo_lstring)):
             try:
                 for attr in vars(self.pseudo_lstring[i][0]).keys():
                     if attr in vars(self.lstring[i][0]).keys():
                         if attr == "leaf_state":
-                            self.pseudo_lstring[i][0].leaf_state = self.lstring[i][0].leaf_state
-                            self.pseudo_lstring[i][0].leaf.state = self.lstring[i][0].leaf.state
-                            #print i, self.lstring[i][0].leaf.state, self.pseudo_lstring[i][0].leaf.state, self.pseudo_lstring[i-1][0].leaf.state
+                            self.pseudo_lstring[i][0].leaf_state = self.lstring[i][
+                                0
+                            ].leaf_state
+                            self.pseudo_lstring[i][0].leaf.state = self.lstring[i][
+                                0
+                            ].leaf.state
+                            # print i, self.lstring[i][0].leaf.state, self.pseudo_lstring[i][0].leaf.state, self.pseudo_lstring[i-1][0].leaf.state
                         else:
-                            vars(self.pseudo_lstring[i][0])[attr] = vars(self.lstring[i][0])[attr]
-                            #print i, self.lstring[i][0].leaf_area, self.pseudo_lstring[i][0].leaf_area
+                            vars(self.pseudo_lstring[i][0])[attr] = vars(
+                                self.lstring[i][0]
+                            )[attr]
+                            # print i, self.lstring[i][0].leaf_area, self.pseudo_lstring[i][0].leaf_area
                     else:
                         continue
             except:
@@ -422,25 +462,26 @@ class Cp_Lstring(object):
             tp.close()
             """
 
-#A class for merging statistical files (not ubiquitous for all situations)
+
+# A class for merging statistical files (not ubiquitous for all situations)
 class Merge(object):
     def __init__(self, src_files=[], dst_file=None, header="Experiment_Date"):
-        #A list of source files, with full directories, which need to be merged
-        #e.g. ["c:/1.txt", "c:/2.txt", "c:/3.txt"]
+        # A list of source files, with full directories, which need to be merged
+        # e.g. ["c:/1.txt", "c:/2.txt", "c:/3.txt"]
         self.src_files = src_files
-        #The destination file for the merging
+        # The destination file for the merging
         self.dst_file = dst_file
-        #The header to help in deciding whether a line needs to be copied or not
+        # The header to help in deciding whether a line needs to be copied or not
         self.header = header
 
-        #Copy all content, including the header line, of the first file,
-        #src_files[0], to the destination file
+        # Copy all content, including the header line, of the first file,
+        # src_files[0], to the destination file
         opr = open(self.src_files[0], "r")
         opw = open(self.dst_file, "a")
         opw.write(opr.read())
-        #opw.write("\n")
+        # opw.write("\n")
         opr.close()
-        #Then copy and paste the content of other files, excluding the headings
+        # Then copy and paste the content of other files, excluding the headings
         for i in range(len(src_files)):
             if i > 0:
                 opr = open(src_files[i], "r")
@@ -449,15 +490,22 @@ class Merge(object):
                         opw.write(line)
                     else:
                         continue
-                #opw.write("\n")
+                # opw.write("\n")
                 opr.close()
             else:
                 continue
         opw.close()
 
-#This is used to find some missed simulations according to the plan
+
+# This is used to find some missed simulations according to the plan
 class Find_missed(object):
-    def __init__(self, file="PararunResults/IntegratedMultiScaleStar.csv",  plan_size=300, group_size=5, csv_delimiter=";"):
+    def __init__(
+        self,
+        file="PararunResults/IntegratedMultiScaleStar.csv",
+        plan_size=300,
+        group_size=5,
+        csv_delimiter=";",
+    ):
         op = open(file, "r")
         content = op.read()
         op.close()

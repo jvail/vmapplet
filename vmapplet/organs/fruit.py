@@ -30,7 +30,7 @@ class Fruit:
 
         self.age = 0
         self._state = state
-        self.mass = 0.
+        self.mass = 0.0
 
     def _set_state(self, state: FruitState):
         if state in list(FruitState):
@@ -44,12 +44,14 @@ class Fruit:
     state = property(
         fget=_get_state,
         fset=_set_state,
-        doc="getter/setter of :attr:`state` of the component to be specified by the user"
+        doc="getter/setter of :attr:`state` of the component to be specified by the user",
     )
 
     def compute_mass(self):
         """a method that computes the mass of the fruit and returns its value"""
-        raise NotImplementedError('please implements a compute_mass method in your fruit class.')
+        raise NotImplementedError(
+            "please implements a compute_mass method in your fruit class."
+        )
 
 
 class AppleFruit(Fruit):
@@ -73,7 +75,15 @@ class AppleFruit(Fruit):
 
     """
 
-    def __init__(self, flower_duration=10., max_relative_growth_rate=0.167, lost_time=28, max_age=147, probability=0.3, max_absolute_growth_rate=.0018):
+    def __init__(
+        self,
+        flower_duration=10.0,
+        max_relative_growth_rate=0.167,
+        lost_time=28,
+        max_age=147,
+        probability=0.3,
+        max_absolute_growth_rate=0.0018,
+    ):
         """
         Inherits :meth:`get_state`, :meth:`set_state` from :class:`Fruit` class.
         The method :meth:`compute_mass` is redefined.
@@ -142,6 +152,8 @@ class AppleFruit(Fruit):
         #  // default mass unit = kg, time unit = second, ...
         fruit_age = min(self.age - self._flower_duration, self._max_age)
 
-        i = log(1.0 + exp((self._max_relative_growth_rate * (fruit_age - self._lost_time))))
+        i = log(
+            1.0 + exp((self._max_relative_growth_rate * (fruit_age - self._lost_time)))
+        )
         self.mass = self._r * i
         return self.mass

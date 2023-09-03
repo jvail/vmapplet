@@ -1,5 +1,3 @@
-
-
 class Wood:
     """a class to manage wood characteristics
 
@@ -20,9 +18,15 @@ class Wood:
     .. note:: in stocatree, the config.ini file contains a section [wood] that
             allows to instanciate this class.
     """
-    def __init__(self, wood_density=1000, reaction_wood_rate=0.5,
-                 reaction_wood_inertia_coefficient=0.1, youngs_modulus=1.1,
-                 modulus_of_rupture=50e6):
+
+    def __init__(
+        self,
+        wood_density=1000,
+        reaction_wood_rate=0.5,
+        reaction_wood_inertia_coefficient=0.1,
+        youngs_modulus=1.1,
+        modulus_of_rupture=50e6,
+    ):
         """**Constructor**
 
 
@@ -38,8 +42,7 @@ class Wood:
 
         self._density = wood_density
         self._reaction_wood_rate = reaction_wood_rate
-        self._reaction_wood_inertia_coefficient = \
-            reaction_wood_inertia_coefficient
+        self._reaction_wood_inertia_coefficient = reaction_wood_inertia_coefficient
         self._youngs_modulus = youngs_modulus
 
         # TODO convert into Pa ?

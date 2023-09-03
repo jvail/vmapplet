@@ -1,12 +1,18 @@
+from typing import Optional
+
 from ..enums import Zone
 
 
 class Internode:
     """Internode class to be used within a metamer"""
 
-    def __init__(self, min_length=0.0001, elongation_period=10.,
-                 plastochron=3.0, max_length=0.03):
-
+    def __init__(
+        self,
+        min_length=0.0001,
+        elongation_period=10.0,
+        plastochron=3.0,
+        max_length=0.03,
+    ):
         self._min_length = min_length  # m/day
         self._plastochron = plastochron  # days
         self._elongation_period = elongation_period  # days
@@ -21,7 +27,7 @@ class Internode:
         self._final_dormant_end = 0.25 * self._max_length / 1.5
         self._final_else = 0.25 * self._max_length / 1.5
 
-    def growth_rate(self, zone: Zone):
+    def growth_rate(self, zone: Optional[Zone] = None):
         """compute te growth rate of the internode as a function of its zone
 
         :Hypothesis:

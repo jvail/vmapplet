@@ -1,9 +1,4 @@
-from openalea.plantgl.all import (
-    Vector3,
-    Vector4,
-    Scaled,
-    BezierPatch
-)
+from openalea.plantgl.all import Vector4, Scaled, BezierPatch
 
 from .file_tools import get_shared_data_path
 
@@ -45,27 +40,27 @@ def createSurface(filename=None, ustride=10, vstride=10):
         >>> produce PglShape(leaf_surface, r)
     """
     try:
-        f = open(filename, 'r')
+        f = open(filename, "r")
     except Exception:
-        raise ValueError('check the filename')
+        raise ValueError("check the filename")
 
-    assert type(ustride) == int
-    assert type(vstride) == int
+    assert type(ustride) is int
+    assert type(vstride) is int
     # read header of the file
     f.readline()
     # read contact point
     v = f.readline().split()
-    cpoint = Vector3(float(v[3]), float(v[5]), float(v[7]))
+    # cpoint = Vector3(float(v[3]), float(v[5]), float(v[7]))
 
     # read end point
     f.readline()
     # read heading
     v = f.readline().split()
-    heading = Vector3(float(v[2]) ,float(v[4]), float(v[6]))
+    # heading = Vector3(float(v[2]), float(v[4]), float(v[6]))
 
     # read up
     v = f.readline().split()
-    up = Vector3(float(v[2]), float(v[4]), float(v[6]))
+    # up = Vector3(float(v[2]), float(v[4]), float(v[6]))
 
     # read size
     v = f.readline().split()
@@ -81,7 +76,9 @@ def createSurface(filename=None, ustride=10, vstride=10):
         v = f.readline().split()
         row = []
         for j in range(4):
-            row.append(Vector4(float(v[j * 3]), float(v[j * 3 + 1]), float(v[j * 3 + 2]), 1))
+            row.append(
+                Vector4(float(v[j * 3]), float(v[j * 3 + 1]), float(v[j * 3 + 2]), 1)
+            )
         ctrlpoints.append(row)
     smb = Scaled(size, BezierPatch(ctrlpoints, ustride, vstride))
     smb.name = name
@@ -96,8 +93,8 @@ def leafSurface(u_stride=6, v_stride=6):
 
     >>> leaf = leafSurface(6, 12)
     """
-    s = createSurface(get_shared_data_path('lpy/leaf_surface.s'), u_stride, v_stride)
-    s.name = 'leaf'
+    s = createSurface(get_shared_data_path("lpy/leaf_surface.s"), u_stride, v_stride)
+    s.name = "leaf"
     return s
 
 
@@ -109,8 +106,8 @@ def groundSurface(u_stride=6, v_stride=6):
 
     >>> ground = groundSurface(6, 12)
     """
-    s = createSurface(get_shared_data_path('lpy/ground_surface.s'), u_stride, v_stride)
-    s.name = 'ground'
+    s = createSurface(get_shared_data_path("lpy/ground_surface.s"), u_stride, v_stride)
+    s.name = "ground"
     return s
 
 
@@ -122,13 +119,9 @@ def petalSurface(u_stride=6, v_stride=6):
 
     >>> petal = petalSurface(6, 12)
     """
-    s = createSurface(get_shared_data_path('lpy/petal_surface.s'), u_stride, v_stride)
-    s.name = 'petal'
+    s = createSurface(get_shared_data_path("lpy/petal_surface.s"), u_stride, v_stride)
+    s.name = "petal"
     return s
 
 
-__all__ = [
-    'leafSurface',
-    'petalSurface',
-    'groundSurface'
-]
+__all__ = ["leafSurface", "petalSurface", "groundSurface"]
