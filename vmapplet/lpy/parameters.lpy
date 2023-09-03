@@ -1,6 +1,3 @@
-from vmapplet import optimisation
-from vmapplet.physics import rotate_frame_at_branch
-
 module apex(apex_data): scale=2
 module branch(): scale=1
 module growth_unit(growth_unit_data): scale=1

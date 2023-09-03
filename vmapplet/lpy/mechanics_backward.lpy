@@ -1,10 +1,10 @@
 import openalea.plantgl.all as pgl
 
 from vmapplet import (
-    constants,
-    optimisation
+    constants
 )
 from vmapplet.enums import LeafState
+from vmapplet.physics import *
 
 gravity = pgl.Vector3(0.0, 0.0, -9.81)
 
@@ -28,10 +28,10 @@ root() >> metamer(m):
     tree.fruit_load = tree.fruits / tree.trunk_cross_sectional_area
 
 metamer(m) >> SB() branch() metamer(mb) EB() metamer(mr):
-    radius = optimisation.get_new_radius(mb.radius, mr.radius)
+    radius = get_new_radius(mb.radius, mr.radius)
     if m.leaf.state == LeafState.GROWING:
-        radius = optimisation.get_new_radius(radius, m.leaf.petiole_radius)
-    m.radius = optimisation.max(radius, m.radius);
+        radius = get_new_radius(radius, m.leaf.petiole_radius)
+    m.radius = max(radius, m.radius);
     # update last layer thickness
     m.layers[-1].thickness = m.radius - m.layers[-1].radius
     m.compute_mass(mr, mb)
@@ -49,8 +49,8 @@ metamer(m) >> SB() branch() metamer(mb) EB() metamer(mr):
 metamer(m) >> metamer(mr):
     radius = mr.radius
     if m.leaf.state == LeafState.GROWING:
-        radius = optimisation.get_new_radius(mr.radius, m.leaf.petiole_radius)
-    m.radius = optimisation.max(radius, m.radius)
+        radius = get_new_radius(mr.radius, m.leaf.petiole_radius)
+    m.radius = max(radius, m.radius)
     m.layers[-1].thickness = m.radius - m.layers[-1].radius
     m.compute_mass(mr)
     if options.general.mechanics:
@@ -66,8 +66,8 @@ metamer(m) >> apex(a):
     # wood.density, m.fruit_mass are units objects
     radius = a.radius
     if m.leaf.state == LeafState.GROWING:
-        radius = optimisation.get_new_radius(a.radius, m.leaf.petiole_radius)
-    m.radius = optimisation.max(radius, m.radius)
+        radius = get_new_radius(a.radius, m.leaf.petiole_radius)
+    m.radius = max(radius, m.radius)
     m.layers[-1].thickness = m.radius - m.layers[-1].radius
     m.compute_mass()
     m.cumulated_torque = cross( m.hlu.heading * m.length, tree.tropism)

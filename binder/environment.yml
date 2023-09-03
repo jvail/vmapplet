@@ -10,9 +10,6 @@ dependencies:
   - toml
   - matplotlib
   - scipy
-  - boost
-  - boost-cpp
-  - cppyy=2.4
   - openalea.lpy
   - openalea.plantgl=3.20.1
   - openalea.mtg

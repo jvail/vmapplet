@@ -2,12 +2,11 @@ from openalea.plantgl.all import Vector3
 
 from vmapplet import Simulation, Options
 from vmapplet.organs.metamer import MetamerData, CambialLayer
-from vmapplet.optimisation import reaction_wood_target
 from vmapplet.organs.wood import Wood
 from vmapplet.organs.fruit import AppleFruit
 from vmapplet.organs.leaf import AppleLeaf
 from vmapplet.organs.internode import Internode
-from vmapplet.physics import Frame
+from vmapplet.physics import Frame, reaction_wood_target
 from vmapplet.enums import FruitState
 
 

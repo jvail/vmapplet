@@ -4,8 +4,13 @@ from math import acos
 
 from openalea.plantgl.all import Vector3, dot
 
-from .. import constants, optimisation
-from ..physics import rotate_frame_at_branch
+from .. import constants
+from ..physics import (
+    rotate_frame_at_branch,
+    second_moment_of_area_annular_section,
+    reaction_wood_target,
+    second_moment_of_area_circle,
+)
 from ..srandom import boolean_event
 from ..enums import Zone, FruitState, LeafState
 
@@ -312,7 +317,7 @@ class MetamerData:
             # if we create a new layer, then computation on previous one will
             # be redundant. Compute them once for all
             second_moment_of_area = (
-                optimisation.second_moment_of_area_annular_section(
+                second_moment_of_area_annular_section(
                     self.layers[-1].radius,
                     self.layers[-1].thickness,
                     self.layers[-1].reaction_wood,
@@ -329,7 +334,7 @@ class MetamerData:
         # TEST if not the central layer
         # TODO days or seconds ?
         if self.nlayers >= 2:
-            r = optimisation.reaction_wood_target(
+            r = reaction_wood_target(
                 self.hlu.up, self.hlu.heading, self.season_initial_heading
             )
             if r > self.layers[-1].reaction_wood:
@@ -347,11 +352,10 @@ class MetamerData:
 
         # Updating second_moment_of_area
         second_moment_of_area = (
-            self.total_second_moment_of_area
-            + optimisation.second_moment_of_area_circle(self.radius)
+            self.total_second_moment_of_area + second_moment_of_area_circle(self.radius)
         )
         second_moment_of_area += (
-            optimisation.second_moment_of_area_annular_section(
+            second_moment_of_area_annular_section(
                 self.layers[-1].radius,
                 self.layers[-1].thickness,
                 self.layers[-1].reaction_wood,
@@ -512,67 +516,6 @@ class MetamerData:
     @property
     def leaf_mass(self):
         return self.leaf.mass
-
-
-def reaction_wood_target(up, heading, previous_heading):
-    r"""Reaction wood target
-
-    The reaction wood is proportional to the change in inclination
-    over a season (Almeras, 2001). Hypothesis: The reaction wood is
-    also proportional to the inclination from gravity.
-
-    .. math::
-
-        P_r = 0.1635 - 0.1778 \theta_s
-
-    where :math:`P_r` is the radial portion of the outermost cambial layer that
-    become reaction wood and :math:`\theta_s` is the change in inclination of the
-    internode over the season (i.e., the cahnge in :math:`\vec{H}`, the heading
-    vector of the HLU frame since the start of the spring.
-
-    In order to also take into account the gravity, The firs term in the equation above
-    must be multiply by a coefficient that varies with the angle between the internode and
-    :math:`\vec{u}` a unit vector opposite to  :math:`-\vec{g}`
-
-    :param Vector3 up:
-    :param heading: vector3
-    :param previous_heading: vector3
-    :returns: reaction_wood (double)
-    """
-
-    # multiply by gravity normalised
-    cos_gh = Vector3(0.0, 0.0, 1.0) * heading
-    cos_pu = previous_heading * up
-    cos_ph = previous_heading * heading
-
-    if cos_pu * cos_ph >= 0.0:
-        try:
-            inclination = acos(cos_ph / 1.0001)
-        except Exception:
-            print("Problem with acos(cos_ph) where cos_ph=%f" % cos_ph)
-            inclination = 0.0
-    else:
-        try:
-            inclination = -acos(cos_ph)
-        except Exception:
-            tol = 1e-6
-            try:
-                inclination = -acos(cos_ph - tol)
-                ValueError("try again with tol set %s %s" % (cos_ph, cos_ph - 1.0))
-            except Exception:
-                print("cos+_pu=", cos_pu, " cos_ph=", cos_ph, "cosgh=", cos_gh)
-                print(cos_ph - 1.0)
-                raise ValueError("Problem with acos(cos_ph) where cos_ph=%f" % cos_ph)
-
-    percentage = 0.1635 * (1.0 - cos_gh) - 0.1778 * inclination
-    r = constants.two_pi * percentage
-
-    if r < 0.0:
-        r = 0.0
-    elif r > constants.pi:
-        r = constants.pi
-
-    return r
 
 
 def _clamp_if_near_zero(data, tol=0.0001):

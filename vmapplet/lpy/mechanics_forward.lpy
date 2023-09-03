@@ -1,5 +1,4 @@
-from vmapplet import optimisation
-from vmapplet.physics import rotate_frame_at_branch
+from vmapplet.physics import *
 
 module apex(apex_data): scale=2
 module branch(): scale=1
@@ -14,12 +13,12 @@ production:
 
 metamer(ml) branch() << metamer(m):
     m.hlu = rotate_frame_at_branch(ml.hlu, ml.branching_angle,  ml.phyllotactic_angle);
-    m.hlu = optimisation.reorient_frame(m.hlu, m.rotation_velocity, m.rv_norm, m.length)
+    m.hlu = reorient_frame(m.hlu, m.rotation_velocity, m.rv_norm, m.length)
     m.update_position(ml.position)
     produce metamer(m)
 
 metamer(ml) << metamer(m):
-    m.hlu = optimisation.reorient_frame(ml.hlu, m.rotation_velocity, m.rv_norm, m.length)
+    m.hlu = reorient_frame(ml.hlu, m.rotation_velocity, m.rv_norm, m.length)
     m.update_position(ml.position)
     produce metamer(m)
 

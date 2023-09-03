@@ -1,13 +1,13 @@
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 
-from pgljupyter import SceneWidget
+if TYPE_CHECKING:
+    from pgljupyter import SceneWidget
 
-from ._cppyy import *  # noqa
 from .simulation import Simulation
 from .options import Options
 
 
-def run(simulation: Simulation, scene_widget: Optional[SceneWidget] = None):
+def run(simulation: Simulation, scene_widget: Optional["SceneWidget"] = None):
     """ """
 
     date_start = simulation.options.general.date_start
