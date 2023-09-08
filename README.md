@@ -1,11 +1,12 @@
 # VMAppleT
 
-A refactored and enhanced implementation of MAppleT/StocaTree. Original sources copied and modified from [openalea/incubator](https://github.com/openalea-incubator/MAppleT).
+Apple tree simulation library using Markov chains based on StocaTree/MAppleT:
+A refactored and enhanced implementation of StocaTree. Original sources copied and modified from [openalea/incubator](https://github.com/openalea-incubator/MAppleT).
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jvail/vmapplet/master?urlpath=lab/tree/notebooks/simple_simulation.ipynb)
 
 
-## Major changes compared to MAppleT/StocaTree
+## Major changes compared to StocaTree/MAppleT
 
 * Build system and dependencies: All outdated and unmaintained dependencies have been removed or replaced
 * Modularization: The L-Py file has been splitted up into several smaller modules
@@ -42,6 +43,11 @@ jupyter lab --notebook-dir=notebooks
 ## Script
 
 ```sh
-activate vmapplet
+conda activate vmapplet
 python -m vmapplet vmapplet/data/simulation.toml out_folder
 ```
+
+## Usage
+
+
+## Examples

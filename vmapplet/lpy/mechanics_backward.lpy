@@ -14,6 +14,7 @@ module growth_unit(growth_unit_data): scale=1
 module axiom()
 module metamer(metamer_data): scale=2
 module root(): scale=1
+module tree(): scale=0
 
 def StartEach():
     backward()
@@ -23,9 +24,9 @@ ignore: growth_unit
 production:
 
 root() >> metamer(m):
-    tree.trunk_radius = m.radius
-    tree.trunk_cross_sectional_area = constants.pi * m.radius * m.radius
-    tree.fruit_load = tree.fruits / tree.trunk_cross_sectional_area
+    tree_data.trunk_radius = m.radius
+    tree_data.trunk_cross_sectional_area = constants.pi * m.radius * m.radius
+    tree_data.fruit_load = tree_data.fruits / tree_data.trunk_cross_sectional_area
 
 metamer(m) >> SB() branch() metamer(mb) EB() metamer(mr):
     radius = get_new_radius(mb.radius, mr.radius)
@@ -41,7 +42,7 @@ metamer(m) >> SB() branch() metamer(mb) EB() metamer(mr):
             mb.cumulated_torque + mr.cumulated_torque +
             cross((mb.hlu.heading * mb.length), (gravity * mb.cumulated_mass)) +
             cross((mr.hlu.heading * mr.length), (gravity * mr.cumulated_mass)) +
-            cross((m.hlu.heading * m.length), tree.tropism)
+            cross((m.hlu.heading * m.length), tree_data.tropism)
         )
         m.calculate_rotation_velocity(simulation, options.general.stake)
     produce metamer(m)
@@ -57,7 +58,7 @@ metamer(m) >> metamer(mr):
         m.cumulated_torque = (
             cross((mr.hlu.heading * mr.length), (gravity * mr.cumulated_mass)) +
             mr.cumulated_torque +
-            cross((m.hlu.heading * m.length) , tree.tropism)
+            cross((m.hlu.heading * m.length) , tree_data.tropism)
         )
         m.calculate_rotation_velocity(simulation, options.general.stake)
     produce metamer(m)
@@ -70,7 +71,7 @@ metamer(m) >> apex(a):
     m.radius = max(radius, m.radius)
     m.layers[-1].thickness = m.radius - m.layers[-1].radius
     m.compute_mass()
-    m.cumulated_torque = cross( m.hlu.heading * m.length, tree.tropism)
+    m.cumulated_torque = cross( m.hlu.heading * m.length, tree_data.tropism)
     if options.general.mechanics:
         m.calculate_rotation_velocity(simulation, options.general.stake)
     produce metamer(m)

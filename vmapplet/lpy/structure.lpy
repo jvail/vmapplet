@@ -44,8 +44,8 @@ metamer(m) < apex(a):
             parent_unit_id=a.parent_unit_id,
             parent_fbr_id=a.parent_fbr_id,
             parent_tree_id=a.parent_tree_id,
-            p_angle=m.phyllotactic_angle + tree.phyllotactic_angle,
-            b_angle=tree.branching_angle,
+            p_angle=m.phyllotactic_angle + tree_data.phyllotactic_angle,
+            b_angle=tree_data.branching_angle,
             wood=wood,
             internode=internode,
             fruit=AppleFruit(**options.fruit),
@@ -77,8 +77,8 @@ apex(a):
             parent_unit_id=a.parent_unit_id,
             parent_fbr_id=a.parent_fbr_id,
             parent_tree_id=a.parent_tree_id,
-            p_angle=tree.phyllotactic_angle,
-            b_angle=tree.branching_angle,
+            p_angle=tree_data.phyllotactic_angle,
+            b_angle=tree_data.branching_angle,
             wood=wood,
             internode=internode,
             fruit=AppleFruit(**options.fruit),
@@ -99,9 +99,9 @@ metamer(m) > metamer(mr) apex(a):
     # case of a floral immediate lateral axis: should be treated as laterals and not as terminals
     if not m.developped and a.parent_observation == Observation.FLORAL and a.sequence_position == 0:
         m.developped = True
-        if boolean_event(tree.inflorescence_death_probability):
+        if boolean_event(tree_data.inflorescence_death_probability):
             produce metamer(m)
-        m.branching_angle = tree.floral_branching_angle
+        m.branching_angle = tree_data.floral_branching_angle
         hlu = rotate_frame_at_branch(m.hlu, m.branching_angle, m.phyllotactic_angle);
         apex_parameters = {
             **options.apex,
@@ -110,11 +110,11 @@ metamer(m) > metamer(mr) apex(a):
         sylleptic_apex = ApexData(hlu, terminal_fate(simulation.year_no, Observation.FLORAL, options.markov.terminal_fate), **apex_parameters)
         sylleptic_apex.parent_observation = Observation.FLORAL
         if m.parent_fbr_id == 0:
-            tree.first_branches += 1
-            # The parent_fbr_id ranges from 0 to tree.first_branches (rather than to tree.frist-branches-1)
+            tree_data.first_branches += 1
+            # The parent_fbr_id ranges from 0 to tree_data.first_branches (rather than to tree_data.frist-branches-1)
             # This is because, the trunk is regarded by branch 0 as default
             # Thus the id of the first real branch should be 1
-            sylleptic_apex.parent_fbr_id = tree.first_branches
+            sylleptic_apex.parent_fbr_id = tree_data.first_branches
         else:
             sylleptic_apex.parent_fbr_id = m.parent_fbr_id
         produce metamer(m) SB() branch() apex(sylleptic_apex) EB()
@@ -142,11 +142,11 @@ metamer(m):
         }
         a = ApexData(hlu, m.observation, **apex_parameters)
         if m.parent_fbr_id == 0:
-            tree.first_branches += 1
-            # The parent_fbr_id ranges from 0 to tree.first_branches (rather than to tree.frist-branches-1)
+            tree_data.first_branches += 1
+            # The parent_fbr_id ranges from 0 to tree_data.first_branches (rather than to tree_data.frist-branches-1)
             # This is because, the trunk is regarded by branch 0 as default
             # Thus the id of the first real branch should be 1
-            a.parent_fbr_id = tree.first_branches
+            a.parent_fbr_id = tree_data.first_branches
         else:
             a.parent_fbr_id = m.parent_fbr_id
         produce metamer(m) SB() branch() apex(a) EB()

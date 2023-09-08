@@ -12,7 +12,7 @@ authors = [
   { name = "Jan Vaillant" },
   { name = "Frederic Boudon" }
 ]
-description = "Apple Tree simulation using Markov Chains based on MAppleT"
+description = "Apple tree simulation library using Markov chains based on StocaTree/MAppleT"
 readme = "README.md"
 requires-python = "~=3.10.0"
 

@@ -24,7 +24,7 @@ bibliography: paper.bib
 
 # Summary
 
-VMAppleT is a greatly refactored, modernized and updated implementation of StocaTree/MappleT [@Costes:2008] with
+VMAppleT is a refactored, modernized and updated implementation of StocaTree/MappleT [@Costes:2008] with
 support for running simulations in Jupyter notebooks to improve accessibility, extensibility and customization of the model.
 
 

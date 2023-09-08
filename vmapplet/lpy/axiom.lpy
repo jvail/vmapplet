@@ -3,13 +3,14 @@ from vmapplet.enums import Observation
 
 module apex(apex_data): scale=2
 module root(): scale=1
+module tree(): scale=0
 
 axiom:
     parameters = {
         **options.apex,
         **options.markov
     }
-    produce apex(ApexData(hlu=tree.initial_hlu, observation=Observation.TRUNK, **parameters))
+    produce tree(tree_data) root() apex(ApexData(hlu=tree_data.initial_hlu, observation=Observation.TRUNK, **parameters))
 
 production:
 

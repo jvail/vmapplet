@@ -55,7 +55,7 @@ apex(a):
         a.sequence_position = len(a.sequence)
         if a.get_observation() == Observation.TRUNK:
             a.set_observation(Observation.LARGE)
-        elif a.get_observation() == Observation.SMALL and boolean_event(tree.spur_death_probability):
+        elif a.get_observation() == Observation.SMALL and boolean_event(tree_data.spur_death_probability):
             a.set_observation(Observation.DORMANT)
         elif a.get_observation() == Observation.FLORAL:
             a.set_observation(Observation.DORMANT)
@@ -63,9 +63,9 @@ apex(a):
             a.set_observation(terminal_fate(simulation.year_no, a.get_observation(), options.markov.terminal_fate))
         a.radius = 0
         a.max_terminal_radius_target()
-        tree.growth_units += 1
+        tree_data.growth_units += 1
         # record the unit id that this apex belongs to (the id values start from 0)
-        a.parent_unit_id = tree.growth_units-1
+        a.parent_unit_id = tree_data.growth_units-1
         # update counts
         # if a.parent_observation == Observation.FLORAL:
         #     data.counts.florals += 1
@@ -89,7 +89,7 @@ apex(a):
         # # This is to avoid the production of two growth units at the same axis
         # # at the same year
         a.year = simulation.date.year
-        nproduce growth_unit(GrowthUnitData(tree.growth_units, simulation.date.year, a.parent_observation == Observation.FLORAL)) apex(a)
+        nproduce growth_unit(GrowthUnitData(tree_data.growth_units, simulation.date.year, a.parent_observation == Observation.FLORAL)) apex(a)
     else:
         produce apex(a)
 

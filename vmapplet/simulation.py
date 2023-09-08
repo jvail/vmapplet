@@ -96,7 +96,7 @@ class Simulation(SimulationInterface):
         lpy_files = self.options.input.lpy_files
         # namspace available in L-Py files
         lpy_options = dict(
-            options=self.options, simulation=self, markov=self._markov, tree=tree
+            options=self.options, simulation=self, markov=self._markov, tree_data=tree
         )
 
         self._lsystems = Lsystems(
