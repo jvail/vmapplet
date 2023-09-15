@@ -9,10 +9,10 @@ from .wood import Wood
 
 
 _SCALE = {
-    "TREE": 0,
-    "GROWTH_UNIT": 1,
-    "APEX": 2,
-    "METAMER": 2,
+    "TREE": 1,
+    "GROWTH_UNIT": 2,
+    "APEX": 3,
+    "METAMER": 3,
 }
 
 
