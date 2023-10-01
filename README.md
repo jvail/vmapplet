@@ -27,14 +27,18 @@ mamba env create -f binder/environment.yml
 
 ## Usage
 
-### Jupyter Lab
+### Notebooks
+
+Run examples in Jupyter notebooks:
 
 ```sh
 conda activate vmapplet
 jupyter lab --notebook-dir=notebooks
 ```
 
-### Console Script
+### Terminal
+
+Execute simulation from the command line:
 
 ```sh
 conda activate vmapplet
@@ -71,35 +75,36 @@ options.tree.phyllotactic_angle = -144.0
 
 For units and defaults take a look the [`Options`](./vmapplet/options.py) class implementation.
 
-The second important set of files are parametrizations for the [Markov](./vmapplet/markov.py) class with the following (simplified) structure:
+#### Simulation
 
-```toml
-# year relative to the simulation's first year (0)
-year = 1
-# the length ('MEDIUM' or 'LONG') of a branch
-length = 'LONG'
+Next to the configuration files the [`Simulation`](./vmapplet/simulation.py) class is the main entry point for any
+simulation run. The class is instantiated with a str (an unparsed TOML file) or an Instance of `Options` and an
+optional path for any output files:
 
-# probabilities per Zone + 1 (see Zone enums.py)
-initial_probabilities = [1.0, ...]
+```py
+from vmapplet import Simulation
 
-# probabilities tabel with Zone + 1 rows and columns
-transition_probabilities = [
-    [0.0, ...],
-]
-
-# distribution tabel with Zone + 1 rows and columns
-observation_distributions = [
-    [1.0, ..., 0.0],
-]
-
-# One description of the occupancy distribution per Zone
-[[occupancy_distributions]]
-distribution = 'NEGATIVE_BINOMIAL'
-parameter = 2.05633
-probability = 0.519757
-bounds = [4.0, +inf]
+simulation = Simulation(options=options, output_path='some_path')
 ```
 
-#### L-System
+The simulation is executed by passing the Simulation object to the `vmapplet.run` function:
+
+```py
+import vmapplet
+
+vmapplet.run(simulation)
+```
+
+In a notebook context it is possibel to pass a second (optional) parameter i.e. an instance of a SceneWidget:
+
+
+```py
+from pgljupyter import SceneWidget
+import vmapplet
+
+widget = SceneWidget()
+display(widget)
+vmapplet.run(simulation, scene_widget=widget)
+```
 
 #### Output
