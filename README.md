@@ -19,6 +19,9 @@ conda install mamba -n base -c conda-forge
 
 ### Create environment - with a development install of VMappleT
 
+With the development (editable `-e .` see [environment file](binder/environment.yml) install all changes in the source tree are directly available for execution
+without requireing a new install. This is the recommended way to work with, extend and adjust the model.
+
 ```sh
 mamba env create -f binder/environment.yml
 # or
@@ -95,7 +98,7 @@ import vmapplet
 vmapplet.run(simulation)
 ```
 
-In a notebook context it is possibel to pass a second (optional) parameter i.e. an instance of a SceneWidget:
+In a notebook context it is possibel to pass a second (optional) parameter i.e. an instance of a SceneWidget to render the 3D representation created from the [interpretation.lpy](./vmapplet/lpy/interpretation.lpy) L-System:
 
 
 ```py
@@ -108,3 +111,5 @@ vmapplet.run(simulation, scene_widget=widget)
 ```
 
 #### Output
+
+_todo_
