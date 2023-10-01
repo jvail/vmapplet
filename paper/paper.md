@@ -40,7 +40,7 @@ The configuration and parameterization of a simulation has been simplified and p
 and are initialized with reasonable defaults.
 
 Supporting Jupyter notebooks by integrating Jupyter Lab including model visualization was another important goal of the reimplementation. This is particularly useful to provide users a straightforward
-access and simple examples that can even be executed and viewed via binder [@Jupyter:2018] without requiring a local installation.
+access and simple examples that can even be executed and viewed via binder [@project_jupyter-proc-scipy-2018] without requiring a local installation.
 
 
 
