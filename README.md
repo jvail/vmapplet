@@ -19,7 +19,7 @@ conda install mamba -n base -c conda-forge
 
 ### Create environment - with a development install of VMappleT
 
-With the development (editable `-e .` see [environment file](binder/environment.yml) install all changes in the source tree are directly available for execution
+With the development (editable `-e .` see [environment file](binder/environment.yml)) install all changes in the source tree are directly available for execution
 without requireing a new install. This is the recommended way to work with, extend and adjust the model.
 
 ```sh
