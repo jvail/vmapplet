@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - main
+      - 11-improve-documentation
 
 jobs:
   paper:
