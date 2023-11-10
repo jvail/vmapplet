@@ -51,7 +51,6 @@ class Tree:
     inflorescence_death_probability: float = 0.2
 
     def __post_init__(self):
-
         self.angle_unit = "radians"
         self.phyllotactic_angle = self.phyllotactic_angle / 180.0 * pi
         self.branching_angle = self.branching_angle / 180.0 * pi

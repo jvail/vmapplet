@@ -8,7 +8,7 @@ module tree(): scale=0
 axiom:
     parameters = {
         **options.apex,
-        **options.markov
+        **options.shoot
     }
     produce tree(tree_data) root() apex(ApexData(hlu=tree_data.initial_hlu, observation=Observation.TRUNK, **parameters))
 

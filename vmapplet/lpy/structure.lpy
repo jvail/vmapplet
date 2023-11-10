@@ -105,9 +105,9 @@ metamer(m) > metamer(mr) apex(a):
         hlu = rotate_frame_at_branch(m.hlu, m.branching_angle, m.phyllotactic_angle);
         apex_parameters = {
             **options.apex,
-            **options.markov
+            **options.shoot
         }
-        sylleptic_apex = ApexData(hlu, terminal_fate(simulation.year_no, Observation.FLORAL, options.markov.terminal_fate), **apex_parameters)
+        sylleptic_apex = ApexData(hlu, terminal_fate(simulation.year_no, Observation.FLORAL, options.input.terminal_fate), **apex_parameters)
         sylleptic_apex.parent_observation = Observation.FLORAL
         if m.parent_fbr_id == 0:
             tree_data.first_branches += 1
@@ -138,7 +138,7 @@ metamer(m):
         hlu = rotate_frame_at_branch(m.hlu, m.branching_angle, m.phyllotactic_angle)
         apex_parameters = {
             **options.apex,
-            **options.markov
+            **options.shoot
         }
         a = ApexData(hlu, m.observation, **apex_parameters)
         if m.parent_fbr_id == 0:

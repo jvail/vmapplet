@@ -12,6 +12,7 @@ stride_number = 5
 pruning = false
 convergence_steps = 2
 
+# relative to vmapplet/lpy
 [input.lpy_files]
 axiom = 'axiom.lpy'
 parameters = 'parameters.lpy'
@@ -20,21 +21,22 @@ statistics = 'statistics.lpy'
 structure = 'structure.lpy'
 interpretation = 'interpretation.lpy'
 
+# relative to vmapplet/data/markov
+[input.markov_files]
+terminal_fate = 'fuji/terminal_fate.toml'
+models = 'fuji/models'
+
 [output]
 dates = [
     { day = 1, month = 6 },
     { day = 1, month = 11 },
 ]
 
+# All of those attributes will be available in the MTGs
 [output.attributes]
 tree = [
     'growth_units'
 ]
-# FIX: mtg display error when GUs are exported
-# growth_unit = [
-#     'year',
-#     'inflorescence'
-# ]
 metamer = [
     'number',
     'closest_apex',
@@ -100,46 +102,9 @@ terminal_expansion_rate = 2e-5
 minimum_size = 0.00075
 maximum_size = 0.003
 
-[markov]
+[shoot]
 maximum_length = 70
 minimum_length = 4
-
-# order matters: index = year_no - 1
-[[markov.terminal_fate]]
-large = [0.500, 0.167, 0.000, 0.333]
-medium = [0.000, 0.000, 0.000, 1.000]
-small = [0.100, 0.100, 0.300, 0.500]
-floral = [0.100, 0.300, 0.600, 0.000]
-
-[[markov.terminal_fate]]
-large = [0.246, 0.185, 0.000, 0.569]
-medium = [0.016, 0.238, 0.032, 0.714]
-small = [0.066, 0.067, 0.317, 0.550]
-floral = [0.317, 0.250, 0.433, 0.000]
-
-[[markov.terminal_fate]]
-large = [0.351, 0.106, 0.010, 0.533]
-medium = [0.123, 0.148, 0.063, 0.666]
-small = [0.015, 0.094, 0.453, 0.438]
-floral = [0.182, 0.249, 0.569, 0.000]
-
-[[markov.terminal_fate]]
-large = [0.213, 0.082, 0.000, 0.705]
-medium = [0.027, 0.046, 0.016, 0.911]
-small = [0.000, 0.024, 0.205, 0.771]
-floral = [0.003, 0.413, 0.584, 0.000]
-
-[[markov.terminal_fate]]
-large = [0.100, 0.050, 0.000, 0.850]
-medium = [0.000, 0.020, 0.130, 0.850]
-small = [0.000, 0.000, 0.375, 0.625]
-floral = [0.008, 0.325, 0.667, 0.000]
-
-[[markov.terminal_fate]]
-large = [0.000, 0.100, 0.000, 0.900]
-medium = [0.000, 0.050, 0.050, 0.900]
-small = [0.000, 0.000, 0.350, 0.650]
-floral = [0.000, 0.200, 0.800, 0.000]
 
 [fruit]
 flower_duration = 10.0

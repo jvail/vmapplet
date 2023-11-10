@@ -3,6 +3,7 @@ from typing import Any, Dict, List
 import dataclasses as dc
 import pathlib
 from datetime import date
+import io
 
 import toml
 
@@ -57,12 +58,37 @@ class OptionsOutput(OptionsBase):
     attributes: Dict[str, List[str]] = dc.field(default_factory=lambda: dict())
 
 
+markov_files = dict(terminal_fate="fuji/terminal_fate.toml", models="fuji/models")
+
+
 @dc.dataclass
 class OptionsInput(OptionsBase):
     lpy_files: LsystemPaths = dc.field(default_factory=lambda: dict())
     lpy_path: str = dc.field(
         default_factory=lambda: str(pathlib.Path(__file__).parent.joinpath("lpy"))
     )
+    markov_files: dict[str, str] = dc.field(default_factory=lambda: markov_files)
+    markov_path: str = dc.field(
+        default_factory=lambda: str(
+            pathlib.Path(__file__).parent.joinpath("data/markov")
+        )
+    )
+    terminal_fate: Dict[Any, Any] = dc.field(default_factory=lambda: dict())
+
+    def __post_init__(self):
+        # create the expected structure/types from toml input
+        # i.e. a list of dicts with observations as keys
+        terminal_fate = {}
+        if "terminal_fate" in self.markov_files:
+            path = pathlib.Path(self.markov_path) / self.markov_files["terminal_fate"]
+            with io.open(path) as file:
+                terminal_fate = toml.loads(file.read())["terminal_fate"]
+                for i, item in enumerate(terminal_fate):
+                    for observation_str, probabilities in item.items():
+                        # start with year_no = 1
+                        self.terminal_fate[
+                            (i + 1, Observation(observation_str.upper()))
+                        ] = probabilities
 
 
 @dc.dataclass
@@ -126,23 +152,9 @@ class OptionsApex(OptionsBase):
 
 
 @dc.dataclass
-class OptionsMarkov(OptionsBase):
+class OptionsShoot(OptionsBase):
     maximum_length: int = 70  # < 100
     minimum_length: int = 4
-    terminal_fate: Dict[Any, Any] = dc.field(default_factory=lambda: dict())
-
-    def __post_init__(self):
-        # create the expected structure/types from toml input
-        # i.e. a list of dicts with observations as keys
-        terminal_fate = {}
-        if self.terminal_fate is not None:
-            for i, item in enumerate(self.terminal_fate):
-                for observation_str, probabilities in item.items():
-                    # start with year_no = 1
-                    terminal_fate[
-                        (i + 1, Observation(observation_str.upper()))
-                    ] = probabilities
-        self.terminal_fate = terminal_fate
 
 
 @dc.dataclass
@@ -176,7 +188,7 @@ class Options(OptionsBase):
     wood: OptionsWood = dc.field(default_factory=lambda: OptionsWood())
     internode: OptionsInternode = dc.field(default_factory=lambda: OptionsInternode())
     apex: OptionsApex = dc.field(default_factory=lambda: OptionsApex())
-    markov: OptionsMarkov = dc.field(default_factory=lambda: OptionsMarkov())
+    shoot: OptionsShoot = dc.field(default_factory=lambda: OptionsShoot())
     fruit: OptionsFruit = dc.field(default_factory=lambda: OptionsFruit())
     leaf: OptionsLeaf = dc.field(default_factory=lambda: OptionsLeaf())
 
@@ -189,7 +201,7 @@ class Options(OptionsBase):
         self.wood = _make_dataclass(OptionsWood, self.wood)
         self.internode = _make_dataclass(OptionsInternode, self.internode)
         self.apex = _make_dataclass(OptionsApex, self.apex)
-        self.markov = _make_dataclass(OptionsMarkov, self.markov)
+        self.shoot = _make_dataclass(OptionsShoot, self.shoot)
         self.fruit = _make_dataclass(OptionsFruit, self.fruit)
         self.leaf = _make_dataclass(OptionsLeaf, self.leaf)
 

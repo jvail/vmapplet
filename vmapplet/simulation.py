@@ -78,13 +78,17 @@ class Simulation(SimulationInterface):
 
         self._markov = Markov(
             generator=self._rng,
-            minimum_length=self.options.markov.minimum_length,
-            maximum_length=self.options.markov.maximum_length,
+            minimum_length=self.options.shoot.minimum_length,
+            maximum_length=self.options.shoot.maximum_length,
         )
 
         self._markov_models = {}
-        for path in os.listdir(get_shared_data_path("markov")):
-            path = pathlib.Path(get_shared_data_path("markov")) / path
+        markov_models_dir = (
+            pathlib.Path(get_shared_data_path("markov"))
+            / self.options.input.markov_files["models"]
+        )
+        for path in os.listdir(markov_models_dir):
+            path = markov_models_dir / path
             if path.is_file() and path.suffix == ".toml":
                 with io.open(path) as file:
                     model = MarkovModel(**toml.loads(file.read()))
