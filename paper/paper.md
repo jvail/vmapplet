@@ -8,9 +8,9 @@ authors:
   - name: Frédéric Boudon
     affiliation: 1
   - name: Jan Vaillant
-	  affiliation: 3
+    affiliation: 3
   - name: Evelyne Costes
-	  affiliation: 2
+    affiliation: 2
 affiliations:
   - name: CIRAD, UMR AGAP Institut, F-34398 Montpellier, France
     index: 1
