@@ -1,7 +1,7 @@
 # VMAppleT
 
-Apple tree simulation library using Markov chains based on StocaTree/MAppleT:
-A [refactored and enhanced](./CHANGES.md) implementation of StocaTree. Original sources copied and modified from [openalea/incubator](https://github.com/openalea-incubator/MAppleT).
+Apple tree simulation library using Markov chains based on MAppleT:
+A [refactored and enhanced](./CHANGES.md) implementation of MAppleT. Original sources copied and modified from [openalea/incubator](https://github.com/openalea-incubator/MAppleT).
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jvail/vmapplet/master?urlpath=lab/tree/notebooks/simple_simulation.ipynb)
 

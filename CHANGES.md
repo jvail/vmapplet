@@ -1,6 +1,6 @@
 # v0.1.0
 
-Major changes compared to the original `MAppleT/StocaTree`:
+Major changes compared to the original `MAppleT`:
 
 * Build system and dependencies: All outdated and unmaintained dependencies have been removed or replaced
 * Modularization: The L-Py file has been splitted up into several smaller modules
