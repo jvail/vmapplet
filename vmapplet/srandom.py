@@ -9,7 +9,7 @@
     :Revision: $Id$
 """
 
-import random as std_random
+from .simulation import random as std_random
 
 
 def random(*args):
